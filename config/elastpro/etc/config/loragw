@@ -1,0 +1,4 @@
+
+config setting 'loragw'
+	option type '0'
+

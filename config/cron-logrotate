@@ -1,0 +1,3 @@
+# every 30 minute
+*/30 * * * * root /usr/sbin/logrotate /etc/logrotate.conf
+

@@ -1,0 +1,121 @@
+#! /bin/sh
+
+CONFIG_FILE="/etc/aziot/config.toml"
+
+do_start()
+{
+	local enabled source attestion_method connection_string iothub_hostname device_id
+	enabled=$(uci get iotedge.iotedge.enabled)
+	source=$(uci get iotedge.iotedge.source)
+	attestion_method=$(uci get iotedge.iotedge.attestion_method)
+	connection_string=$(uci get iotedge.iotedge.connection_string)
+	iothub_hostname=$(uci get iotedge.iotedge.iothub_hostname)
+	device_id=$(uci get iotedge.iotedge.device_id)
+	symmetric_key=$(uci get iotedge.iotedge.symmetric_key)
+	cert_path=$(uci get iotedge.iotedge.certificate)
+	key_path=$(uci get iotedge.iotedge.private_key)
+	global_endpoint=$(uci get iotedge.iotedge.global_endpoint)
+	id_scope=$(uci get iotedge.iotedge.id_scope)
+	registration_id=$(uci get iotedge.iotedge.registration_id)
+
+	if [ "$enabled" = "0" ]; then
+		/usr/bin/iotedge system stop > /dev/null &
+		sudo systemctl disable aziot-edged.service
+		return
+	fi
+
+	if ! grep -q '^\[provisioning\]' "$CONFIG_FILE"; then
+		echo "\n[provisioning]" >> "$CONFIG_FILE"
+	fi
+
+
+	if [ "$source" = "manual" ]; then
+		if [ "$attestion_method" = "0" ]; then
+			provision_config="source = \"$source\"\nconnection_string = \"$connection_string\""
+		else
+			provision_config="source = \"$source\"\niothub_hostname = \"$iothub_hostname\"\ndevice_id = \"$device_id\""
+
+			sed -i '/^\[provisioning.attestation\]/,/^\[/d' "$CONFIG_FILE"
+
+			if ! grep -q '^\[provisioning.authentication\]' "$CONFIG_FILE"; then
+				echo "\n[provisioning.authentication]" >> "$CONFIG_FILE"
+			fi
+
+			auth_method=$([ "$attestion_method" = "1" ] && echo "sas" || echo "x509")
+			if [ "$attestion_method" = "1" ]; then
+				auth_config="device_id_pk = { value = \"$symmetric_key\" }"
+			else
+				auth_config="identity_cert = \"file:///etc/ssl/iotedge/$cert_path\"\nidentity_pk = \"file:///etc/ssl/iotedge/$key_path\""
+			fi
+
+			sed -i '/^\[provisioning.authentication\]/,/^\[/{
+				/^\[provisioning.authentication\]/!d
+				a\
+method = "'"$auth_method"'"\
+'"$auth_config"'
+			}' "$CONFIG_FILE"
+		fi
+	else
+		echo 'dsp'
+		provision_config="source = \"$source\"\nglobal_endpoint = \"https://$global_endpoint\"\nid_scope = \"$id_scope\""
+		
+		sed -i '/^\[provisioning.authentication\]/,/^\[/d' "$CONFIG_FILE"
+
+		if ! grep -q '^\[provisioning.attestation\]' "$CONFIG_FILE"; then
+			echo "\n[provisioning.attestation]" >> "$CONFIG_FILE"
+		fi
+
+		if [ "$attestion_method" = "0" ]; then
+			auth_method="tpm";
+		elif [ "$attestion_method" = "1" ]; then
+			auth_method="symmetric_key";
+			auth_config="symmetric_key = { value = \"$symmetric_key\" }"
+		else
+			auth_method="x509";
+			auth_config="identity_cert = \"file:///etc/ssl/iotedge/$cert_path\"\nidentity_pk = \"file:///etc/ssl/iotedge/$key_path\""
+		fi
+
+		sed -i '/^\[provisioning.attestation\]/,/^\[/{
+		/^\[provisioning.attestation\]/!d
+		a\
+method = "'"$auth_method"'"\
+registration_id = "'"$registration_id"'"\
+'"$auth_config"'
+		}' "$CONFIG_FILE"
+	fi
+
+	sed -i '/^\[provisioning\]/,/^\[/ {/^\[provisioning\]/!{/^\[/!d}}' "$CONFIG_FILE"
+	echo "$provision_config" | sed -i '/^\[provisioning\]$/ {
+		r /dev/stdin
+	}' "$CONFIG_FILE"
+	
+	sudo aziotctl config apply && sudo iotedge config apply > /dev/null &
+}
+
+do_stop()
+{
+	/usr/bin/iotedge system stop >/dev/null &
+}
+
+do_restart()
+{
+	/usr/bin/iotedge system restart >/dev/null &
+}
+
+case "$1" in
+  start)
+	do_start
+	;;
+  stop)
+	do_stop
+	;;
+  restart|force-reload)
+	do_restart
+	;;
+  *)
+	echo "Usage: $SCRIPTNAME {start|stop|restart}" >&2
+	exit 3
+	;;
+esac
+
+:

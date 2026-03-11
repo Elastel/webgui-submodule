@@ -1,0 +1,42 @@
+#! /bin/sh
+
+PROG=/sbin/edaemon
+
+do_start()
+{
+      $PROG &
+}
+
+do_stop()
+{     
+      pid=$(cat /var/run/daemon.pid)
+      if [ -n "$pid" ]; then
+            kill -9 $pid;
+      fi
+}
+
+case "$1" in
+  start)
+      do_start
+      ;;
+  stop)
+      # do_stop
+      model=$(cat /etc/fw_model)
+
+      if [ "$model" = "EG500" ]; then
+            /usr/sbin/i2cset -f -y 1 0x20 0x03 0xff
+      fi
+
+      /etc/init.d/failover restart
+      ;;
+  restart|force-reload)
+      $0 stop
+      $0 start
+      ;;
+  *)
+      echo "Usage: $SCRIPTNAME {start|stop|restart}" >&2
+      exit 3
+      ;;
+esac
+
+:

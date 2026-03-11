@@ -1,0 +1,38 @@
+#! /bin/sh
+
+TARGET=router-modbus
+PROG=/usr/sbin/$TARGET
+
+do_start()
+{
+	$PROG >/dev/null &
+}
+
+do_stop()
+{
+	killall -q $TARGET
+	sleep 1
+	[ -n "$(pgrep $TARGET)" ] && {
+		sleep 1
+		kill -9 $(pgrep $TARGET)
+	}
+}
+
+case "$1" in
+  start)
+	do_start
+	;;
+  stop)
+	do_stop
+	;;
+  restart|force-reload)
+	$0 stop
+	$0 start
+	;;
+  *)
+	echo "Usage: $SCRIPTNAME {start|stop|restart}" >&2
+	exit 3
+	;;
+esac
+
+:

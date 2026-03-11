@@ -1,0 +1,48 @@
+
+config setting 'basic'
+	option minute_enabled '0'
+	option hour_enabled '0'
+	option day_enabled '0'
+	option cache_enabled '0'
+	option s7_count '0'
+	option collect_period '5'
+	option report_period '10'
+	option enabled '0'
+	option modbus_count '0'
+
+config setting 'tcp_server'
+	option enabled1 '0'
+	option enabled2 '0'
+	option enabled3 '0'
+	option enabled4 '0'
+	option enabled5 '0'
+
+config setting 'com'
+	option enabled5 '0'
+	option enabled2 '0'
+	option enabled3 '0'
+	option enabled4 '0'
+	option enabled1 '0'
+
+config setting 'server'
+	option enabled2 '0'
+	option enabled3 '0'
+	option enabled4 '0'
+	option enabled5 '0'
+	option enabled1 '0'
+
+config setting 'bacnet'
+
+config setting 'bacnet_client'
+
+config setting 'opcua'
+
+config setting 'dnp3_server'
+
+config setting 'modbus_slave'
+
+config state 'connection'
+
+config state 'sensor'
+
+

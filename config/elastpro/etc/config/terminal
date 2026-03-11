@@ -1,0 +1,5 @@
+
+config terminal 'terminal'
+	option interface 'br0'
+	option port '7681'
+

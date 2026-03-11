@@ -1,0 +1,77 @@
+#! /bin/sh
+
+PROG=/usr/sbin/dctd
+BACNET_PROG=/usr/sbin/bacserv
+BACNET_MSTP_PROG=/usr/sbin/bacserv-mstp
+BACCLI_PROG=/usr/sbin/baccli
+BACCLI_MSTP_PROG=/usr/sbin/baccli-mstp
+
+do_start()
+{
+        local enabled hour_enabled day_enabled bacnet_enabled proto baccli_enabled baccli_proto
+
+        enabled=$(uci get dct.basic.enabled)
+        [ "$enabled" = "1" ] || return
+
+        $PROG >/dev/null &
+
+        bacnet_enabled=$(uci get dct.bacnet.enabled)
+        [ "$bacnet_enabled" = "1" ] && {
+                proto=$(uci get dct.bacnet.proto)
+                if [ "$proto" = "0" ]; then
+                        $BACNET_PROG >/dev/null &
+                else
+                        $BACNET_MSTP_PROG >/dev/null &
+                fi
+        }
+}
+
+do_stop()
+{
+        killall -q dctd
+        sleep 1
+        [ -n "$(pgrep -x dctd)" ] && {
+                sleep 1
+                kill -9 $(pgrep -x dctd)
+        }
+
+        killall -q bacserv
+        [ -n "$(pgrep -x bacserv)" ] && {
+                kill -9 $(pgrep -x bacserv)
+        }
+
+        killall -q bacserv-mstp
+        [ -n "$(pgrep -x bacserv-mstp)" ] && {
+                kill -9 $(pgrep -x bacserv-mstp)
+        }
+
+        killall -q baccli
+        [ -n "$(pgrep -x baccli)" ] && {
+                kill -9 $(pgrep -x baccli)
+        }
+
+	killall -q baccli-mstp
+        [ -n "$(pgrep -x baccli-mstp)" ] && {
+                sleep 1
+                kill -9 $(pgrep -x baccli-mstp)
+        }
+}
+
+case "$1" in
+  start)
+        do_start
+        ;;
+  stop)
+        do_stop
+        ;;
+  restart|force-reload)
+        $0 stop
+        $0 start
+        ;;
+  *)
+        echo "Usage: $SCRIPTNAME {start|stop|restart}" >&2
+        exit 3
+        ;;
+esac
+
+:

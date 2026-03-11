@@ -1,0 +1,4 @@
+
+config setting 'iotedge'
+	option enabled '0'
+

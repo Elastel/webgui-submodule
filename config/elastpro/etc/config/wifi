@@ -1,0 +1,7 @@
+
+config setting 'wifi'
+	option enabled '1'
+
+config setting 'wifi_client'
+	option enabled '0'
+

@@ -1,0 +1,36 @@
+#! /bin/sh
+
+PROG=/usr/sbin/efw
+
+do_start()
+{
+    $PROG start
+}
+
+do_stop()
+{
+    $PROG stop
+}
+
+do_restart()
+{
+    $PROG restart
+}
+
+case "$1" in
+  start)
+	do_start
+	;;
+  stop)
+	do_stop
+	;;
+  restart|force-reload)
+	do_restart
+	;;
+  *)
+	echo "Usage: $SCRIPTNAME {start|stop|restart}" >&2
+	exit 3
+	;;
+esac
+
+:

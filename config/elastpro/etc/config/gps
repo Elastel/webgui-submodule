@@ -1,0 +1,5 @@
+
+config gpsd 'conf'
+	option tty 'ttyUSB3'
+	option source '0'
+	option enabled '0'

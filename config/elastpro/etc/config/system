@@ -1,0 +1,15 @@
+
+config setting 'hmi'
+	option enabled '1'
+	option hmi_mode 'browser'
+	option hmi_touchbeep 'off'
+	option browser_url '127.0.0.1:1880/ui'
+	option hmi_backlight_timeout '5'
+
+config setting 'system'
+	option lte_enabled '1'
+	option sms_password 'admin'
+
+config setting 'scheduled'
+	option enabled '0'
+

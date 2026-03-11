@@ -1,0 +1,2 @@
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="2c7c", ATTR{idProduct}=="0700", RUN+="/sbin/modprobe option", RUN+="/bin/sh -c 'echo 2c7c 0700 > /sys/bus/usb-serial/drivers/option1/new_id'"
+

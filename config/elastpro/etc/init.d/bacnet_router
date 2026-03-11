@@ -1,0 +1,68 @@
+#! /bin/sh
+
+TARGET=router-mstp
+PROG=/usr/sbin/$TARGET
+
+do_start()
+{
+	local enabled mode ifname port interface baudrate mac max_master frames
+
+	enabled=$(uci get bacnet_router.bacnet.enabled)
+	[ "$enabled" = "1" ] || return
+
+	mode=$(uci get bacnet_router.bacnet.mode)
+	ifname=$(uci get bacnet_router.bacnet.ifname)
+	port=$(uci get bacnet_router.bacnet.port)
+	interface=$(uci get bacnet_router.bacnet.interface)
+	baudrate=$(uci get bacnet_router.bacnet.baudrate)
+	mac=$(uci get bacnet_router.bacnet.mac)
+	max_master=$(uci get bacnet_router.bacnet.max_master)
+	frames=$(uci get bacnet_router.bacnet.frames)
+
+	export BACNET_IFACE=$ifname
+	export BACNET_IP_PORT=$port
+	export BACNET_MSTP_IFACE=$interface
+	export BACNET_MSTP_BAUD=$baudrate
+	export BACNET_MSTP_MAC=$mac
+	export BACNET_MAX_INFO_FRAMES=$frames
+	export BACNET_MAX_MASTER=$max_master
+
+	if [ "$mode" = "0" ]; then
+		export BACNET_IP_NET=1
+		export BACNET_MSTP_NET=2
+	else
+		export BACNET_IP_NET=2
+		export BACNET_MSTP_NET=1
+	fi
+
+	$PROG >/dev/null &
+}
+
+do_stop()
+{
+	killall -q $TARGET
+	sleep 1
+	[ -n "$(pgrep $TARGET)" ] && {
+		sleep 1
+		kill -9 $(pgrep $TARGET)
+	}
+}
+
+case "$1" in
+  start)
+	do_start
+	;;
+  stop)
+	do_stop
+	;;
+  restart|force-reload)
+	$0 stop
+	$0 start
+	;;
+  *)
+	echo "Usage: $SCRIPTNAME {start|stop|restart}" >&2
+	exit 3
+	;;
+esac
+
+:

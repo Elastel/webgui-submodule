@@ -1,0 +1,39 @@
+#!/bin/bash
+
+model=$(cat /etc/fw_model)
+
+if [ $1 == "0" ]; then
+	echo "BACnet/IP"
+	export BACNET_IFACE=$2
+	export BACNET_IP_PORT=$3
+	
+	/usr/sbin/bacdiscover_ip --print-seconds 2
+else
+	echo "BACnet/MSTP"
+	if [ $model == "EG324" ]; then
+		if [ $2 == "COM1" ]; then
+			iface="/dev/ttyAMA0"
+		else
+			iface="/dev/ttyAMA1"
+		fi
+	elif [ $model == "EG324L" ]; then
+		if [ $2 == "COM1" ]; then
+			iface="/dev/ttyS1"
+		else
+			iface="/dev/ttyS2"
+		fi
+	elif [ $model == "EG510" ]; then
+		iface="/dev/ttyCH9344USB0"
+	else
+		iface="/dev/ttyACM0"
+	fi
+
+	export BACNET_IFACE=$iface
+	export BACNET_MSTP_BAUD=$3
+	export BACNET_MSTP_MAC=$4
+	export BACNET_MAX_MASTER=$5
+	export BACNET_MAX_INFO_FRAMES=$6
+	
+	kill -9 $(pgrep -x baccli-mstp)
+	/usr/sbin/bacdiscover_mstp --print-seconds 3
+fi

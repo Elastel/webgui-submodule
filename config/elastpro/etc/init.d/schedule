@@ -1,0 +1,42 @@
+#! /bin/sh
+
+PROG=/usr/sbin/scheduled
+
+do_start()
+{
+	enabled=$(uci get system.scheduled.enabled)
+	
+	[ "$enabled" = "0" ] && return
+	$PROG >/dev/null &
+}
+
+do_stop()
+{
+	killall -q scheduled
+	sleep 1
+	[ -n "$(pgrep scheduled)" ] && {
+		sleep 1
+		kill -9 $(pgrep scheduled)
+	}
+}
+
+case "$1" in
+  start)
+	do_start
+	;;
+  stop)
+	do_stop
+	;;
+  restart|force-reload)
+	$0 stop
+	$0 start
+	;;
+  *)
+	echo "Usage: $SCRIPTNAME {start|stop|restart}" >&2
+	exit 3
+	;;
+esac
+
+:
+
+
