@@ -1,18 +1,18 @@
 [submodule "Elastel/EG324"]
 	path = Elastel/EG324
-	url = git@github.com:Elastel/EG324.git
+	url = https://github.com/Elastel/EG324
 [submodule "Elastel/EG324L"]
 	path = Elastel/EG324L
-	url = git@github.com:Elastel/EG324L.git
+	url = https://github.com/Elastel/EG324L
 [submodule "Elastel/EG410"]
 	path = Elastel/EG410
-	url = git@github.com:Elastel/EG410.git
+	url = https://github.com/Elastel/EG410
 [submodule "Elastel/EG500"]
 	path = Elastel/EG500
-	url = git@github.com:Elastel/EG500.git
+	url = https://github.com/Elastel/EG500
 [submodule "Elastel/EG510"]
 	path = Elastel/EG510
-	url = git@github.com:Elastel/EG510.git
+	url = https://github.com/Elastel/EG510
 [submodule "Elastel/ElastBox400"]
 	path = Elastel/ElastBox400
-	url = git@github.com:Elastel/ElastBox400.git
+	url = https://github.com/Elastel/ElastBox400
