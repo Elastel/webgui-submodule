@@ -30,7 +30,7 @@ function DisplayWireGuardConfig()
 
             if (isset($_POST['applywgsettings'])) {
                 $status->addMessage('Attempting to stop WireGuard', 'info');
-                if ($model != "EG324L" && $model != "EC212") {
+                if (model_category('no_buildroot')) {
                     exec('sudo /bin/systemctl stop wg-quick@wg0', $return);
                     exec('sudo /bin/systemctl disable wg-quick@wg0', $return);
                 } else {
@@ -40,7 +40,7 @@ function DisplayWireGuardConfig()
                 sleep(1);
                 if ($type != 'off') {
                     $status->addMessage('Attempting to start WireGuard', 'info');
-                    if ($model != "EG324L" && $model != "EC212") {
+                    if (model_category('no_buildroot')) {
                         exec('sudo /bin/systemctl enable wg-quick@wg0', $return);
                         exec('sudo /bin/systemctl start wg-quick@wg0', $return);
                     } else {

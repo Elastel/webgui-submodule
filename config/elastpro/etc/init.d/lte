@@ -1,5 +1,15 @@
 #! /bin/sh
 
+### BEGIN INIT INFO
+# Provides:          lte
+# Required-Start:    $network $remote_fs $syslog
+# Required-Stop:     
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description:
+# Description:
+### END INIT INFO
+
 START_PROG=/usr/sbin/start_diald
 STOP_PROG=/usr/sbin/stop_diald
 

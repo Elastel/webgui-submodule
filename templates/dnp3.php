@@ -38,7 +38,7 @@
             echo '<div id="page_proto_rtu" name="page_proto_rtu">';
             exec("cat /etc/fw_model", $model);
             
-            if ($model[0] == "EG324" || $model[0] == "EG324L") {
+            if (model_category('four_com')) {
               $comlist = array('COM1'=>'COM1', 'COM2'=>'COM2', 'COM3'=>'COM3', 'COM4'=>'COM4');
             } else {
               $comlist = array('COM1'=>'COM1', 'COM2'=>'COM2');

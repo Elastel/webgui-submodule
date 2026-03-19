@@ -10,7 +10,7 @@ function DisplayThingsWing()
     $enable = file_exists("/usr/local/baseagent/baseagent");
     
     if ((isset($_POST['restart']) || isset($_POST['enable']))&& $enable) {
-        if ($model == 'EG324L' || $model == 'EC212') {
+        if (model_category('buildroot')) {
             if (isset($_POST['enable'])) {
                 exec('chmod +x /etc/init.d/baseagent \
                 /etc/init.d/newficus \
@@ -39,7 +39,7 @@ function DisplayThingsWing()
             }
         }
     } else if ((isset($_POST['stop']) || isset($_POST['disable'])) && $enable) {
-        if ($model == 'EG324L' || $model == 'EC212') {
+        if (model_category('buildroot')) {
             exec("/etc/init.d/baseagent stop;
                 /etc/init.d/newficus stop;
                 /etc/init.d/device_console stop;
@@ -68,7 +68,7 @@ function DisplayThingsWing()
             }
         }
     } else if (isset($_POST['install'])) {
-        if ($model == 'EG500' || $model == 'ElastBox400' || $model == 'EG410' || $model == 'EG510')
+        if (model_category('debian11'))
             exec('curl -L https://storage.thingswing.com/package/install_eg500.sh | sudo bash -s', $return);
         else if ($model == 'EG324')
             exec('curl -L https://storage.thingswing.com/package/install_eg324.sh | sudo bash -s', $return);
@@ -90,7 +90,7 @@ function DisplayThingsWing()
     $start_enable = false;
 
     if ($enable) {
-        if ($model == 'EG324L' || $model == 'EC212') {
+        if (model_category('buildroot')) {
             exec('test -x /etc/init.d/baseagent && echo 1 || echo 0', $tmp);
             $start_enable = $tmp[0] == '1' ? true : false;
             unset($tmp);

@@ -46,6 +46,7 @@
           }
       }
 
+      $hwModeDisabled = '';
       if (!in_array($arrConfig['country_code'], $countries_5Ghz_max48ch)) {
           $hwModeDisabled = 'ac';
           if ($selectedHwMode === $hwModeDisabled) {

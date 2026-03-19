@@ -10,7 +10,7 @@ function DisplayNetworkingConfig($type)
         if (isset($_POST['savenetworksettings']) || isset($_POST['applynetworksettings'])) {
             if ($type == 'wired') {
                 saveStaticConfig($status);
-                if ($model != 'EG324L' && $model != 'EC212') {
+                if (model_category('no_buildroot')) {
                     if ($_POST['wan-multi'] == '1') {
                         exec('sudo cp /var/www/html/config/raspap-br0-member-eth0.network /etc/systemd/network/');
                     } else {
@@ -33,7 +33,7 @@ function DisplayNetworkingConfig($type)
 
             if (isset($_POST['applynetworksettings'])) {
                 if ($type == 'wired') {
-                    if ($model != 'EG324L' && $model != 'EC212') {
+                    if (model_category('no_buildroot')) {
                         exec('cat /sys/class/net/eth0/address', $cur_wired_mac);
                         if ($cur_wired_mac[0] != $_POST['wired_mac']) {
                             exec('sudo ifconfig eth0 down');
@@ -86,6 +86,9 @@ function DisplayNetworkingConfig($type)
     $wlan0_interface = ['wlan0'];
     $lte_interface = '';
     $lte_enabled = 0;
+    $wired_mac = '';
+    $lte_mac = '';
+    $wlan0_mac = '';
 
     if ($type == 'wired') {
         exec('uci get network.wan.mac', $mac_conf);
@@ -104,7 +107,7 @@ function DisplayNetworkingConfig($type)
             }
         }
 
-        $lte_mac = exec('cat /sys/class/net/wwan0/address');
+        $lte_mac = exec("cat /sys/class/net/$cur_interface[0]/address");
     } else if ($type == 'wlan0') {
         exec('uci get network.wifi.mac', $mac_conf);
         if ($mac_conf[0] != '') {

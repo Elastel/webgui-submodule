@@ -34,7 +34,7 @@ function writeValueByTag(object) {
     var tagName = tds.filter('[name="factor_name"]').text();
     var serverCenter = tds.filter('[name="server_center"]').text();
     if (serverCenter == '' || serverCenter == '-') {
-        serverCenter = '0';
+        serverCenter = '-1';
     }
 
     var flag = getReportingCenterFlag(serverCenter);

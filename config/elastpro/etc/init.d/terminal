@@ -1,5 +1,15 @@
 #! /bin/sh
 
+### BEGIN INIT INFO
+# Provides:          terminal
+# Required-Start:    $network $remote_fs $syslog
+# Required-Stop:     
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description:
+# Description:
+### END INIT INFO
+
 PROG=/usr/local/bin/ttyd
 
 do_start()

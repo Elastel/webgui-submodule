@@ -30,7 +30,7 @@ function DisplayWPAConfig()
             exec('sudo dhclient -r wlan0; sleep 1; sudo dhclient wlan0');
         }
         
-        if ($model == "EG324" || $model == "EG324L" || $model == "EC212") {
+        if (model_category('HT')) {
             exec("sudo /usr/sbin/init-wlan0 &");
         }
     } elseif (isset($_POST['wpa_reinit'])) {
@@ -50,7 +50,7 @@ function DisplayWPAConfig()
                     exec('sudo wpa_cli -i ' . $iface . ' disconnect ' . $netid);
                     exec('sudo wpa_cli -i ' . $iface . ' remove_network ' . $netid);
                     unset($tmp_networks[$_POST['ssid' . $post_match[1]]]);
-                    if ($model == "EG324" || $model == "EG324L" || $model == "EC212") {
+                    if (model_category('HT')) {
                         exec("sudo ifconfig wlan0 0.0.0.0");
                     }
                 } elseif (preg_match('/update(\d+)/', $post, $post_match)) {

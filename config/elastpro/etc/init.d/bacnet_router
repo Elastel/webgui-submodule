@@ -1,5 +1,15 @@
 #! /bin/sh
 
+### BEGIN INIT INFO
+# Provides:          bacnet_router
+# Required-Start:    $all
+# Required-Stop:     
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: bacnet router
+# Description:
+### END INIT INFO
+
 TARGET=router-mstp
 PROG=/usr/sbin/$TARGET
 

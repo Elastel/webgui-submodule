@@ -24,12 +24,12 @@ function DisplayInterfaces()
 
 function saveComConfig($status, $model)
 {
-    if ($model == "EG500" || $model == "EG410" || $model == "EG510" || $model == "EC212") {
+    if (model_category('two_com')) {
         $count = 2;
     } else {
         $count = 4;
     }
-
+    
     $data = array();
     $arr_option = array();
     $arr_key = array();

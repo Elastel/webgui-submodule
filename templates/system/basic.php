@@ -9,7 +9,7 @@
               <div class="info-item col-xs-3" style="width:5rem"><?php echo _("Hostname"); ?></div><div class="info-value col-xs-3"><?php echo htmlspecialchars($cur_hostname, ENT_QUOTES); ?></div>
             </div>
             <div class="row mb-1">
-              <div class="info-item col-xs-3" style="width:5rem"><?php echo _("Revision"); ?></div><div class="info-value col-xs-3"><?php echo htmlspecialchars(RPiVersion(), ENT_QUOTES); ?></div>
+              <div class="info-item col-xs-3" style="width:5rem"><?php echo _("Revision"); ?></div><div class="info-value col-xs-3"><?php echo htmlspecialchars(get_revison(), ENT_QUOTES); ?></div>
             </div>
             <div class="row mb-1">
               <div class="info-item col-xs-3" style="width:5rem"><?php echo _("Uptime"); ?></div><div class="info-value col-xs-3"><?php echo htmlspecialchars($uptime, ENT_QUOTES); ?></div>

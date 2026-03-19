@@ -848,6 +848,101 @@ function getTarget()
     return $target[0];
 }
 
+function model_category($option)
+{
+    $model = getModel();
+    if ($option == 'HT' && ($model == 'EG324' || $model == 'EG324L' || $model == 'EC212' || $model == "EG324Pro")) {
+        return true;
+    } else if ($option == 'buildroot' && ($model == 'EG324L' || $model == 'EC212')) {
+        return true;
+    } else if ($option == 'no_buildroot' && $model != "EG324L" && $model != "EC212") {
+        return true;
+    } else if ($option == 'raspbian' && ($model == 'EG500' || $model == 'EG410' || $model == 'ElastBox400' || $model == 'EG510')) {
+        return true;
+    } else if ($option == 'debian11' && ($model == 'EG500' || $model == 'EG410' || $model == 'ElastBox400')) {
+        return true;
+    } else if ($option == 'debian12' && ($model == 'EG510')) {
+        return true;
+    } else if ($option == 'two_com' && ($model == 'EG500' || $model == 'EG410' || $model == 'EG510' || $model == 'EC212')) {
+        return true;
+    } else if ($option == 'four_com' && ($model == 'EG324' || $model == 'EG324Pro' || $model == 'EG324L')) {
+        return true;
+    }
+
+    return false;
+}
+
+function get_revison()
+{
+    $dev_model = getModel();
+    // Lookup table from http://www.raspberrypi-spy.co.uk/2012/09/checking-your-raspberry-pi-board-version/
+    if ($dev_model != "EG324" && $dev_model != "EC212") {
+        $revisions = array(
+        '0002' => 'Model B Revision 1.0',
+        '0003' => 'Model B Revision 1.0 + ECN0001',
+        '0004' => 'Model B Revision 2.0 (256 MB)',
+        '0005' => 'Model B Revision 2.0 (256 MB)',
+        '0006' => 'Model B Revision 2.0 (256 MB)',
+        '0007' => 'Model A',
+        '0008' => 'Model A',
+        '0009' => 'Model A',
+        '000d' => 'Model B Revision 2.0 (512 MB)',
+        '000e' => 'Model B Revision 2.0 (512 MB)',
+        '000f' => 'Model B Revision 2.0 (512 MB)',
+        '0010' => 'Model B+',
+        '0013' => 'Model B+',
+        '0011' => 'Compute Module',
+        '0012' => 'Model A+',
+        'a01041' => 'a01041',
+        'a21041' => 'a21041',
+        '900092' => 'PiZero 1.2',
+        '900093' => 'PiZero 1.3',
+        '9000c1' => 'PiZero W',
+        'a02082' => 'Pi 3 Model B',
+        'a22082' => 'Pi 3 Model B',
+        'a32082' => 'Pi 3 Model B',
+        'a52082' => 'Pi 3 Model B',
+        'a020d3' => 'Pi 3 Model B+',
+        'a220a0' => 'Compute Module 3',
+        'a020a0' => 'Compute Module 3',
+        'a02100' => 'Compute Module 3+',
+        'a03111' => 'Model 4B Revision 1.1 (1 GB)',
+        'b03111' => 'Model 4B Revision 1.1 (2 GB)',
+        'c03111' => 'Model 4B Revision 1.1 (4 GB)'
+        );
+
+        if ($dev_model == 'EG324Pro') {
+            exec('lscpu | awk -F: \'/Model name/ {gsub(/^[ \t]+/,"",$2); print $2}\'', $tmp);
+            if (isset($tmp[0])) {
+                return $tmp[0];
+            } else {
+                return 'Unknown Device';
+            }
+        } else {
+            $cpuinfo_array = '';
+            exec('cat /proc/cpuinfo', $cpuinfo_array);
+            $rev = trim(array_pop(explode(':', array_pop(preg_grep("/^Revision/", $cpuinfo_array)))));
+            if (array_key_exists($rev, $revisions)) {
+                return $revisions[$rev];
+            } else {
+                exec('cat /proc/device-tree/model', $model);
+                if (isset($model[0])) {
+                    return $model[0];
+                } else {
+                    return 'Unknown Device';
+                }
+            }
+        }
+    } else {
+        exec('cat /proc/cpuinfo', $cpuinfo_array);
+        $rev = trim(array_pop(explode(':', array_pop(preg_grep("/^model name/", $cpuinfo_array)))));
+        if ($rev == null || $rev == '') {
+            $rev = trim(array_pop(explode(':', array_pop(preg_grep("/^Processor/", $cpuinfo_array)))));
+        }
+        return $rev;
+    }
+}
+
 function isBinExists($name)
 {
     exec("which $name", $path);
@@ -938,7 +1033,7 @@ function get_serial_device_list()
 
     if ($model == "EG324") {
         $comlist = array('/dev/ttyAMA0'=>'COM1', '/dev/ttyAMA1'=>'COM2', '/dev/ttyAMA2'=>'COM3', '/dev/ttyAMA3'=>'COM4');
-    } else if ($model == "EG324L") {
+    } else if ($model == "EG324L" || $model == "EG324Pro") {
         $comlist = array('/dev/ttyS1'=>'COM1', '/dev/ttyS2'=>'COM2', '/dev/ttyS3'=>'COM3', '/dev/ttyS4'=>'COM4');
     } else if ($model == "EC212") {
         $comlist = array('/dev/ttyS1'=>'COM1', '/dev/ttyS2'=>'COM2');
@@ -1062,9 +1157,15 @@ function switchWifiMode($enabled)
     exec("sudo cp $tmp_dhcpcd_conf $dhcpcd_conf");
 
     exec("sudo kill -9 $(pgrep -x wpa_supplicant)");
-    if ($model == "EG324" || $model == "EG324L" || $model == "EC212") {
-        exec("sudo /usr/sbin/init-wlan0 &");
-        sleep(3);
+    if (model_category('HT')) {
+	$cmd = "/usr/sbin/init-wlan0";
+	$check = shell_exec("pgrep -f " . escapeshellarg($cmd));
+
+	if (empty($check)) {
+		exec("sudo nohup $cmd > /dev/null 2>&1 &");
+	}
+
+	sleep(3);
     } else {
         if ($enabled == 1) {
             // switch to sta mode

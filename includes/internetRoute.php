@@ -26,7 +26,7 @@ function getRouteInfo($checkAccess)
                     $metric = $mm[1];
                 }
 
-                if ($model != "EG324L" && $model != "EC212") {
+                if (model_category('no_buildroot')) {
                     exec('ifconfig ' . $iface . ' | grep -oP "(?<=netmask )([0-9]{1,3}\.){3}[0-9]{1,3}"', $netmask);
                 } else {
                     exec('ifconfig ' . $iface . ' | grep -Eo "([0-9]+[.]){3}[0-9]+" | grep "255.255"', $netmask);

@@ -14,6 +14,8 @@ function DisplayHostAPDConfig()
     $status = new \ElastPro\Messages\StatusMessage;
     $system = new \ElastPro\System\Sysinfo;
     $arrConfig = array();
+    $arrHostapdConf = array();
+
     if ($model == "EG324") {
         $arr80211Standard = [
             'a' => '802.11a - 5 GHz',
@@ -54,7 +56,7 @@ function DisplayHostAPDConfig()
             $arrHostapdConf = parse_ini_file('/etc/raspap/hostapd.ini');
 
             if (isset($_POST['applyHostAPDsettings'])) {
-                if ($model == "EG324" || $model == "EG324L" || $model == "EC212") {
+                if (model_category('HT')) {
                     exec("sudo /usr/sbin/init-wlan0 &");
                 } else {
                     if ($arrHostapdConf['BridgedEnable'] == 1) {

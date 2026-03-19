@@ -44,7 +44,7 @@ function DisplayOpenVPNConfig()
                 $type = $_POST['type'];
             }
 
-            if ($model != "EG324L" && $model != "EC212" && $model != "EC211") {
+            if (model_category('no_buildroot')) {
                 exec('sudo /bin/systemctl stop openvpn-client@client', $return);
                 exec('sudo /bin/systemctl disable openvpn-client@client', $return);
                 exec('sudo /bin/systemctl stop openvpn-server@server', $return);
@@ -56,7 +56,7 @@ function DisplayOpenVPNConfig()
             sleep(1);
             if ($type != 'off') {
                 $status->addMessage('Attempting to start OpenVPN', 'info');
-                if ($model != "EG324L" && $model != "EC212" && $model != "EC211") {
+                if (model_category('no_buildroot')) {
                     if ($role == 'client') {
                         exec('sudo /bin/systemctl enable openvpn-client@client', $return);
                         exec('sudo /bin/systemctl start openvpn-client@client', $return);

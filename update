@@ -241,7 +241,7 @@ fi
 set_immutable_if_needed "/etc/fw_model"
 set_immutable_if_needed "/etc/target_model"
 
-if [[ $model == "EG500" || $model == "EG410" || $model == "ElastBox400" || $model == "EG510" || $model == "EG324" ]]; then
+if [[ $model != "EG324L" && $model != "EC212" ]]; then
         install_package_if_needed "openvpn" "openvpn"
         install_package_if_needed "wireguard" "wg"
         install_package_if_needed  "snmp" "snmpget" 

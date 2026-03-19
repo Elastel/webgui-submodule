@@ -18,7 +18,7 @@ function DisplayDHCPConfig()
                 //exec('sudo /bin/systemctl restart dnsmasq.service', $dnsmasq, $return);
                     exec('sudo ip addr flush dev br0'); // clear ip caches
                     exec('sudo /etc/raspap/hostapd/servicestart.sh --interface br0 --seconds 3', $return);
-                if ($model == 'EG324L' || $model == 'EC212') {
+                if (model_category('buildroot')) {
                     exec('/etc/init.d/S80dnsmasq restart; sleep 1; /etc/init.d/S80dhcpcd restart', $return);
                 }
             }

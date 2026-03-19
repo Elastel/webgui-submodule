@@ -32,7 +32,7 @@ if ($type == "node_online_update") {
     if ($network_status) {
         exec('cd /var/www/html; sudo git fetch origin');
         exec('cd /var/www/html; sudo git reset --hard origin/$(git rev-parse --abbrev-ref HEAD)');
-        exec('cd /var/www/html; sudo git pull origin $(git rev-parse --abbrev-ref HEAD)');
+        exec('cd /var/www/html; sudo git pull origin $(git rev-parse --abbrev-ref HEAD) && sudo git submodule update --init --recursive Elastel/$(cat /etc/fw_model)');
         // check current node update
         exec($cmd_get_remote_node, $new_node);
         exec($cmd_get_local_node, $cur_node);
