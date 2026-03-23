@@ -90,6 +90,8 @@ def rpiRevision():
         revision_name = revisions.get(output)
         if revision_name:
             return revision_name
+        elif dev_model == "EG324Pro":
+            return subprocess.run('lscpu | awk -F: \'/Model name/ {gsub(/^[ \t]+/,"",$2); print $2}\'', shell=True, capture_output=True, text=True).stdout.strip()
         else:
             try:
                 with open('/proc/device-tree/model', 'r') as f:
