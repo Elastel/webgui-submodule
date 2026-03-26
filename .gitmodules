@@ -19,3 +19,6 @@
 [submodule "Elastel/EG324Pro"]
 	path = Elastel/EG324Pro
 	url = https://github.com/Elastel/EG324Pro
+[submodule "Elastel/EC212"]
+	path = Elastel/EC212
+	url = https://github.com/Elastel/EC212
