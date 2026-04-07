@@ -1640,6 +1640,7 @@ function contentLoaded() {
         case "snmpcli_conf":
         case "iec1107_conf":
         case "dlms_conf":
+        case "iec61850cli_conf":
             loadRulesConfig(pageCurrent.split('_')[0]);
             break;
         case "io_conf":

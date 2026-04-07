@@ -131,7 +131,8 @@ function saveTcpConfig($status)
     for ($i = 1; $i <= $count; $i++) {
         if ($_POST['tcp_enabled' . $i] == '1') {
             for ($j = 0; $j < count($arr_option); $j++) {
-                if ($arr_key[$j] == 'certificate' || $arr_key[$j] == 'private_key' || $arr_key[$j] == 'trust_crt')
+                if ($arr_key[$j] == 'certificate' || $arr_key[$j] == 'private_key' || $arr_key[$j] == 'trust_crt' ||
+                    $arr_key[$j] == 'iec61850_key' || $arr_key[$j] == 'iec61850_cert' || $arr_key[$j] == 'iec61850_root_cert')
                     continue;
 
                 $data[$arr_option[$j] . $i] = $_POST[$arr_key[$j] . $i];
@@ -164,7 +165,7 @@ function saveTcpConfig($status)
                     if (is_uploaded_file($_FILES['private_key' . $i]['tmp_name'])) {
                         saveFileUploadInterface($status, $_FILES['private_key' . $i], $i); 
                     }
-    
+                    
                     $keyName = $_FILES['private_key' . $i]['name'];
                     $data['private_key' . $i] = $keyName;
                 }
@@ -183,6 +184,37 @@ function saveTcpConfig($status)
                     }
                     
                     $data['trust_crt' . $i] = $trustName;
+                }
+
+            } 
+
+            if ($data['iec61850_auth' . $i] == '2') {
+                if (strlen($_FILES['iec61850_key' . $i]['name']) > 0) {
+                    if (is_uploaded_file($_FILES['iec61850_key' . $i]['tmp_name'])) {
+                        saveFileUploadInterface($status, $_FILES['iec61850_key' . $i], $i); 
+                    }
+                    
+                    $keyName = $_FILES['iec61850_key' . $i]['name'];
+                    echo "keyName: " . $keyName;
+                    $data['iec61850_key' . $i] = $keyName;
+                }
+
+                if (strlen($_FILES['iec61850_cert' . $i]['name']) > 0) {
+                    if (is_uploaded_file($_FILES['iec61850_cert' . $i]['tmp_name'])) {
+                        saveFileUploadInterface($status, $_FILES['iec61850_cert' . $i], $i); 
+                    }
+    
+                    $keyName = $_FILES['iec61850_cert' . $i]['name'];
+                    $data['iec61850_cert' . $i] = $keyName;
+                }
+
+                if (strlen($_FILES['iec61850_root_cert' . $i]['name']) > 0) {
+                    if (is_uploaded_file($_FILES['iec61850_root_cert' . $i]['tmp_name'])) {
+                        saveFileUploadInterface($status, $_FILES['iec61850_root_cert' . $i], $i); 
+                    }
+    
+                    $keyName = $_FILES['iec61850_root_cert' . $i]['name'];
+                    $data['iec61850_root_cert' . $i] = $keyName;
                 }
             }
         } else {

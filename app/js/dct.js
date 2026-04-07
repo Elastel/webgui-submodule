@@ -353,6 +353,18 @@ function loadInterfacesConfig() {
                             if (jsonData[info + i]) {
                                 $('#trust_text' + i).html(jsonData[info + i]);
                             }
+                        } else if (info == 'iec61850_key') {
+                            if (jsonData[info + i]) {
+                                $('#iec61850_key_text' + i).html(jsonData[info + i]);
+                            }
+                        }  else if (info == 'iec61850_cert') {
+                            if (jsonData[info + i]) {
+                                $('#iec61850_cert_text' + i).html(jsonData[info + i]);
+                            }
+                        }  else if (info == 'iec61850_root_cert') {
+                            if (jsonData[info + i]) {
+                                $('#iec61850_root_cert_text' + i).html(jsonData[info + i]);
+                            }
                         } else {
                             $('#' + info + i).val(jsonData[info + i]);
                         } 
@@ -453,6 +465,30 @@ function dlmsAuthChangeTcp(num) {
     } else if (selectedText == 'HighGmac') {
         $('#tcp_page_dlms_password' + numStr).hide();
         $('#tcp_page_security_dlms' + numStr).show();
+    }
+    dlmsSecurityChangeTcp(num);
+}
+
+function iec61850AuthChangeTcp(num) {
+    var numStr = num.toString();
+    var selectElement = document.getElementById('tcp_iec61850_auth' + numStr);
+    if (!selectElement.value) {
+        selectElement.value = "0";
+        selectElement.dispatchEvent(new Event('change'));
+        return;
+    }
+    var selectedOption = selectElement.options[selectElement.selectedIndex];
+    var selectedText = selectedOption.text;
+
+    if (selectedText == 'Password') {
+        $('#tcp_page_password_iec61850' + numStr).show();
+        $('#tcp_page_tls_iec61850' + numStr).hide();
+    } else if (selectedText == 'TLS') {
+        $('#tcp_page_password_iec61850' + numStr).hide();
+        $('#tcp_page_tls_iec61850' + numStr).show();
+    } else {
+        $('#tcp_page_password_iec61850' + numStr).hide();
+        $('#tcp_page_tls_iec61850' + numStr).hide();
     }
     dlmsSecurityChangeTcp(num);
 }
@@ -567,6 +603,7 @@ function tcpProtocolChange(num) {
     $('#tcp_page_protocol_bacnet' + numStr).hide();
     $('#tcp_page_protocol_snmp' + numStr).hide();
     $('#tcp_page_protocol_dlms' + numStr).hide();
+    $('#tcp_page_protocol_iec61850' + numStr).hide();
 
     if (selectedText == 'Transparent') {
         $('#tcp_page_protocol_transparent' + numStr).show();
@@ -589,6 +626,9 @@ function tcpProtocolChange(num) {
     } else if (selectedText == 'DLMS') {
         $('#tcp_page_protocol_dlms' + numStr).show();
         dlmsAuthChangeTcp(num);
+    } else if (selectedText == 'IEC61850') {
+        $('#tcp_page_protocol_iec61850' + numStr).show();
+        iec61850AuthChangeTcp(num);
     } else {
         $('#tcp_page_protocol_modbus' + numStr).show();
     }
@@ -630,6 +670,18 @@ function certChangeTcp(num) {
 
 function keyChangeTcp(num) {
     $('#key_text' + num).html($('#private_key' + num)[0].files[0].name);
+}
+
+function iec61850KeyChangeTcp(num) {
+    $('#iec61850_key_text' + num).html($('#iec61850_key' + num)[0].files[0].name);
+}
+
+function iec61850CertChangeTcp(num) {
+    $('#iec61850_cert_text' + num).html($('#iec61850_cert' + num)[0].files[0].name);
+}
+
+function iec61850RootCertChangeTcp(num) {
+    $('#iec61850_root_cert_text' + num).html($('#iec61850_root_cert' + num)[0].files[0].name);
 }
 
 function trustChangeTcp(num) {
@@ -733,6 +785,8 @@ function get_data_type_value(table_name) {
         data_type_value = ['Double', 'String'];
     } else if (table_name == 'iec1107' || table_name == 'dlms') {
         data_type_value = ['Int', 'Float', 'String'];
+    } else if (table_name == 'iec61850cli') {
+        data_type_value = ['Bool', 'Int', 'Float', 'String'];
     }
 
     return data_type_value;
@@ -749,6 +803,7 @@ function addSectionTable(table_name, jsonData, option_list) {
     var type_id_list = {'1':'M_SP_NA_1', '30':'M_SP_TB_1', '3':'M_DP_NA_1', '31':'M_DP_TB_1', '5':'M_ST_NA_1', '32':'M_ST_TB_1',
     '7':'M_BO_NA_1', '33':'M_BO_TB_1', '9':'M_ME_NA_1', '34':'M_ME_TD_1', '21':'M_ME_ND_1', '11':'M_ME_NB_1', '35':'M_ME_TE_1', '13':'M_ME_NC_1', 
     '36':'M_ME_TF_1', '15':'M_IT_NA_1', '37':'M_IT_TB_1', '38':'M_EP_TD_1'};
+    var fc_value = ['ST', 'MX', 'SP', 'SV', 'CF', 'DC', 'SG', 'SE', 'SR', 'OR', 'BL', 'EX', 'CO', 'US', 'MS', 'RP', 'BR', 'LG', 'GO'];
 
     if (option_list != null)
         $('#option_list_'+table_name).val(option_list);
@@ -809,6 +864,8 @@ function addSectionTable(table_name, jsonData, option_list) {
                 contents += '   <td style="text-align:center" name="'+key+'">'+ (data_type_value[Number(jsonData[i][key])]) +'</td>\n';
             } else if (key == 'reg_type') {
                 contents += '   <td style="text-align:center" name="'+key+'">'+ (reg_type_value[Number(jsonData[i][key])]) +'</td>\n';
+            } else if (key == 'fc') {
+                contents += '   <td style="text-align:center" name="'+key+'">'+ (fc_value[Number(jsonData[i][key])]) +'</td>\n';
             } else if (key == 'word_len') {
                 contents += '   <td style="text-align:center" name="'+key+'">'+ (data_type_value[Number(jsonData[i][key])]) +'</td>\n';
             } else if (key == 'cap_type') {
@@ -967,6 +1024,18 @@ function dlmsScan() {
     $.get('ajax/dct/get_dctcfg.php?type=dlms_scan&interface=' + interface, function(data) {
         // console.log(data);
         $('#dlms_result_area').val(data);
+        $('#loading').hide();
+        btn.disabled = false;
+    })
+}
+
+function iec61850cliScan() {
+    $('#loading').show();
+    const btn = document.getElementById("btn_scan");
+    btn.disabled = true;
+    const interface = document.getElementById('scan_interface').value;
+    $.get('ajax/dct/get_dctcfg.php?type=iec61850cli_scan&interface=' + interface, function(data) {
+        $('#iec61850cli_result_area').val(data);
         $('#loading').hide();
         btn.disabled = false;
     })
@@ -1868,6 +1937,7 @@ function get_table_data(table_name, option_list) {
     var type_id_list = {'1':'M_SP_NA_1', '30':'M_SP_TB_1', '3':'M_DP_NA_1', '31':'M_DP_TB_1', '5':'M_ST_NA_1', '32':'M_ST_TB_1',
     '7':'M_BO_NA_1', '33':'M_BO_TB_1', '9':'M_ME_NA_1', '34':'M_ME_TD_1', '21':'M_ME_ND_1', '11':'M_ME_NB_1', '35':'M_ME_TE_1', '13':'M_ME_NC_1', 
     '36':'M_ME_TF_1', '15':'M_IT_NA_1', '37':'M_IT_TB_1', '38':'M_EP_TD_1'};
+    var fc_value = ['ST', 'MX', 'SP', 'SV', 'CF', 'DC', 'SG', 'SE', 'SR', 'OR', 'BL', 'EX', 'CO', 'US', 'MS', 'RP', 'BR', 'LG', 'GO'];
 
     if (table_name == 'fx') {
         reg_type_value = ['X', 'Y', 'M', 'S', 'D'];
@@ -1897,6 +1967,8 @@ function get_table_data(table_name, option_list) {
                     tmp += '"' + option + '":"' + data_type_value.indexOf(val) + '",';
                 } else if (option == 'reg_type') {
                     tmp += '"' + option + '":"' + reg_type_value.indexOf(val) + '",';
+                } else if (option == 'fc') {
+                    tmp += '"' + option + '":"' + fc_value.indexOf(val) + '",';
                 } else if (option == 'word_len') {
                     tmp += '"' + option + '":"' + data_type_value.indexOf(val) + '",';
                 } else if (option == 'cap_type') {
@@ -1943,6 +2015,7 @@ function saveData(table_name) {
     var type_id_list = {'1':'M_SP_NA_1', '30':'M_SP_TB_1', '3':'M_DP_NA_1', '31':'M_DP_TB_1', '5':'M_ST_NA_1', '32':'M_ST_TB_1',
     '7':'M_BO_NA_1', '33':'M_BO_TB_1', '9':'M_ME_NA_1', '34':'M_ME_TD_1', '21':'M_ME_ND_1', '11':'M_ME_NB_1', '35':'M_ME_TE_1', '13':'M_ME_NC_1', 
     '36':'M_ME_TF_1', '15':'M_IT_NA_1', '37':'M_IT_TB_1', '38':'M_EP_TD_1'};
+    var fc_value = ['ST', 'MX', 'SP', 'SV', 'CF', 'DC', 'SG', 'SE', 'SR', 'OR', 'BL', 'EX', 'CO', 'US', 'MS', 'RP', 'BR', 'LG', 'GO'];
 
     if (table_name == 'fx') {
         reg_type_value = ['X', 'Y', 'M', 'S', 'D'];
@@ -1970,6 +2043,8 @@ function saveData(table_name) {
             option_value[option] = data_type_value[Number(document.getElementById(table_name + '.'  + option).value)];
         } else if (option == 'reg_type') {
             option_value[option] = reg_type_value[Number(document.getElementById(table_name + '.'  + option).value)];
+        } else if (option == 'fc') {
+            option_value[option] = fc_value[Number(document.getElementById(table_name + '.'  + option).value)];
         } else if (option == 'word_len') {
             option_value[option] = data_type_value[Number(document.getElementById(table_name + '.'  + option).value)];
         } else if (option == 'cap_type') {
@@ -2121,7 +2196,8 @@ function editData(object, table_name) {
         var val = tds.filter('[name="'+ option +'"]').text();
 
         if (option == 'data_type' || option == 'reg_type' || option == 'word_len' || option == 'cap_type' ||
-            option == 'cap_type' || option == 'mode' || option == 'count_method' || option == 'init_status') {
+            option == 'cap_type' || option == 'mode' || option == 'count_method' || option == 'init_status' ||
+            option == 'fc') {
             setSelectByText(table_name + '.'  + option, val);
         } else if (option == 'index') {
             document.getElementById(table_name + '.'  + option + '.' + io_type).value = val;

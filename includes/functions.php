@@ -1331,6 +1331,9 @@ function handlePageActions($extraFooterScripts, $page)
         case "/dlms_conf":
             DisplayDlms();
             break;
+        case "/iec61850cli_conf":
+            DisplayIec61850Client();
+            break;
         case "/nodered":
             DisplayNodered();
             break;

@@ -80,6 +80,7 @@
                             <li class="nav-item" name="snmp_client" id="dct_south_snmp_client"><a class="nav-link" href="snmpcli_conf"><?php echo _("SNMP Rules"); ?></a></li>
                             <li class="nav-item" name="iec1107" id="dct_south_iec1107"><a class="nav-link" href="iec1107_conf"><?php echo _("IEC62056-21 Rules"); ?></a></li>
                             <li class="nav-item" name="dlms" id="dct_south_dlms"><a class="nav-link" href="dlms_conf"><?php echo _("DLMS Rules"); ?></a></li>
+                            <li class="nav-item" name="iec61850_client" id="dct_south_iec61850_client"><a class="nav-link" href="iec61850cli_conf"><?php echo _("IEC61850 Rules"); ?></a></li>
                             <?php if (isIoExistts()) : ?>
                             <li class="nav-item" name="io" id="dct_south_io"><a class="nav-link" href="io_conf"><?php echo _("IO"); ?></a></li>
                             <?php endif; ?>

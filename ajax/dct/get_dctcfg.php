@@ -245,6 +245,25 @@ if ($type == 'datadisplay') {
     } else {
         echo '';
     }
+} else if (strstr($type, 'iec61850cli_scan')) {
+    $uci_section = "tcp_server";
+    $address = exec("uci get dct.$uci_section.server_addr$num");
+    $port = exec("uci get dct.$uci_section.server_port$num");
+    $cmd = "sudo /usr/sbin/iec61850cli_scan $address $port";
+    $auth = exec("uci get dct.$uci_section.iec61850_auth$num");
+    if ($auth == '1') {
+        $password = exec("uci get dct.$uci_section.iec61850_password$num");
+        $cmd .= " $password";
+    } else if ($auth == '2') {
+        ;
+    }
+
+    exec($cmd, $data);
+    if (!empty($data)) {
+        echo implode(PHP_EOL, $data);
+    } else {
+        echo '';
+    }
 } else {
     $rule = $_GET['rule'];
     if (file_exists('/etc/elastel_config.json')) {

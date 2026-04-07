@@ -29,6 +29,7 @@ abstract class TcpProtoEnum {
   const TCP_PROTO_EIP = 10;
   const TCP_PROTO_SNMP = 11;
   const TCP_PROTO_DLMS = 12;
+  const TCP_PROTO_IEC61850 = 13;
 };
 
 function get_io_maps()
@@ -284,7 +285,7 @@ function page_interface_tcp($num)
   $tcp_proto = array('Modbus TCP', 'Transparent', 'S7', 'FX', 
                       'MC', 'ASCII', 'IEC104', 'OPCUA', 'DNP3', 
                       'BACnet/IP', 'Ethernet/IP', 'SNMP',
-                      'DLMS');
+                      'DLMS', 'IEC61850');
   SelectControlCustom(_('Protocol'), 'tcp_proto'.$num, $tcp_proto, $tcp_proto[0], 'tcp_proto'.$num, null, "tcpProtocolChange($num)");
 
   echo '<div id="tcp_page_protocol_modbus'.$num.'" name="tcp_page_protocol_modbus'.$num.'">';
@@ -388,6 +389,19 @@ function page_interface_tcp($num)
       echo '</div>';
       InputControlCustom(_('Client System Title'), 'tcp_dlms_client_title'.$num, 'tcp_dlms_client_title'.$num);
       InputControlCustom(_('Invocation counter'), 'tcp_dlms_invocation_counter'.$num, 'tcp_dlms_invocation_counter'.$num, "eg: 0.0.43.1.0.255");
+    echo '</div>';
+  echo '</div>';
+
+  echo '<div id="tcp_page_protocol_iec61850'.$num.'" name="tcp_page_protocol_iec61850'.$num.'">';
+    $iec61850_auth_list = [_('None'), 'Password'/*, 'TLS'*/];
+    SelectControlCustom(_('Authentication'), 'tcp_iec61850_auth'.$num, $iec61850_auth_list, $iec61850_auth_list[0], 'tcp_iec61850_auth'.$num, null, "iec61850AuthChangeTcp($num)");
+    echo '<div id="tcp_page_password_iec61850'.$num.'" name="tcp_page_password_iec61850'.$num.'">';
+        InputControlCustom(_('Password'), 'tcp_iec61850_password'.$num, 'tcp_iec61850_password'.$num);
+    echo '</div>';
+    echo '<div id="tcp_page_tls_iec61850'.$num.'" name="tcp_page_tls_iec61850'.$num.'">';
+      UploadFileControlCustom(_('Client Key'), 'iec61850_key_btn'.$num, 'iec61850_key_text'.$num, 'iec61850_key'.$num, 'iec61850_key'.$num, "iec61850KeyChangeTcp($num)");
+      UploadFileControlCustom(_('Client Certificate'), 'iec61850_cert_btn'.$num, 'iec61850_cert_text'.$num, 'iec61850_cert'.$num, 'iec61850_cert'.$num, "iec61850CertChangeTcp($num)");
+      UploadFileControlCustom(_('Root Certificate'), 'iec61850_root_cert_btn'.$num, 'iec61850_root_cert_text'.$num, 'iec61850_root_cert'.$num, 'iec61850_root_cert'.$num, "iec61850RootCertChangeTcp($num)");
     echo '</div>';
   echo '</div>';
 
@@ -803,6 +817,10 @@ function page_table_title($section, $option_list) {
       <tr class=\"tr cbi-section-table-descr\">";
   echo $descr_buf;
   echo "<th class=\"th cbi-section-table-cell cbi-section-actions\"></th>
+        <th class=\"th cbi-section-table-cell cbi-section-actions\"></th>
+        <th class=\"th cbi-section-table-cell cbi-section-actions\"></th>
+        <th class=\"th cbi-section-table-cell cbi-section-actions\"></th>
+        <th class=\"th cbi-section-table-cell cbi-section-actions\"></th>
         <th class=\"th cbi-section-table-cell cbi-section-actions\"></th>
       </tr>
     </table>";
