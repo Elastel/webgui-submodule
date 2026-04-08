@@ -247,6 +247,8 @@ if ($type == 'datadisplay') {
     }
 } else if (strstr($type, 'iec61850cli_scan')) {
     $uci_section = "tcp_server";
+    $interface = $_GET['interface'];
+    $num = filter_var($interface, FILTER_SANITIZE_NUMBER_INT);
     $address = exec("uci get dct.$uci_section.server_addr$num");
     $port = exec("uci get dct.$uci_section.server_port$num");
     $cmd = "sudo /usr/sbin/iec61850cli_scan $address $port";
