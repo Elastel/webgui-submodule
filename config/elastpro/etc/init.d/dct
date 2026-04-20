@@ -18,6 +18,10 @@ BACCLI_MSTP_PROG=/usr/sbin/baccli-mstp
 
 do_start()
 {
+        if ! grep -q "/var/state" /proc/mounts; then
+		mount -t tmpfs tmpfs /var/state/ -o size=10m
+	fi
+        
         local enabled hour_enabled day_enabled bacnet_enabled proto baccli_enabled baccli_proto
 
         enabled=$(uci get dct.basic.enabled)

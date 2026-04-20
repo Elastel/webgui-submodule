@@ -1648,6 +1648,9 @@ function contentLoaded() {
             loadRulesConfig('di');
             loadRulesConfig('do');
             break;
+        case "system_param_conf":
+            loadRulesConfig('system_param');
+            break;
         case "server_conf":
             loadServerConfig();
             break;

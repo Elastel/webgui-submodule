@@ -34,6 +34,8 @@ function saveBasicConfig($status)
         $data['minute_period'] = $_POST['minute_period'];
         $data['hour_enabled'] = $_POST['hour_enabled'] ?? '0';
         $data['day_enabled'] = $_POST['day_enabled'] ?? '0';
+        $data['system_enabled'] = $_POST['system_enabled'] ?? '0';
+        $data['system_report_period'] = $_POST['system_report_period'];
     }
 
     $json_data = json_encode($data);

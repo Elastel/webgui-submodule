@@ -32,6 +32,11 @@
 
             InputControlCustom(_('Report Period'), 'report_period', 'report_period', _('Seconds'), '10');
 
+            CheckboxControlCustom(_('Enable System Reporting'), 'system_enabled', 'system_enabled', null, null, 'enableSystemReport(this)');
+            echo '<div id="page_system_report" name="page_system_report">';
+            InputControlCustom(_('System Report Period'), 'system_report_period', 'system_report_period', _('Seconds'), '30');
+            echo '</div>';
+
             CheckboxControlCustom(_('Batch Reporting'), 'batch_reporting', 'batch_reporting');
 
             CheckboxControlCustom(_('Enable Cache'), 'cache_enabled', 'cache_enabled', null, _('Cache History Data'), 'enableCache(this)');

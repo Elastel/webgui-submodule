@@ -18,10 +18,6 @@ do_start()
 	enabled=$(uci get system.system.lte_enabled)
 	[ "$enabled" = "0" ] && return
 
-	if ! grep -q "/var/state" /proc/mounts; then
-		mount -t tmpfs tmpfs /var/state/ -o size=10m
-	fi
-
 	local proto lte_interface
 
 	proto=$(uci get network.swan.proto)

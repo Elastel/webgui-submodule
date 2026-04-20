@@ -83,6 +83,7 @@
                             <li class="nav-item" name="iec61850_client" id="dct_south_iec61850_client"><a class="nav-link" href="iec61850cli_conf"><?php echo _("IEC61850 Rules"); ?></a></li>
                             <?php if (isIoExistts()) : ?>
                             <li class="nav-item" name="io" id="dct_south_io"><a class="nav-link" href="io_conf"><?php echo _("IO"); ?></a></li>
+                            <li class="nav-item" name="io" id="dct_south_system_param"><a class="nav-link" href="system_param_conf"><?php echo _("System Parameters"); ?></a></li>
                             <?php endif; ?>
                         </ul>
                     </div>

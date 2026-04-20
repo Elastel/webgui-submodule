@@ -1268,6 +1268,9 @@ function handlePageActions($extraFooterScripts, $page)
         case "/io_conf":
             DisplayIO();
             break;
+        case "/system_param_conf":
+            DisplaySystemParam();
+            break;
         case "/server_conf":
             DisplayServer();
             break;

@@ -151,6 +151,9 @@ function writeValueByTag(object) {
 }
 
 function insertColumn(tableId, name, headerName, newHeaderName) {
+    if (tableId == 'table_system_param') {
+        return;
+    }
     if (doesColumnExist(tableId, newHeaderName))
         return;
 
@@ -237,7 +240,7 @@ function loadBasicConfig() {
     $.get('ajax/dct/get_dctcfg.php?type=basic',function(data) {
         var jsonData = JSON.parse(data);
         var arr = ['collect_period', 'report_period', 'batch_reporting', 'cache_enabled', 'cache_day', 'minute_enabled',
-        'minute_period', 'hour_enabled', 'day_enabled'];
+        'minute_period', 'hour_enabled', 'day_enabled', 'system_enabled', 'system_report_period'];
 
         $('#enabled').val(jsonData.enabled);
         if (jsonData.enabled == '1') {
@@ -250,7 +253,7 @@ function loadBasicConfig() {
                 }
     
                 if (info == 'cache_enabled' || info == 'minute_enabled' || info == 'hour_enabled' || 
-                    info == 'day_enabled' || info == 'batch_reporting') {
+                    info == 'day_enabled' || info == 'batch_reporting' || info == 'system_enabled') {
                     $('#' + info).prop('checked', (jsonData[info] == '1') ? true:false);
                 } else {
                     $('#' + info).val(jsonData[info]);
@@ -261,6 +264,12 @@ function loadBasicConfig() {
                 $('#page_cache_days').show();
             } else {
                 $('#page_cache_days').hide();
+            }
+
+            if (jsonData.system_enabled == '1') {
+                $('#page_system_report').show();
+            } else {
+                $('#page_system_report').hide();
             }
 
             if (jsonData.minute_enabled == '1') {
@@ -281,6 +290,7 @@ function enableBasic(state) {
     if (state) {
       $('#page_basic').show();
       enableCache(document.getElementById('cache_enabled'));
+      enableSystem(document.getElementById('system_enabled'));
     } else {
       $('#page_basic').hide();
     }
@@ -291,6 +301,14 @@ function enableCache(checkbox) {
         $("#page_cache_days").show();
     } else {
         $("#page_cache_days").hide();
+    }
+}
+
+function enableSystemReport(checkbox) {
+    if (checkbox.checked == true) {
+        $("#page_system_report").show();
+    } else {
+        $("#page_system_report").hide();
     }
 }
 
@@ -565,6 +583,16 @@ function snmpVersionChangeTcp(num) {
     }
 }
 
+function systemParamChange($table) {
+    var val = document.getElementById($table+'.param').value;
+
+    if (val == 'custom') {
+        $('#page_cmd').show();
+    } else {
+        $('#page_cmd').hide();
+    }
+}
+
 function securityLevelChangeTcp(num) {
     var numStr = num.toString();
     var selectElement = document.getElementById('security_level' + numStr);
@@ -833,7 +861,8 @@ function addSectionTable(table_name, jsonData, option_list) {
             if (!jsonData[i].hasOwnProperty(key)) {
                 if (key == 'operator' || key == 'operand' || key == 'ex' || key == 'accuracy' ||
                 key == 'report_type' || key == 'alarm_up' || key == 'alarm_down' || key == 'phone_num' || 
-                key == 'email' || key == 'event_server_center' || key == 'contents' || key == 'retry_interval' || key == 'again_interval') {
+                key == 'email' || key == 'event_server_center' || key == 'contents' || key == 'retry_interval' || 
+                key == 'again_interval' || key == 'command') {
                     contents += '   <td style="display:none" name="'+key+'">-</td>\n';
                 } else if (key == 'enabled' || key == 'sms_reporting') {
                     contents += '   <td style="' + ((key == 'enabled') ? 'text-align:center' : 'display:none') + '"><input type="checkbox" name="' +
@@ -858,7 +887,8 @@ function addSectionTable(table_name, jsonData, option_list) {
 
             if (key == 'operator' || key == 'operand' || key == 'ex' || key == 'accuracy' ||
             key == 'report_type' || key == 'alarm_up' || key == 'alarm_down' || key == 'phone_num' || 
-            key == 'email' || key == 'event_server_center' || key == 'contents' || key == 'retry_interval' || key == 'again_interval') {
+            key == 'email' || key == 'event_server_center' || key == 'contents' || key == 'retry_interval' || 
+            key == 'again_interval' || key == 'command') {
                 contents += '   <td style="display:none" name="'+key+'">'+ (jsonData[i][key] != null ? jsonData[i][key] : "-") +'</td>\n';
             } else if (key == 'data_type') {
                 contents += '   <td style="text-align:center" name="'+key+'">'+ (data_type_value[Number(jsonData[i][key])]) +'</td>\n';
@@ -999,7 +1029,8 @@ function loadRulesConfig(table_name) {
         $('#loading').hide();
     });
 
-    loadRealtimeData();
+    if (table_name != 'system_param')
+        loadRealtimeData();
 }
 
 function snmpScan() {
@@ -2089,7 +2120,8 @@ function saveData(table_name) {
         option_list.forEach(function(option){
             if (option == 'operator' || option == 'operand' || option == 'ex' || option == 'accuracy' ||
                 option == 'report_type' || option == 'alarm_up' || option == 'alarm_down' || option == 'phone_num' || 
-                option == 'email' || option == 'event_server_center' || option == 'contents' || option == 'retry_interval' || option == 'again_interval') {
+                option == 'email' || option == 'event_server_center' || option == 'contents' || option == 'retry_interval' || 
+                option == 'again_interval' || option == 'command') {
                 contents += '   <td style="display:none" name="'+option+'">'+ (option_value[option].length > 0 ? option_value[option] : "-") +'</td>\n';
             } else if (option == 'enabled' || option == 'sms_reporting') {
                 contents += '   <td style="' + ((option == 'enabled') ? 'text-align:center' : 'display:none') + '"><input type="checkbox" name="' + option
@@ -2216,6 +2248,10 @@ function editData(object, table_name) {
     openBox(table_name);
     if (table_name == 'io')
         switchPage('btn' + io_type.toUpperCase());
+
+    if (table_name == 'system_param') {
+        systemParamChange(table_name)
+    }
 
     enableAlarm(table_name);
 }

@@ -1,6 +1,6 @@
 {
     "basic_option" : ["enabled", "collect_period", "report_period", "batch_reporting", "cache_enabled", "cache_day", "minute_enabled",
-						"minute_period", "hour_enabled", "day_enabled"],
+						"minute_period", "hour_enabled", "day_enabled", "system_enabled", "system_report_period"],
     "com_option" : ["enabled", "baudrate", "databit", "stopbit", "parity", "frame_interval",
 					"proto", "cmd_interval", "report_center", "slave_address", "master_address", "frames",
 					"src_addr", "max_master", "collect_mode", "controller_model", "dlms_client_address", 
@@ -127,5 +127,6 @@
 	"dnp3_server_option" : ["enabled", "proto", "port", "interface", "baudrate", "databit", "stopbit", "parity", "slave_address", "master_address"],
 	"dnp3_option" : ["source_object", "group_id", "point_number", "event_class", "event_var", "static_var", "enabled"],
 	"modbus_slave_option" : ["enabled", "proto", "port", "interface", "baudrate", "databit", "stopbit", "parity", "slave_id"],
-	"modbus_slave_point_option" : ["source_object", "function_code", "start_address", "data_type", "count", "enabled"]
+	"modbus_slave_point_option" : ["source_object", "function_code", "start_address", "data_type", "count", "enabled"],
+	"system_param_option" : ["order", "factor_name", "param", "command", "server_center", "enabled"]
 }
