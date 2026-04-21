@@ -76,15 +76,15 @@ if (isset($type)) {
         exec("sudo /usr/local/bin/uci get loragw.loragw.protocol", $protocol);
         $json_strings['protocol'] = $protocol[0];
         if ($protocol[0] == 'lns') {
-            exec("cat /etc/basic_station/tc.uri", $uri);
+            $uri = file_get_contents('/etc/basic_station/tc.uri');
             $proto_name = 'tc';
         } else if ($protocol[0] == 'cups') {
-            exec("cat /etc/basic_station/cups.uri", $uri);
+            $uri = file_get_contents('/etc/basic_station/cups.uri');
             $proto_name = 'cups';
         }
             
 
-        $json_strings['uri'] = $uri[0];
+        $json_strings['uri'] = $uri;
         exec("sudo /usr/local/bin/uci get loragw.loragw.auth_mode", $auth_mode);
         $json_strings['auth_mode'] = $auth_mode[0];
 

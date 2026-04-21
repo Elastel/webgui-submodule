@@ -41,13 +41,14 @@
             InputControlCustom(_('Port'), 'port', 'port', _('1~65535'));
 
             echo '<h5>'._("BACnet/MSTP Settings").'</h5>';
-            exec("cat /etc/fw_model", $model);
+
+            $model = getModel();
             
-            if ($model[0] == "EG324") {
+            if ($model == "EG324") {
               $comlist = array('/dev/ttyAMA0'=>'COM1', '/dev/ttyAMA1'=>'COM2');
-            } else if ($model[0] == "EG324L" || $model[0] == "EG324Pro") {
+            } else if ($model == "EG324L" || $model == "EG324Pro") {
               $comlist = array('/dev/ttyS1'=>'COM1', '/dev/ttyS2'=>'COM2');
-            } else if ($model[0] == "EG510") {
+            } else if ($model == "EG510") {
               $comlist = array('/dev/ttyCH9344USB0'=>'COM1');
             } else {
               $comlist = array('/dev/ttyACM0'=>'COM1');

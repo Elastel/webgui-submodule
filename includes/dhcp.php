@@ -53,7 +53,7 @@ function DisplayDHCPConfig()
     if ($mac_conf[0] != '') {
         $lan_mac = $mac_conf[0];
     } else {
-        $lan_mac = exec('cat /sys/class/net/br0/address');
+        $lan_mac = file_get_contents('/sys/class/net/br0/address');
     }
 
     $interfaces = ['br0'];

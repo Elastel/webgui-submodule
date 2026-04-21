@@ -38,7 +38,6 @@
             echo '</div>';
 
             echo '<div id="page_proto_mstp" name="page_proto_mstp">';
-            exec("cat /etc/fw_model", $model);
             
             if (model_category('four_com')) {
               $comlist = array('COM1'=>'COM1', 'COM2'=>'COM2');

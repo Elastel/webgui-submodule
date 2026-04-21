@@ -18,7 +18,7 @@
                     <div class="row ml-1">
                         <div class="col-sm">
                           <div class="row mb-1">
-                              <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Version:"); ?></div><div class="col-xs-3"><?php echo $version[0]; ?></div>
+                              <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Version:"); ?></div><div class="col-xs-3"><?php echo $version; ?></div>
                           </div>
                           <div class="row mb-1">
                               <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Status:"); ?></div>
@@ -28,7 +28,7 @@
                           </div>
                           <div class="row mb-1">
                               <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Management Tool:"); ?></div>
-                              <input class="btn btn-outline btn-primary" type="submit" value="Portainer" onClick="window.open(window.location.protocol+'//'+window.location.host+':<?php echo $port[0] ?>','nr');">
+                              <input class="btn btn-outline btn-primary" type="submit" value="Portainer" onClick="window.open(window.location.protocol+'//'+window.location.host+':<?php echo $port ?>','nr');">
                           </div>
                           <form method="POST" action="docker" role="form">
                           <?php echo \ElastPro\Tokens\CSRF::hiddenField(); ?>

@@ -34,8 +34,8 @@ function DisplayNetworkingConfig($type)
             if (isset($_POST['applynetworksettings'])) {
                 if ($type == 'wired') {
                     if (model_category('no_buildroot')) {
-                        exec('cat /sys/class/net/eth0/address', $cur_wired_mac);
-                        if ($cur_wired_mac[0] != $_POST['wired_mac']) {
+                        $cur_wired_mac = file_get_contents('/sys/class/net/eth0/address');
+                        if ($cur_wired_mac != $_POST['wired_mac']) {
                             exec('sudo ifconfig eth0 down');
                             exec('sudo ifconfig eth0 hw ether ' . $_POST['wired_mac']);
                             exec('sudo ifconfig eth0 up');
@@ -95,7 +95,7 @@ function DisplayNetworkingConfig($type)
         if ($mac_conf[0] != '') {
             $wired_mac = $mac_conf[0];
         } else {
-            $wired_mac = exec('cat /sys/class/net/eth0/address');
+            $wired_mac = file_get_contents('/sys/class/net/eth0/address');
         }
     } elseif ($type == 'lte') {
         exec('ls /sys/class/net | grep -v lo', $interfaces);
@@ -106,14 +106,13 @@ function DisplayNetworkingConfig($type)
                 $lte_interface = [$cur_interface[0]];
             }
         }
-
-        $lte_mac = exec("cat /sys/class/net/$cur_interface[0]/address");
+        $lte_mac = file_get_contents("/sys/class/net/$cur_interface[0]/address");
     } else if ($type == 'wlan0') {
         exec('uci get network.wifi.mac', $mac_conf);
         if ($mac_conf[0] != '') {
             $wlan0_mac = $mac_conf[0];
         } else {
-            $wlan0_mac = exec('cat /sys/class/net/wlan0/address');
+            $wlan0_mac = file_get_contents('/sys/class/net/wlan0/address');
         }
     }
 

@@ -48,9 +48,9 @@ function getClients($simple=true)
             $cl["device"][$i]["vendor"] = preg_replace("/\\\\x20/", " ", $vendor);
             $cl["device"][$i]["vid"] = $vendorid;
             $cl["device"][$i]["pid"] = $productid;
-            unset($mac);
-            exec("cat /sys/class/net/$dev/address 2> /dev/null", $mac);
-            $cl["device"][$i]["mac"] = empty($mac) ? "":$mac[0];
+
+            $mac = file_get_contents("/sys/class/net/$dev/address");
+            $cl["device"][$i]["mac"] = empty($mac) ? "":$mac;
             unset($ip);
             exec("ifconfig $dev 2> /dev/null", $ip);
             $cl["device"][$i]["ipaddress"] =  preg_only_match("/.*inet ([0-9\.]+) .*/", $ip);

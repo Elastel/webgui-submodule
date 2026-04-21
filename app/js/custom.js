@@ -874,7 +874,10 @@ $('.wg-keygen').click(function(){
     var entity_pub = $(this).parent('div').prev('input[type="text"]');
     var entity_priv = $(this).parent('div').next('input[type="hidden"]');
     var updated = entity_pub.attr('name')+"-pubkey-status";
-    $.post('ajax/networking/get_wgkey.php',{'entity':entity_pub.attr('name') },function(data){
+    
+    var csrfToken = $('meta[name=csrf_token]').attr('content');
+    $.post('ajax/networking/get_wgkey.php',{'entity':entity_pub.attr('name'), 'csrf_token': csrfToken },function(data){
+        console.log(data);
         var jsonData = JSON.parse(data);
         entity_pub.val(jsonData.pubkey);
         $('#wg-srvprikey').val(jsonData.privkey);

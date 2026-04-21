@@ -11,8 +11,7 @@ function DisplaySystem()
     if (isset($_POST['applyProperties'])) {
         if (isset($_POST['hostname'])) {
             if (model_category('no_buildroot')) {
-                exec("cat /proc/sys/kernel/hostname", $buff);
-                $old_hostname = $buff[0];
+                $old_hostname = file_get_contents('/proc/sys/kernel/hostname');
                 $new_hostname = $_POST['hostname'];
                 exec("sudo hostnamectl set-hostname $new_hostname");
                 exec("sudo sed -i 's/$old_hostname/$new_hostname/g' /etc/hosts");
@@ -191,19 +190,8 @@ function DisplaySystem()
         $_SESSION['timezones'] = $result;
     }
     
-    unset($tmp);
-    exec("cat /proc/sys/kernel/hostname", $tmp);
-    $cur_hostname = $tmp[0];
-
-    if (model_category('HT')) {
-        unset($tmp);
-        exec("cat /etc/sn", $tmp);
-        $sn = $tmp[0];
-    } else {
-        unset($tmp);
-        exec("cat /proc/cpuinfo | grep Serial | awk -F ':' '{print $2}'", $tmp);
-        $sn = $tmp[0];
-    }
+    $cur_hostname = getHostname();
+    $sn = getSn();
 
     echo renderTemplate("system", compact(
         "arrLocales",

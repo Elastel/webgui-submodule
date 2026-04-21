@@ -37,7 +37,7 @@ if ($type == 'datadisplay') {
 } else if (strstr($type, 'download')) {
     $arr = explode("_", $type);
     exec('sudo conf_im_ex export ' . $arr[1]);
-    exec('cat /tmp/config_export.csv', $data);
+    $data = file('/tmp/config_export.csv', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     echo implode(PHP_EOL, $data);
 } else if (strstr($type, 'bacdiscover')) {
     $interface = $_GET['interface'];

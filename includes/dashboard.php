@@ -41,6 +41,96 @@ function getInterfaceMetric($iface) {
     return null;
 }
 
+function myCidr2mask($cidr)
+{
+    $cidr = intval($cidr);
+
+    if ($cidr < 0 || $cidr > 32) {
+        return '0.0.0.0';
+    }
+
+    return long2ip(-1 << (32 - $cidr));
+}
+
+function getLteInfo($iface)
+{
+    $lteInfo = [
+        "enabled"    => 0,
+        "interface"  => $iface,
+        "ip_address" => '-',
+        "netmask"    => '-',
+        "signal"     => '-',
+        "operator"   => '-',
+        "iccid"      => '-',
+        "imei"       => '-',
+        "sim"        => '-',
+        "lte_status" => 'DISCONNECTED',
+        "uptime"     => '-',
+        "metric"     => '-'
+    ];
+
+    if (empty($iface)) {
+        return $lteInfo;
+    }
+
+    $ifaceSafe = escapeshellarg($iface);
+
+    exec("ip -o route show default", $routes);
+
+    foreach ($routes as $r) {
+        if (strpos($r, $iface) !== false) {
+            $lteInfo["enabled"] = 1;
+            break;
+        }
+    }
+
+    if (!file_exists("/dev/ttyUSB2")) {
+        return $lteInfo;
+    }
+
+    exec("ip -o -f inet addr show dev {$ifaceSafe}", $addr);
+
+    if (!empty($addr) && preg_match('/inet ([0-9.]+)\/(\d+)/', $addr[0], $m)) {
+        $lteInfo["ip_address"] = $m[1];
+        $lteInfo["netmask"] = myCidr2mask((int)$m[2]);
+    }
+
+    exec("uci -P /var/state show dangle.dev", $uciLines);
+
+    $uciMap = [];
+    foreach ($uciLines as $line) {
+        if (preg_match('/dangle\.dev\.(\w+)=(.*)/', $line, $m)) {
+            $uciMap[$m[1]] = trim($m[2], "'");
+        }
+    }
+
+    if (!empty($uciMap)) {
+        $lteInfo["signal"]   = $uciMap['signal']   ?? '-';
+        $lteInfo["operator"] = $uciMap['service']  ?? '-';
+        $lteInfo["iccid"]    = $uciMap['iccid']    ?? '-';
+        $lteInfo["imei"]     = $uciMap['imei']     ?? '-';
+        $lteInfo["sim"]      = $uciMap['sim']      ?? '-';
+
+        $lte_status = $uciMap['connect'] ?? 'DISCONNECTED';
+
+        if ($lteInfo["enabled"] == 0) {
+            $lte_status = "DISCONNECTED";
+        }
+
+        $lteInfo["lte_status"] = $lte_status;
+
+        if (!empty($uciMap['uptime'])) {
+            $lteInfo["uptime"] = timeCalculation($uciMap['uptime']);
+        }
+    }
+
+    if (function_exists('getInterfaceMetric')) {
+        $lteInfo["metric"] = getInterfaceMetric($iface) ?? '-';
+    }
+
+    return $lteInfo;
+}
+
 /**
  * Show dashboard page.
  */
@@ -99,92 +189,26 @@ function DisplayDashboard(&$extraFooterScripts)
     }
     
     $leases = array();
-    exec('cat ' . RASPI_DNSMASQ_LEASES, $leases);
-    // fetch dhcpcd.conf settings for interface
-    $conf = file_get_contents(RASPI_DHCPCD_CONFIG);
-    preg_match('/^#\sRaspAP\seth0\s.*?(?=\s*+$)/ms', $conf, $matched);
-    $data = getBetweenStrings($data, "RaspAP");
-    preg_match('/metric\s(\d*)/', $data, $metric);
-    preg_match('/static\sip_address=(.*)/', $data, $static_ip);
-    preg_match('/static\srouters=(.*)/', $data, $static_routers);
-    preg_match('/static\sdomain_name_server=(.*)/', $data, $static_dns);
-    // preg_match('/fallback\sstatic_'.$interface.'/', $data, $fallback);
-    preg_match('/(?:no)?gateway/', $data, $gateway);
-    $dhcpdata['Metric'] = $metric[1];
-    $dhcpdata['StaticIP'] = strpos($static_ip[1],'/') ?  substr($static_ip[1], 0, strpos($static_ip[1],'/')) : $static_ip[1];
-    $dhcpdata['SubnetMask'] = cidr2mask($static_ip[1]);
-    $dhcpdata['StaticRouters'] = $static_routers[1];
-    $dhcpdata['StaticDNS'] = $static_dns[1];
-    if (isset($dhcpdata['StaticDNS'])) {
-        $arrStaticDns = explode(" ", $dhcpdata['StaticDNS']);
-        if (count($arrStaticDns) == 1) {
-            $dhcpdata['StaticDNS1'] = $arrStaticDns[0];
-        } else if (count($arrStaticDns) >= 2) {
-            $dhcpdata['StaticDNS1'] = $arrStaticDns[0];
-            $dhcpdata['StaticDNS2'] = $arrStaticDns[1];
-        }
-    }
+
+    $leases = file(RASPI_DNSMASQ_LEASES, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
     $routeInfo = getRouteInfo(true);
 
-    exec('ip route | grep "default"  | grep -c "'. $lte_ifname[0] .'"', $enabled);
-    $lteInfo = array();
-    $lteInfo["enabled"] = $enabled[0];
-    if (file_exists("/dev/ttyUSB2")) {
-        exec('ifconfig '. $lte_ifname[0] .' | grep -Eo "([0-9]+[.]){3}[0-9]+" | grep -v "255.255."', $ip_address);
-        exec('ifconfig '. $lte_ifname[0] .' | grep -Eo "([0-9]+[.]){3}[0-9]+" | grep "255.255."', $netmask);
-        exec('uci -P /var/state/ get dangle.dev.signal', $signal);
-        exec('uci -P /var/state/ get dangle.dev.service', $operator);
-        exec('uci -P /var/state/ get dangle.dev.iccid', $iccid);
-        exec('uci -P /var/state/ get dangle.dev.imei', $imei);
-		exec('uci -P /var/state/ get dangle.dev.sim', $sim);
-        exec('uci -P /var/state/ get dangle.dev.connect', $lte_status);
-        exec('uci -P /var/state/ get dangle.dev.uptime', $uptime);
-        if ($enabled[0] == '0') {
-            $lte_status[0] = "DISCONNECTED";
-        }
+    $lte_ifname = ["wwan0"];
 
-        $lteInfo["interface"] = $lte_ifname[0];
-        $lteInfo["ip_address"] = $ip_address[0] ?? '-';
-        $lteInfo["netmask"] = $netmask[0] ?? '-';
-        $lteInfo["signal"] = $signal[0] ?? '-';
-        $lteInfo["operator"] = $operator[0] ?? '-';
-        $lteInfo["iccid"] = $iccid[0] ?? '-';
-        $lteInfo["imei"] = $imei[0] ?? '-';
-        $lteInfo["lte_status"] = $lte_status[0]  ?? "DISCONNECTED";
-		$lteInfo["sim"] = $sim[0] ?? '-';
-        $lteInfo["uptime"] = $uptime[0] ? timeCalculation($uptime[0]) : '-';
-        $lteInfo["metric"] = getInterfaceMetric($lte_ifname[0]) ?? '-';
-    }
+    $lteInfo = getLteInfo($lte_ifname[0]);
 
-    exec("cat /proc/sys/kernel/hostname", $tmp);
-    $cur_hostname = $tmp[0];
+    $cur_hostname = getHostname();
 
     $model = getModel();
-    unset($tmp);
-    exec("cat /etc/fw_date", $tmp);
-    $fw_date = $tmp[0];
+    
+    $fw_date = trim(file_get_contents('/etc/fw_date'));
 
-    unset($tmp);
-    exec("uname -r", $tmp);
-    $kernel_version = $tmp[0];
+    $kernel_version = trim(file_get_contents('/proc/sys/kernel/osrelease'));
 
-    unset($tmp);
-    exec("uname -r", $tmp);
-    $kernel_version = $tmp[0];
+    $local_time = date('Y-m-d H:i:s');
 
-    unset($tmp);
-    exec("date '+%Y-%m-%d %H:%M:%S'", $tmp);
-    $local_time = $tmp[0];
-
-    unset($tmp);
-    if (model_category('HT')) {
-        exec("cat /etc/sn", $tmp);
-        $sn = $tmp[0];
-    } else {
-        exec("cat /proc/cpuinfo | grep Serial | awk -F ':' '{print $2}'", $tmp);
-        $sn = $tmp[0];
-    }
+    $sn = getSn();
 
     $system = new \ElastPro\System\Sysinfo;
     $uptime   = $system->uptime();

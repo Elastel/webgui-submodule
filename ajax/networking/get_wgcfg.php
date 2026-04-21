@@ -36,7 +36,7 @@ if (isset($type)) {
 
         echo json_encode($wgdata); 
     } else if ($type == "download") {
-        exec('sudo cat '. RASPI_WIREGUARD_PATH.'client.conf', $return);
+        $return = file(RASPI_WIREGUARD_PATH . 'client.conf', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         echo implode(PHP_EOL,$return);
     }  
 }

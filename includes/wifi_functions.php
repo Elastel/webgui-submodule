@@ -5,7 +5,7 @@ require_once 'functions.php';
 function knownWifiStations(&$networks)
 {
     // Find currently configured networks
-    exec(' sudo cat ' . RASPI_WPA_SUPPLICANT_CONFIG, $known_return);
+    $known_return = file(RASPI_WPA_SUPPLICANT_CONFIG, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     $index = 0;
     foreach ($known_return as $line) {
         if (preg_match('/network\s*=/', $line)) {

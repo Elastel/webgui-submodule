@@ -102,9 +102,9 @@ function DisplayWireGuardConfig()
     }
 
     // fetch service status
-    exec('pgrep -x wg-crypt-wg0 | wc -l', $wgstatus);
-    $serviceStatus = $wgstatus[0] == 0 ? "down" : "up";
-    $wg_state = ($wgstatus[0] > 0);
+    exec('ip link show wg0 2>/dev/null', $wgstatus, $wg_return);
+    $serviceStatus = ($wg_return === 0) ? "up" : "down";
+    $wg_state = ($wg_return === 0);
     $public_ip = get_public_ip();
 
     echo renderTemplate(

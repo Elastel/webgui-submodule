@@ -46,9 +46,8 @@ function DisplayHmi()
         }
     }
 
-    unset($tmp);
-    exec("cat /sys/class/backlight/pwm-backlight/brightness", $tmp);
-    $hmi['hmi_brightness'] = $tmp[0] ?? '255';
+    $tmp = file_get_contents('/sys/class/backlight/pwm-backlight/brightness');
+    $hmi['hmi_brightness'] = $tmp ?? '255';
 
     echo renderTemplate("hmi", compact(
         'status',

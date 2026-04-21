@@ -761,7 +761,7 @@ class validation
  */
 function get_public_ip()
 {
-    exec('wget https://ipinfo.io/ip -qO -', $public_ip);
+    exec('wget --timeout=5 --tries=1 https://ipinfo.io/ip -qO -', $public_ip);
     return $public_ip[0];
 }
 
@@ -836,16 +836,32 @@ function setSidbarLogo($target, $hostname)
     echo '<img src="app/img/'. $name .'" class="navbar-logo" width="200" height="50">';
 }
 
-function getModel()
+function getSn()
 {
-    exec('cat /etc/fw_model', $model);
-    return $model[0];
+    if (file_exists('/etc/sn')) {
+        return trim(file_get_contents('/etc/sn'));
+    } else {
+        return '';
+    }
+}
+
+function getModel()
+{   
+    if (file_exists('/etc/fw_model')) {
+        return trim(file_get_contents('/etc/fw_model'));
+    } else {
+        return '';
+    }
+    
 }
 
 function getTarget()
 {
-    exec('cat /etc/target_model', $target);
-    return $target[0];
+    if (file_exists('/etc/target_model')) {
+        return trim(file_get_contents('/etc/target_model'));
+    } else {
+        return '';
+    }
 }
 
 function model_category($option)
@@ -920,24 +936,51 @@ function get_revison()
             }
         } else {
             $cpuinfo_array = '';
-            exec('cat /proc/cpuinfo', $cpuinfo_array);
-            $rev = trim(array_pop(explode(':', array_pop(preg_grep("/^Revision/", $cpuinfo_array)))));
+            $cpuinfo_array = file('/proc/cpuinfo', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            $rev = '';
+            foreach ($cpuinfo_array as $line) {
+                if (strpos($line, 'Revision') === 0) {
+                    $parts = explode(':', $line, 2);
+                    if (isset($parts[1])) {
+                        $rev = trim($parts[1]);
+                    }
+                    break;
+                }
+            }
+
             if (array_key_exists($rev, $revisions)) {
                 return $revisions[$rev];
             } else {
-                exec('cat /proc/device-tree/model', $model);
-                if (isset($model[0])) {
-                    return $model[0];
+                $model = trim(file_get_contents('/proc/device-tree/model'));
+                if (isset($model)) {
+                    return $model;
                 } else {
                     return 'Unknown Device';
                 }
             }
         }
     } else {
-        exec('cat /proc/cpuinfo', $cpuinfo_array);
-        $rev = trim(array_pop(explode(':', array_pop(preg_grep("/^model name/", $cpuinfo_array)))));
-        if ($rev == null || $rev == '') {
-            $rev = trim(array_pop(explode(':', array_pop(preg_grep("/^Processor/", $cpuinfo_array)))));
+        $cpuinfo_array = file('/proc/cpuinfo', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $rev = '';
+        foreach ($cpuinfo_array as $line) {
+            if (stripos($line, 'model name') === 0) {
+                $parts = explode(':', $line, 2);
+                if (isset($parts[1])) {
+                    $rev = trim($parts[1]);
+                    break;
+                }
+            }
+        }
+        if ($rev === '') {
+            foreach ($cpuinfo_array as $line) {
+                if (stripos($line, 'Processor') === 0) {
+                    $parts = explode(':', $line, 2);
+                    if (isset($parts[1])) {
+                        $rev = trim($parts[1]);
+                        break;
+                    }
+                }
+            }
         }
         return $rev;
     }

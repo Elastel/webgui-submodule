@@ -10,13 +10,18 @@ function DisplayDocker()
         exec('sudo systemctl restart docker.service');
     }
     
-    exec("docker -v | grep version | awk -F ' ' '{print $3}' | awk -F ',' '{print $1}'", $version);
-    exec('pgrep dockerd', $run_status);
+    $version = exec("docker -v | grep version | awk -F ' ' '{print $3}' | awk -F ',' '{print $1}'");
+    $run_status = exec('pgrep dockerd');
 
-    if ($run_status[0] != null) {
-        exec("sudo docker ps | grep portainer | awk -F ' ' '{print $1}'", $container);
-        if ($container[0] != null) {
-            exec("sudo docker port " . $container[0] . "| grep 0.0.0.0 | grep 9000 | awk -F ':' '{print $2}'", $port);
+    if ($run_status != null) {
+        $container = exec("sudo docker ps | grep portainer | awk -F ' ' '{print $1}'");
+        if ($container != null) {
+            $tmp = exec("sudo ss -tlnp | grep -E '9000'");
+            if ($tmp != null) {
+                $port = '9000';
+            } else {
+                $port = '9100';
+            }
         }
     }
 
