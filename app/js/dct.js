@@ -290,7 +290,7 @@ function enableBasic(state) {
     if (state) {
       $('#page_basic').show();
       enableCache(document.getElementById('cache_enabled'));
-      enableSystem(document.getElementById('system_enabled'));
+      enableSystemReport(document.getElementById('system_enabled'));
     } else {
       $('#page_basic').hide();
     }
