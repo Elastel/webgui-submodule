@@ -35,8 +35,14 @@ if ($type == 'datadisplay') {
     exec($cmd, $dctdata);
     echo $dctdata[0];
 } else if (strstr($type, 'download')) {
-    $arr = explode("_", $type);
-    exec('sudo conf_im_ex export ' . $arr[1]);
+    $pos = strpos($type, '_');
+    if ($pos !== false) {
+        $right = substr($type, $pos + 1);
+    } else {
+        $right = '';
+    }
+    
+    exec('sudo conf_im_ex export ' . $right);
     $data = file('/tmp/config_export.csv', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     echo implode(PHP_EOL, $data);
 } else if (strstr($type, 'bacdiscover')) {
