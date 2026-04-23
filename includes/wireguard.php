@@ -105,14 +105,14 @@ function DisplayWireGuardConfig()
     exec('ip link show wg0 2>/dev/null', $wgstatus, $wg_return);
     $serviceStatus = ($wg_return === 0) ? "up" : "down";
     $wg_state = ($wg_return === 0);
-    $public_ip = get_public_ip();
+    // $public_ip = get_public_ip();
 
     echo renderTemplate(
         "wireguard", compact(
             "status",
             "wg_state",
             "serviceStatus",
-            "public_ip",
+            // "public_ip",
             "optRules",
             "optLogEnable",
             "peer_id",

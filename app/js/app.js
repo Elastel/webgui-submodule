@@ -1,42 +1,55 @@
 
-function msgShow(retcode,msg) {
-    if(retcode == 0) { var alertType = 'success';
-    } else if(retcode == 2 || retcode == 1) {
-        var alertType = 'danger';
-    }
-    var htmlMsg = '<div class="alert alert-'+alertType+' alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+msg+'</div>';
-    return htmlMsg;
-}
+import "./modules/system.js";
+import {
+    setCSRFTokenHeader,
+    getCookie,
+    setCookie,
+    disableValidation,
+    setDarkMode,
+    setLightMode
+} from "./helpers.js";
 
-function createNetmaskAddr(bitCount) {
-  var mask=[];
-  for(i=0;i<4;i++) {
-    var n = Math.min(bitCount, 8);
-    mask.push(256 - Math.pow(2, 8-n));
-    bitCount -= n;
-  }
-  return mask.join('.');
-}
+import { initLogin } from "./modules/login.js";
+import { initSession } from "./modules/session.js";
+import { initDashboard } from "./modules/dashboard.js";
+import { initNetworking } from "./modules/networking.js";
+import { initDHCP } from "./modules/dhcp.js";
+import { initHostapd } from "./modules/hostapd.js"
+import { initWPA } from "./modules/wpa.js"
+import { initLorawan } from "./modules/lorawan.js"
+import { initDctBasic } from "./modules/dct-basic.js"
+import { initDctInterface } from "./modules/dct-interface.js"
+import { initDctRule } from "./modules/dct-rule.js"
+import { initDctServer } from "./modules/dct-server.js"
+import { initDctModbusSlave } from "./modules/dct-modbusslave.js"
+import { initDctOpcuaServer } from "./modules/dct-opcuaserver.js"
+import { initDctBacnetServer } from "./modules/dct-bacnetserver.js"
+import { initDctDnp3Server } from "./modules/dct-dnp3server.js"
+import { initDctDataDisplay } from "./modules/dct-datadisplay.js"
+import { initAdblock } from "./modules/adblock.js"
+import { initFirewall } from "./modules/firewall.js"
+import { initOpenVPN } from "./modules/openvpn.js"
+import { initWireGuard } from "./modules/wg.js"
+import { initModbusRouter } from "./modules/modbus-router.js"
+import { initBacnetRouter } from "./modules/bacnet-router.js"
+import { initDDNS } from "./modules/ddns.js"
+import { initServiceIotedge } from "./modules/service-iotedge.js"
+import { initGps } from "./modules/gps.js"
+import { initPlugins } from "./modules/plugins.js"
+import { initRestApi } from "./modules/restapi.js"
 
-function setupTabs() {
-    $('a[data-toggle="tab"]').on('shown.bs.tab',function(e){
-        var target = $(e.target).attr('href');
-        if(!target.match('summary')) {
-            var int = target.replace("#","");
-            loadCurrentSettings(int);
-        }
-    });
-}
+$('#chirpstack_region').change(function(){
+    $('#loading').show();
+    $.get('ajax/service/get_service.php?type=chirpstack&region=' + $('#chirpstack_region').val(),function() {
+        $('#loading').hide();
+    }) 
+})
 
 // Enable Bootstrap tooltips
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
 
-/*
-Populates the wired network form fields
-Option toggles are set dynamically depending on the loaded configuration
-*/
 
 // Add the following code if you want the name of the file appear on select
 $(".custom-file-input").on("change", function() {
@@ -65,16 +78,6 @@ $(document).on("click", "#js-session-expired-login", function(e) {
     const loginModal = $('#modal-admin-login');
     const redirectUrl = window.location.pathname;
     window.location.href = `/login?action=${encodeURIComponent(redirectUrl)}`;
-});
-
-// show modal login on page load
-$(document).ready(function () {
-    const params = new URLSearchParams(window.location.search);
-    const redirectUrl = $('#redirect-url').val() || params.get('action') || '/';
-    $('#modal-admin-login').modal('show');
-    $('#redirect-url').val(redirectUrl);
-    $('#username').focus();
-    $('#username').addClass("focusedInput");
 });
 
 // Static Array method
@@ -120,39 +123,6 @@ $(window).bind("load", function() {
       return this.href == url;
     }).parent().addClass('active');
 });
-
-function downloadFile(conf_name) {
-    let lowerConfName;
-    if (conf_name == 'IO') {
-        lowerConfName = document.getElementById("page_im_ex_name").value;
-    } else {
-        lowerConfName = conf_name.toLowerCase();
-    }
-    
-    var req = new XMLHttpRequest();
-    var url = 'ajax/dct/get_dctcfg.php?type=download_' + lowerConfName;
-    req.open('get', url, true);
-    req.responseType = 'blob';
-    req.setRequestHeader('Content-type', 'text/plain; charset=UTF-8');
-    req.onreadystatechange = function (event) {
-        if(req.readyState == 4 && req.status == 200) {
-            var blob = req.response;
-            var link=document.createElement('a');
-            link.href=window.URL.createObjectURL(blob);
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = ('0' + (now.getMonth() + 1)).slice(-2);
-            const day = ('0' + now.getDate()).slice(-2);
-            const hours = ('0' + now.getHours()).slice(-2);
-            const minutes = ('0' + now.getMinutes()).slice(-2);
-            const seconds = ('0' + now.getSeconds()).slice(-2);
-            const formattedTime = year + month + day + hours + minutes;
-            link.download = lowerConfName + '_' + formattedTime + '.csv';
-            link.click();
-        }
-    }
-    req.send();
-}
 
 $(document).ready(function(){
     $('.sidebar li a').each(function(){
@@ -229,47 +199,34 @@ $(document).ready(function(){
     });
 });
 
-function disableValidation(form) {
-    form.removeAttribute("novalidate");
-    form.classList.remove("needs-validation");
-    form.querySelectorAll("[required]").forEach(function (field) {
-        field.removeAttribute("required");
-    });
-}
-
-function setCSRFTokenHeader(event, xhr, settings) {
-    var csrfToken = $('meta[name=csrf_token]').attr('content');
-    if (/^(POST|PATCH|PUT|DELETE)$/i.test(settings.type)) {
-        xhr.setRequestHeader("X-CSRF-Token", csrfToken);
-    }
-}
-
 function contentLoaded() {
-    pageCurrent = window.location.href.split("/").pop();
+    const pageCurrent = window.location.pathname.split("/").pop();
     switch(pageCurrent) {
         case "dashboard":
-            loadDashboard();
+            initDashboard();
             break;
         case "wired_conf":
-            loadInterfaceWiredSelect("wired");
-            break;
         case "lte_conf":
-            loadInterfaceWiredSelect("lte");
-            break;
         case "wlan0_conf":
-            loadInterfaceWiredSelect("wlan0");
+            initNetworking(pageCurrent.split('_')[0]);
             break;
         case "hostapd_conf":
-            loadChannel();
+            initHostapd();
             break;
         case "dhcpd_conf":
-            loadInterfaceDHCPSelect();
+            initDHCP();
+            break;
+        case "wpa_conf":
+            initWPA();
+            break;
+        case "lorawan_conf":
+            initLorawan();
             break;
         case "basic_conf":
-            loadBasicConfig();
+            initDctBasic();
             break;
         case "interfaces_conf":
-            loadInterfacesConfig();
+            initDctInterface();
             break;
         case "modbus_conf":
         case "ascii_conf":
@@ -286,62 +243,70 @@ function contentLoaded() {
         case "iec1107_conf":
         case "dlms_conf":
         case "iec61850cli_conf":
-            loadRulesConfig(pageCurrent.split('_')[0]);
+            initDctRule(pageCurrent.split('_')[0]);
             break;
         case "io_conf":
-            loadRulesConfig('adc');
-            loadRulesConfig('di');
-            loadRulesConfig('do');
+            initDctRule('adc');
+            initDctRule('di');
+            initDctRule('do');
             break;
         case "system_param_conf":
-            loadRulesConfig('system_param');
+            initDctRule('system_param');
             break;
         case "server_conf":
-            loadServerConfig();
+            initDctServer();
             break;
         case "ddns":
-            loadDDNSConfig();
+            initDDNS();
             break;
         case "opcua":
-            loadOpcuaConfig();
+            initDctOpcuaServer();
             break;
         case "bacnet":
-            loadBACnetConfig();
+            initDctBacnetServer();
             break;
         case "dnp3":
-            loadDnp3Config();
+            initDctDnp3Server();
             break;
         case "modbus_slave":
-            loadModbusSlaveConfig();
+            initDctModbusSlave();
             break;
         case "datadisplay":
-            loadDataDisplay();
-            break;
-        case "lorawan_conf":
-            loadDataLorawan();
+            initDctDataDisplay();
             break;
         case "openvpn":
-            loadOpenvpn();
+            initOpenVPN();
             break;
         case "wireguard":
-            loadWireguard();
+            initWireGuard();
             break;
         case "gps":
-            loadGps();
+            initGps();
             break;
         case "bacnet_router":
-            loadBacnetRouter();
+            initBacnetRouter();
+            break;
+        case "modbus_router":
+            initModbusRouter();
             break;
         case "firewall_conf":
-            loadFirewall();
+            initFirewall();
             break;
         case "iotedge":
-            loadIotedge();
+            initServiceIotedge();
+            break;
+        case "restapi":
+            initRestApi();
+            break;
+        case "login":
+            initLogin();
             break;
     }
 }
 
+// --------- Global initialization ---------
+initSession();
+
 $(document)
     .ajaxSend(setCSRFTokenHeader)
-    .ready(contentLoaded)
-    .ready(loadWifiStations());
+    .ready(contentLoaded);

@@ -82,10 +82,7 @@ require_once 'includes/includes.php';
     <script src="dist/sb-admin-2/js/sb-admin-2.js"></script>
 
     <!-- Custom JS -->
-    <script src="app/js/dct.js?<?php echo filemtime('app/js/dct.js'); ?>"></script>
-    <script src="app/js/custom.js?<?php echo filemtime('app/js/custom.js'); ?>"></script>
-    <script src="app/js/system.js?<?php echo filemtime('app/js/system.js'); ?>"></script>
-    <script src="app/js/services.js?<?php echo filemtime('app/js/services.js'); ?>"></script>
+    <script type="module" src="app/js/app.js?v=<?php echo filemtime('app/js/app.js'); ?>"></script>
 
     <?php loadFooterScripts($extraFooterScripts); ?>
   </body>
