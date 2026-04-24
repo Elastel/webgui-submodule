@@ -38,166 +38,20 @@ import { initGps } from "./modules/gps.js"
 import { initPlugins } from "./modules/plugins.js"
 import { initRestApi } from "./modules/restapi.js"
 
-$('#chirpstack_region').change(function(){
-    $('#loading').show();
-    $.get('ajax/service/get_service.php?type=chirpstack&region=' + $('#chirpstack_region').val(),function() {
-        $('#loading').hide();
-    }) 
-})
+function initFormValidation() {
+    document.addEventListener('submit', function (e) {
+        const form = e.target;
 
-// Enable Bootstrap tooltips
-$(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-})
+        if (!form.classList.contains('needs-validation')) return;
 
+        if (!form.checkValidity()) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
 
-// Add the following code if you want the name of the file appear on select
-$(".custom-file-input").on("change", function() {
-  var fileName = $(this).val().split("\\").pop();
-  $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-});
-
-// Event listener for Bootstrap's form validation
-window.addEventListener('load', function() {
-    // Fetch all the forms we want to apply custom Bootstrap validation styles to
-    var forms = document.getElementsByClassName('needs-validation');
-    // Loop over them and prevent submission
-    var validation = Array.prototype.filter.call(forms, function(form) {
-        form.addEventListener('submit', function(event) {
-          //console.log(event.submitter);
-          if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          form.classList.add('was-validated');
-        }, false);
+        form.classList.add('was-validated');
     });
-}, false);
-
-$(document).on("click", "#js-session-expired-login", function(e) {
-    const loginModal = $('#modal-admin-login');
-    const redirectUrl = window.location.pathname;
-    window.location.href = `/login?action=${encodeURIComponent(redirectUrl)}`;
-});
-
-// Static Array method
-Array.range = (start, end) => Array.from({length: (end - start)}, (v, k) => k + start);
-
-$(document).on("click", ".js-toggle-password", function(e) {
-    var button = $(e.currentTarget);
-    var field  = $(button.data("bsTarget"));
-    if (field.is(":input")) {
-        e.preventDefault();
-
-        if (!button.data("__toggle-with-initial")) {
-            $("i", button).removeClass("fas fa-eye").addClass(button.attr("data-toggle-with"));
-        }
-
-        if (field.attr("type") === "password") {
-            field.attr("type", "text");
-        } else {
-            $("i", button).removeClass("fas fa-eye-slash").addClass("fas fa-eye");
-            field.attr("type", "password");
-        }
-    }
-});
-
-// Toggles the sidebar navigation.
-// Overrides the default SB Admin 2 behavior
-$("#sidebarToggleTopbar").on('click', function(e) {
-    $("body").toggleClass("sidebar-toggled");
-    $(".sidebar").toggleClass("toggled d-none");
-});
-
-// Overrides SB Admin 2
-$("#sidebarToggle, #sidebarToggleTop").on('click', function(e) {
-    var toggled = $(".sidebar").hasClass("toggled");
-    // Persist state in cookie
-    setCookie('sidebarToggled',toggled, 90);
-});
-
-// Adds active class to current nav-item
-$(window).bind("load", function() {
-    var url = window.location;
-    $('ul.navbar-nav a').filter(function() {
-      return this.href == url;
-    }).parent().addClass('active');
-});
-
-$(document).ready(function(){
-    $('.sidebar li a').each(function(){
-        if ($($(this))[0].href == String(window.location)) {
-        $(this).parent().addClass('active');
-        }
-    });
-
-    $('.nav-item').each(function() {
-        if ($(this).hasClass('active')) {
-            var id = $($(this))[0].id;
-            if (id.includes('dct_')) {
-                if (id.includes('dct_south')) {
-                    $('#navbar-collapse-south').addClass('show')
-                    $('#south').removeClass('collapsed');
-                } else if (id.includes('dct_north')) {
-                    $('#navbar-collapse-north').addClass('show')
-                    $('#north').removeClass('collapsed');
-                }
-
-                $('#navbar-collapse-dct').addClass('show')
-                $('#dct').removeClass('collapsed');
-            } else if (id.includes('remote_')) {
-                if (id.includes('remote_vpn')) {
-                    $('#navbar-collapse-vpn').addClass('show');
-                    $('#vpn').removeClass('collapsed');
-                }
-
-                $('#navbar-collapse-remote').addClass('show');
-                $('#remote').removeClass('collapsed');
-            } else if (id.includes('network_')) {
-                if (id.includes('network_wan')) {
-                    $('#navbar-collapse-wan').addClass('show')
-                    $('#wan').removeClass('collapsed');
-                }
-
-                $('#navbar-collapse-network').addClass('show');
-                $('#network').removeClass('collapsed');
-            } else if (id.includes('convert_')) {
-                $('#navbar-collapse-convert').addClass('show');
-                $('#convert').removeClass('collapsed');
-            } else if (id.includes('services_')) {
-                $('#navbar-collapse-services').addClass('show');
-                $('#services').removeClass('collapsed');
-            }  else if (id.includes('system_')) {
-                $('#navbar-collapse-system').addClass('show');
-                $('#system').removeClass('collapsed');
-            }
-        }
-    });
-
-    function itemChange(id) {
-        var idArr = ['dct', 'remote', 'network', 'protocol_convert', 'services', 'system'];
-        if (id.includes('page_')) {
-        var key = id.slice(5);
-        // console.log(key);
-        if (idArr.includes(key)) {
-            idArr.forEach(function (info) {
-                if (id != 'page_' + info) {
-                // console.log("info:" + info);
-                if ($('#navbar-collapse-' + info).hasClass('show')) {
-                    $('#navbar-collapse-' + info).removeClass('show');
-                    $('#' + info).addClass('collapsed');
-                }
-                }
-            });
-        }
-        }
-    }
-
-    $('.nav-item').click(function() {
-        var id = $($(this))[0].id;
-        itemChange(id);
-    });
-});
+}
 
 function contentLoaded() {
     const pageCurrent = window.location.pathname.split("/").pop();
@@ -243,15 +97,13 @@ function contentLoaded() {
         case "iec1107_conf":
         case "dlms_conf":
         case "iec61850cli_conf":
-            initDctRule(pageCurrent.split('_')[0]);
+        case "system_param_conf":
+            initDctRule(pageCurrent.replace(/_conf$/, ''));
             break;
         case "io_conf":
             initDctRule('adc');
             initDctRule('di');
             initDctRule('do');
-            break;
-        case "system_param_conf":
-            initDctRule('system_param');
             break;
         case "server_conf":
             initDctServer();
@@ -304,9 +156,171 @@ function contentLoaded() {
     }
 }
 
-// --------- Global initialization ---------
-initSession();
+function bindEvents() {
+    const $doc = $(document);
+    const $body = $("body");
+    const $sidebar = $(".sidebar");
+    const $loading = $("#loading");
 
-$(document)
-    .ajaxSend(setCSRFTokenHeader)
-    .ready(contentLoaded);
+    function apiGet(url, data) {
+        $loading.show();
+        return $.get(url, data)
+            .fail(err => console.error("API error:", err))
+            .always(() => $loading.hide());
+    }
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+
+    $(".custom-file-input").on("change", function() {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+
+    $('#chirpstack_region').on('change', function () {
+        apiGet('ajax/service/get_service.php', {
+            type: 'chirpstack',
+            region: this.value
+        });
+    });
+
+    $doc.on("click", ".js-toggle-password", function (e) {
+        e.preventDefault();
+
+        const $btn = $(this);
+        const $field = $($btn.data("bsTarget"));
+
+        if (!$field.length) return;
+
+        const isPwd = $field.attr("type") === "password";
+        $field.attr("type", isPwd ? "text" : "password");
+
+        $btn.find("i").toggleClass("fa-eye fa-eye-slash");
+    });
+
+    function goLogin() {
+        const redirect = encodeURIComponent(
+            location.pathname + location.search + location.hash
+        );
+        location.assign(`/login?action=${redirect}`);
+    }
+
+    $doc.on("click", "#js-session-expired-login", function (e) {
+        e.preventDefault();
+        goLogin();
+    });
+
+    function toggleSidebar() {
+        $body.toggleClass("sidebar-toggled");
+        $sidebar.toggleClass("toggled d-none");
+
+        setCookie("sidebarToggled", $sidebar.hasClass("toggled"), 90);
+    }
+
+    $("#sidebarToggleTopbar, #sidebarToggle, #sidebarToggleTop")
+        .on("click", toggleSidebar);
+}
+
+function initMenu() {
+    const currentUrl = location.href;
+    const $sidebarLinks = $('.sidebar a');
+    const $navItems = $('.nav-item');
+    
+    const MENU_GROUPS = ['dct', 'remote', 'network', 'protocol_convert', 'services', 'system'];
+    
+    const MENU_MAP = [
+        { match: 'dct_', parent: 'dct', extra: [
+            { match: 'dct_south', id: 'south', collapse: 'navbar-collapse-south' },
+            { match: 'dct_north', id: 'north', collapse: 'navbar-collapse-north' }
+        ]},
+        { match: 'remote_', parent: 'remote', extra: [
+            { match: 'remote_vpn', id: 'vpn', collapse: 'navbar-collapse-vpn' }
+        ]},
+        { match: 'network_', parent: 'network', extra: [
+            { match: 'network_wan', id: 'wan', collapse: 'navbar-collapse-wan' }
+        ]},
+        { match: 'convert_', parent: 'convert' },
+        { match: 'services_', parent: 'services' },
+        { match: 'system_', parent: 'system' }
+    ];
+    
+    const activateMenuItem = (selector, addClass, removeClass) => {
+        const $element = $(selector);
+        if ($element.length) {
+            if (addClass) $element.addClass(addClass);
+            if (removeClass) $element.removeClass(removeClass);
+        }
+    };
+    
+    $sidebarLinks.each(function() {
+        if (this.href === currentUrl) {
+            const $this = $(this);
+            $this.parent().addClass('active');
+            $this.parents('.collapse').addClass('show');
+            $this.parents('.nav-item').children('a').removeClass('collapsed');
+        }
+    });
+    
+    $navItems.each(function() {
+        const $item = $(this);
+        if (!$item.hasClass('active')) return;
+        
+        const id = this.id;
+        if (!id) return;
+        
+        const matchedGroup = MENU_MAP.find(group => id.includes(group.match));
+        if (!matchedGroup) return;
+        
+        const parentCollapseId = `#navbar-collapse-${matchedGroup.parent}`;
+        const parentId = `#${matchedGroup.parent}`;
+        
+        $(parentCollapseId).addClass('show');
+        $(parentId).removeClass('collapsed');
+
+        if (matchedGroup.extra) {
+            matchedGroup.extra.forEach(sub => {
+                if (id.includes(sub.match)) {
+                    $(`#${sub.collapse}`).addClass('show');
+                    $(`#${sub.id}`).removeClass('collapsed');
+                }
+            });
+        }
+    });
+    
+    const collapseOthers = (activeKey) => {
+        MENU_GROUPS.forEach(key => {
+            if (key !== activeKey) {
+                $(`#navbar-collapse-${key}`).removeClass('show');
+                $(`#${key}`).addClass('collapsed');
+            }
+        });
+    };
+    
+    $('.nav-item').on('click', function() {
+        const id = this.id;
+        if (!id || !id.startsWith('page_')) return;
+        
+        const key = id.slice(5);
+        if (MENU_GROUPS.includes(key)) {
+            collapseOthers(key);
+        }
+    });
+}
+
+function initApp() {
+    initSession();
+    initFormValidation();
+    bindEvents();
+    initMenu();
+    contentLoaded();
+
+    $(document).ajaxSend(setCSRFTokenHeader);
+    globalThis.getCookie = getCookie;
+    globalThis.setCookie = setCookie;
+    globalThis.disableValidation = disableValidation;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    $(initApp);
+});
