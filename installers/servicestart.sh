@@ -156,5 +156,5 @@ if [ "${config[WifiAPEnable]}" = 1 ]; then
     wpa_cli -i ${config[WifiManaged]} reassociate
 fi
 
-echo "RaspAP service start DONE"
+echo "ElastPro service start DONE"
 

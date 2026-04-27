@@ -10,16 +10,8 @@ function DisplaySystem()
 
     if (isset($_POST['applyProperties'])) {
         if (isset($_POST['hostname'])) {
-            if (model_category('no_buildroot')) {
-                $old_hostname = file_get_contents('/proc/sys/kernel/hostname');
-                $new_hostname = $_POST['hostname'];
-                exec("sudo hostnamectl set-hostname $new_hostname");
-                exec("sudo sed -i 's/$old_hostname/$new_hostname/g' /etc/hosts");
-            } else {
-                $new_hostname = $_POST['hostname'];
-                exec("echo $new_hostname > /etc/hostname");
-                exec("hostname -F /etc/hostname");
-            }   
+            $new_hostname = $_POST['hostname'];
+            exec("sudo /var/www/html/installers/update_hostname.sh $new_hostname", $return);
         }
 
         if (isset($_POST['timezones'])) {
