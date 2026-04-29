@@ -12,8 +12,9 @@ function DisplayEthernetip()
             if ($ret == false) {
                 $status->addMessage('Error data', 'danger');
             } else {
-                if (isset($_POST['applyopcuaclisettings'])) {
-                    exec('sudo /etc/init.d/dct restart >/dev/null'); 
+                if (isset($_POST['applyethernetipsettings'])) {
+                    exec('sudo /etc/init.d/dct restart >/dev/null');
+                    $status->addMessage('Configuration applied.', 'success');
                 }
             }
         }
@@ -24,7 +25,7 @@ function DisplayEthernetip()
             if (is_uploaded_file($_FILES['upload_file']['tmp_name'])) {
                 save_import_file('ethernetip', $status, $_FILES['upload_file']);
             } else {
-                $status->addMessage('fail to upload file', 'danger');
+                $status->addMessage('Fail to upload file', 'danger');
             }
         }
     }
@@ -38,7 +39,7 @@ function saveEthernetipConfig($status)
     file_put_contents(ELASTEL_DCT_CONFIG_JSON, $data);
     exec('sudo /usr/sbin/set_config ' . ELASTEL_DCT_CONFIG_JSON . ' dct ethernetip');
 
-    $status->addMessage('EtherNet/IP configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
 }
 

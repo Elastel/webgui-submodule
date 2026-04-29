@@ -13,7 +13,8 @@ function DisplaySnmpClient()
                 $status->addMessage('Error data', 'danger');
             } else {
                 if (isset($_POST['applysnmpclisettings'])) {
-                    exec('sudo /etc/init.d/dct restart >/dev/null'); 
+                    exec('sudo /etc/init.d/dct restart >/dev/null');
+                    $status->addMessage('Configuration applied.', 'success');
                 }
             }
         }
@@ -28,7 +29,7 @@ function saveSnmpClientConfig($status)
     file_put_contents(ELASTEL_DCT_CONFIG_JSON, $data);
     exec('sudo /usr/sbin/set_config ' . ELASTEL_DCT_CONFIG_JSON . ' dct snmpcli');
 
-    $status->addMessage('SNMP Rules configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
 }
 

@@ -3,7 +3,7 @@
   if (!RASPI_MONITOR_ENABLED) :
     BtnSaveApplyCustom('savemodbusslavesettings', 'applymodbusslavesettings');
   endif;
-  $msg = _('Restarting Modbus Slave');
+  $msg = _('Restarting').' Modbus '._('Slave');
   page_progressbar($msg, _("Executing dct start"));
   $buttons = ob_get_clean(); 
   ob_end_clean();
@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("Modbus Slave"); ?>
+          Modbus <?php echo _("Slave"); ?>
           </div>
         </div><!-- ./row -->
       </div><!-- ./card-header -->
@@ -24,7 +24,7 @@
           <form method="POST" action="modbus_slave" role="form">
           <?php echo \ElastPro\Tokens\CSRF::hiddenField();
             echo '<div class="cbi-section cbi-tblsection">';
-            RadioControlCustom(_('Modbus Slave'), 'modbus_slave_enabled', 'modbus_slave', 'enableModbusSlave');
+            RadioControlCustom('Modbus '._('Slave'), 'modbus_slave_enabled', 'modbus_slave', 'enableModbusSlave');
 
             echo '<div id="page_modbus_slave" name="page_modbus_slave">';
 
@@ -55,7 +55,7 @@
             SelectControlCustom(_('Parity'), 'parity', $parity_list, $parity_list['0'], 'parity');
             echo '</div>';
 
-            InputControlCustom(_('Slave ID'), 'slave_id', 'slave_id');
+            InputControlCustom(_('Slave').' ID', 'slave_id', 'slave_id');
             
             ?>
                 <input type="hidden" name="table_data" value="" id="hidTD_modbus_slave_point">
@@ -63,17 +63,17 @@
                 <div class="cbi-section cbi-tblsection" id="page_modbus_slave" name="page_modbus_slave">
                   <?php
                   $arr= array(
-                    array("name"=>"Source Object",        "style"=>"", "descr"=>"", "ctl"=>"select"),
-                    array("name"=>"Function Code",        "style"=>"", "descr"=>"", "ctl"=>"select"),
-                    array("name"=>"Start Address",        "style"=>"", "descr"=>"", "ctl"=>"input"),
-                    array("name"=>"Data Type",            "style"=>"", "descr"=>"", "ctl"=>"select"),
-                    array("name"=>"Count",                "style"=>"", "descr"=>"", "ctl"=>"input"),
-                    array("name"=>"Enable",               "style"=>"", "descr"=>"", "ctl"=>"check"),
+                    array("name"=>"Source Object",        "data-field" => "factor_name", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                    array("name"=>"Function Code",        "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                    array("name"=>"Start Address",        "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+                    array("name"=>"Data Type",            "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                    array("name"=>"Count",                "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+                    array("name"=>"Enable",               "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"check"),
                   );
                   page_table_title('modbus_slave_point', $arr);
                   ?>
                   <div class="cbi-section-create">
-                    <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addData('modbus_slave_point')">
+                    <input type="button" class="cbi-button-add" name="popBox" value="<?=_('Add')?>" onclick="addData('modbus_slave_point')">
                   </div>
                 </div>
           <?php

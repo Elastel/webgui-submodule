@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("IEC61850 Rules"); ?>
+          IEC61850 <?php echo _("Setting"); ?>
           </div>
         </div><!-- ./row -->
       </div><!-- ./card-header -->
@@ -28,10 +28,6 @@
               <div class="cbi-section cbi-tblsection" id="page_iec61850cli" name="page_iec61850cli">
                 <?php
                 $arr= array(
-                  array("name"=>"Order",                "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Device Name",          "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Belonged Interface",   "style"=>"", "descr"=>"", "ctl"=>"select"),
-                  array("name"=>"Tag Name",          "style"=>"", "descr"=>"", "ctl"=>"input"),
                   array("name"=>"Functional Constraints",   "style"=>"", "descr"=>"", "ctl"=>"select"),
                   array("name"=>"Node Name",            "style"=>"", "descr"=>"", "ctl"=>"input"),
                   array("name"=>"Data Type",            "style"=>"", "descr"=>"", "ctl"=>"select"),
@@ -40,10 +36,6 @@
                 $arr = dct_rules_common_add_fields($arr);
                 page_table_title('iec61850cli', $arr);
                 ?>
-                <div class="cbi-section-create">
-                  <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addData('iec61850cli')">
-                  <?php conf_im_ex('iec61850cli'); ?>
-                </div>
               </div>
             <?php echo $buttons ?>
           </form>
@@ -56,7 +48,7 @@
 <div id="popLayer"></div>
 <div id="popBox" style="overflow:auto">
   <input hidden="hidden" name="page_type" id="page_type" value="0">
-  <h4><?php echo _("IEC61850 Rules Object Setting"); ?></h4>
+  <h4>IEC61850 <?php echo _("Rules Setting"); ?></h4>
   <div class="cbi-section">
     <?php
       $table_name = 'iec61850cli';
@@ -70,7 +62,7 @@
       InputControlCustom(_('Tag Name'), $table_name.'.factor_name', $table_name.'.factor_name');
 
       $fc_list = ['ST', 'MX', 'SP', 'SV', 'CF', 'DC', 'SG', 'SE', 'SR', 'OR', 'BL', 'EX', 'CO', 'US', 'MS', 'RP', 'BR', 'LG', 'GO'];
-      SelectControlCustom(_('Functional constraints'), $table_name.'.fc', $fc_list, $fc_list[0], $table_name.'.fc');
+      SelectControlCustom(_('Functional Constraints'), $table_name.'.fc', $fc_list, $fc_list[0], $table_name.'.fc');
 
       InputControlCustom(_('Node Name'), $table_name.'.node_name', $table_name.'.node_name');
 
@@ -93,7 +85,7 @@
     <h4><?php echo _("Tip: Scan to get logical device list.");?></h4>
   </div>
   <div class="cbi-value">
-    <a><?php echo _("Interface:");?></a>
+    <a><?php echo _("Interface");?>:</a>
     <select id="scan_interface" class="cbi-input-select" name="scan_interface" style="width: 100%; max-width: 15rem; min-width: 5rem;">
     <?php
       foreach ($interface_list as $key => $value) {

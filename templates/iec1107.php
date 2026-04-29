@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("IEC62056-21 Setting"); ?>
+          IEC62056-21 <?php echo _("Setting"); ?>
           </div>
         </div><!-- ./row -->
       </div><!-- ./card-header -->
@@ -26,10 +26,6 @@
             <input type="hidden" name="option_list_iec1107" value="" id="option_list_iec1107">
             <?php echo \ElastPro\Tokens\CSRF::hiddenField();
             $arr= array(
-              array("name"=>"Order",                "style"=>"", "descr"=>""),
-              array("name"=>"Device Name",          "style"=>"", "descr"=>""),
-              array("name"=>"Belonged Interface",   "style"=>"", "descr"=>""),
-              array("name"=>"Tag Name",             "style"=>"", "descr"=>""),
               array("name"=>"OBIS",                 "style"=>"", "descr"=>""),
               array("name"=>"Data Type",            "style"=>"", "descr"=>""),
             );
@@ -38,10 +34,6 @@
             ?>
             <div class="cbi-section cbi-tblsection" id="page_iec1107" name="page_iec1107">
               <?php page_table_title('iec1107', $arr); ?>
-              <div class="cbi-section-create">
-                <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addData('iec1107')">
-                <?php conf_im_ex('Iec1107'); ?>
-              </div>
             </div>
             <?php echo $buttons ?>
           </form>
@@ -54,7 +46,7 @@
 <div id="popLayer"></div>
 <div id="popBox" style="overflow:auto">
   <input hidden="hidden" name="page_type" id="page_type" value="0">
-  <h4><?php echo _("IEC62056-21 Rules Setting"); ?></h4>
+  <h4>IEC62056-21 <?php echo _("Rules Setting"); ?></h4>
   <div class="cbi-section">
     <?php
       $table_name = 'iec1107';

@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("OPCUA Rules"); ?>
+          OPCUA <?php echo _("Setting"); ?>
           </div>
         </div><!-- ./row -->
       </div><!-- ./card-header -->
@@ -28,21 +28,13 @@
               <div class="cbi-section cbi-tblsection" id="page_opcuacli" name="page_opcuacli">
                 <?php
                 $arr= array(
-                  array("name"=>"Order",                "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Device Name",          "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Belonged Interface",   "style"=>"", "descr"=>"", "ctl"=>"select"),
-                  array("name"=>"Tag Name",          "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Node Name",            "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Data Type",            "style"=>"", "descr"=>"", "ctl"=>"select"),
+                  array("name"=>"Node Name",            "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+                  array("name"=>"Data Type",            "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
                 );
 
                 $arr = dct_rules_common_add_fields($arr);
                 page_table_title('opcuacli', $arr);
                 ?>
-                <div class="cbi-section-create">
-                  <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addData('opcuacli')">
-                  <?php conf_im_ex('Opcuacli'); ?>
-                </div>
               </div>
             <?php echo $buttons ?>
           </form>
@@ -55,7 +47,7 @@
 <div id="popLayer"></div>
 <div id="popBox" style="overflow:auto">
   <input hidden="hidden" name="page_type" id="page_type" value="0">
-  <h4><?php echo _("OPCUA Rules Object Setting"); ?></h4>
+  <h4>OPCUA <?php echo _("Rules Setting"); ?></h4>
   <div class="cbi-section">
     <?php
       $table_name = 'opcuacli';

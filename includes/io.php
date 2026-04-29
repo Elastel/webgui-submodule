@@ -17,6 +17,7 @@ function DisplayIO()
             if (isset($_POST['applyIOsettings'])) {
                 sleep(2);
                 exec('sudo /etc/init.d/dct restart > /dev/null');
+                $status->addMessage('Configuration applied.', 'success');
             }
         }
     }
@@ -26,7 +27,7 @@ function DisplayIO()
             if (is_uploaded_file($_FILES['upload_file']['tmp_name'])) {
                 save_import_file($_POST['page_im_ex_name'], $status, $_FILES['upload_file']);
             } else {
-                $status->addMessage('fail to upload file', 'danger');
+                $status->addMessage('Fail to upload file', 'danger');
             }
         }
     }
@@ -120,6 +121,6 @@ function saveIOConfig($status, $model)
     
     exec('sudo /usr/local/bin/uci commit dct');
 
-    $status->addMessage('dct configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
 }

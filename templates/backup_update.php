@@ -20,24 +20,24 @@
             <h5><?php echo _("Status") ;?></h5>
             <?php 
               echo \ElastPro\Tokens\CSRF::hiddenField();;
-              LabelControlCustom(_("Version:"), 'cur_version', 'cur_version', RASPI_VERSION);
+              LabelControlCustom(_("Version").':', 'cur_version', 'cur_version', RASPI_VERSION);
               $cmd_get_local_node = "cd /var/www/html; git for-each-ref --format='%(objectname)' refs/heads/$(git rev-parse --abbrev-ref HEAD)";
               $cmd_get_remote_node = "cd /var/www/html; git for-each-ref --format='%(objectname)' refs/remotes/origin/$(git rev-parse --abbrev-ref HEAD)";
               exec($cmd_get_local_node, $cur_node);
               exec($cmd_get_remote_node, $new_node);
             ?>
             <div class="cbi-value">
-              <label class="cbi-value-title"><?php echo _("Current node:");?></label>
+              <label class="cbi-value-title"><?php echo _("Current node");?>:</label>
               <label id="cur_node" name="cur_node"><?php echo _(empty($cur_node[0]) ? "-" : $cur_node[0]);?></label>
             </div>
             <div class="cbi-value">
-              <label class="cbi-value-title"><?php echo _("Online newest node:");?></label>
+              <label class="cbi-value-title"><?php echo _("Online newest node");?>:</label>
               <label id="new_node" name="new_node"><?php echo _(empty($new_node[0]) ? "-" : $new_node[0]);?></label>
               <button class="btn rounded-right node_online_update" type="button"><i class="fas fa-sync"></i></button>
             </div>
             <div class="cbi-value">
               <label class="cbi-value-title"><?php echo _("Node update"); ?></label>
-              <input type="button" class="cbi-button-add" name="update_node" id="update_node" value="Perform update" <?php if ($cur_node[0] == $new_node[0]) {echo 'disabled="disabled" style="background-color:grey"';}?>>
+              <input type="button" class="cbi-button-add" name="update_node" id="update_node" value="<?=_('Perform update')?>" <?php if ($cur_node[0] == $new_node[0]) {echo 'disabled="disabled" style="background-color:grey"';}?>>
             </div>
             <!-- <h5><?php echo _("Backup") ;?></h5>
             <div class="cbi-value">
@@ -46,8 +46,8 @@
             </div> -->
             <h5><?php echo _("Restore") ;?></h5>
             <div class="cbi-value">
-              <label class="cbi-value-title"><?php echo _("Reset configs"); ?></label>
-              <input type="button" class="cbi-button-add" name="reset_configs" id="reset_configs" value="Perform reset">
+              <label class="cbi-value-title"><?php echo _("Reset configs"); ?>:</label>
+              <input type="button" class="cbi-button-add" name="reset_configs" id="reset_configs" value="<?=_('Perform reset')?>">
             </div>
             <!-- <div class="cbi-value">
               <label class="cbi-value-title"><?php echo _("Restore backup"); ?></label>

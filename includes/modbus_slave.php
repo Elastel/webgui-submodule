@@ -13,7 +13,8 @@ function DisplayModbusSlave()
                 $status->addMessage('Error data', 'danger');
             } else {
                 if (isset($_POST['applymodbusslavesettings'])) {
-                    exec('sudo /etc/init.d/dct restart >/dev/null'); 
+                    exec('sudo /etc/init.d/dct restart >/dev/null');
+                    $status->addMessage('Configuration applied.', 'success');
                 }
             }
         }
@@ -44,7 +45,7 @@ function saveModbusSlaveConfig($status)
 
     exec('sudo uci commit dct');
     
-    $status->addMessage('Modbus Slave configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
 }
 

@@ -13,6 +13,7 @@ function DisplayServer()
             if (isset($_POST['applyserversettings'])) {
                 sleep(2);
                 exec('sudo /etc/init.d/dct restart > /dev/null');
+                $status->addMessage('Configuration applied.', 'success');
             }
         }
     }
@@ -129,5 +130,5 @@ function saveServerConfig($status)
     file_put_contents(ELASTEL_DCT_CONFIG_JSON, $json_data);
     exec('sudo /usr/sbin/set_config ' . ELASTEL_DCT_CONFIG_JSON . ' dct server');
 
-    $status->addMessage('dct configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
 }

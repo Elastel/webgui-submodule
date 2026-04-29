@@ -77,7 +77,7 @@ function DisplayRestAPI()
  */
 function saveAPISettings($status, $apiKey, $dotenv)
 {
-    $status->addMessage('Saving API key', 'info');
+    // $status->addMessage('Saving API key', 'info');
     $dotenv->set('ElastPro_API_KEY', $apiKey);
     return $status;
 }

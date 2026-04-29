@@ -15,7 +15,6 @@ function DisplayDHCPConfig()
             saveDHCPConfig($status);
             
             if (isset($_POST['applydhcpdsettings'])) {
-                //exec('sudo /bin/systemctl restart dnsmasq.service', $dnsmasq, $return);
                     exec('sudo ip addr flush dev br0'); // clear ip caches
                     exec('sudo /etc/raspap/hostapd/servicestart.sh --interface br0 --seconds 3', $return);
                 if (model_category('buildroot')) {
@@ -25,17 +24,12 @@ function DisplayDHCPConfig()
         }
     }
 
-    // foreach ($return as $line) {
-    //     $status->addMessage($line, 'info');
-    // }
     exec('pidof dnsmasq | wc -l', $dnsmasq);
     $dnsmasq_state = ($dnsmasq[0] > 0);
 
     getWifiInterface();
     $ap_iface = "br0";
     $serviceStatus = $dnsmasq_state ? 'up' : 'down';
-    // exec('cat '. RASPI_DNSMASQ_PREFIX.'raspap.conf', $return);
-    // $conf = ParseConfig($return);
     exec('cat '. RASPI_DNSMASQ_PREFIX.$ap_iface.'.conf', $return);
     $conf = array_merge(ParseConfig($return));
     $hosts = array();
@@ -230,9 +224,9 @@ function updateDnsmasqConfig($iface,$status)
     file_put_contents('/tmp/dnsmasqdata', $config);
     $msg = file_exists(RASPI_DNSMASQ_PREFIX.$iface.'.conf') ? 'updated' : 'added';
     system('sudo cp /tmp/dnsmasqdata '.RASPI_DNSMASQ_PREFIX.$iface.'.conf', $result);
-    if ($result == 0) {
-        $status->addMessage('Dnsmasq configuration for '.$iface.' '.$msg.'.', 'success');
-    }
+    // if ($result == 0) {
+    //     $status->addMessage('Dnsmasq configuration for '.$iface.' '.$msg.'.', 'success');
+    // }
 
     // write default 090_raspap.conf
     $config = '# RaspAP default config'.PHP_EOL;
@@ -289,11 +283,11 @@ function updateDHCPConfig($iface,$status)
         $cfg[] = PHP_EOL;
         $cfg = join(PHP_EOL, $cfg);
         $dhcp_cfg .= $cfg;
-        $status->addMessage('DHCP configuration for '.$iface.' added.', 'success');
+        $status->addMessage('Configuration added.', 'success');
     } else {
         $cfg = join(PHP_EOL, $cfg);
         $dhcp_cfg = preg_replace('/^#\sRaspAP\s'.$iface.'\s.*?(?=\s*^\s*$)/ms', $cfg, $dhcp_cfg, 1);
-        $status->addMessage('DHCP configuration for '.$iface.' updated.', 'success');
+        $status->addMessage('Configuration updated.', 'success');
     }
     file_put_contents('/tmp/dhcpddata', $dhcp_cfg);
     system('sudo cp /tmp/dhcpddata '.RASPI_DHCPCD_CONFIG, $result);

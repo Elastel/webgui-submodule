@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("IO Setting"); ?>
+          IO <?php echo _("Setting"); ?>
           </div>
         </div><!-- ./row -->
       </div><!-- ./card-header -->
@@ -25,23 +25,23 @@
             <?php echo \ElastPro\Tokens\CSRF::hiddenField();
               if ($adc_index_count > 0) { 
                 $arrADC = array(
-                  array("name"=>"Device Name",          "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"ADC Channel",          "style"=>"", "descr"=>"", "ctl"=>"select"),
-                  array("name"=>"Tag Name",          "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Capture Type",         "style"=>"", "descr"=>"", "ctl"=>"select"),
-                  array("name"=>"Range Down",           "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Range Up",             "style"=>"", "descr"=>"", "ctl"=>"input"),
+                  array("name"=>"Device Name",          "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+                  array("name"=>"ADC Channel",          "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                  array("name"=>"Tag Name",             "data-field" => "factor_name", "style"=>"", "descr"=>"", "ctl"=>"input"),
+                  array("name"=>"Capture Type",         "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                  array("name"=>"Range Down",           "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+                  array("name"=>"Range Up",             "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
                 );
 
-                $arrADC = dct_rules_common_add_fields($arrADC);
+                $arrADC = dct_rules_common_add_fields_behind($arrADC);
             ?>
               <div class="cbi-section cbi-tblsection" id="pageADC" name="pageADC">
                 <input type="hidden" name="tableDataADC" value="" id="hidTD_adc">
                 <input type="hidden" name="option_list_adc" value="" id="option_list_adc">
-                <h4><?php echo _("ADC Setting"); ?></h4>
+                <h4>ADC <?php echo _("Setting"); ?></h4>
                 <?php page_table_title('adc', $arrADC); ?>
                 <div class="cbi-section-create">
-                  <input type="button" class="cbi-button-add" name="btnADC" value="ADD" onclick="addDataIO(this, 'io')">
+                  <input type="button" class="cbi-button-add" name="btnADC" value=<?=_("ADD")?> onclick="addDataIO(this, 'io')">
                   <?php conf_im_ex('ADC'); ?>
                 </div>
               </div>
@@ -49,23 +49,23 @@
             <?php
             if ($di_index_count > 0) { 
               $arrDI = array(
-                array("name"=>"Device Name",          "style"=>"", "descr"=>"", "ctl"=>"input"),
-                array("name"=>"DI Channel",           "style"=>"", "descr"=>"", "ctl"=>"select"),
-                array("name"=>"Tag Name",          "style"=>"", "descr"=>"Multiple Tags Are Separated By Semicolon", "ctl"=>"input"),
-                array("name"=>"Mode",                 "style"=>"", "descr"=>"", "ctl"=>"select"),
-                array("name"=>"Count Method",         "style"=>"", "descr"=>"", "ctl"=>"select"),
-                array("name"=>"Debounce Interval",    "style"=>"", "descr"=>"", "ctl"=>"input"),
+                array("name"=>"Device Name",          "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+                array("name"=>"DI Channel",           "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                array("name"=>"Tag Name",             "data-field" => "factor_name", "style"=>"", "descr"=>"Multiple Tags Are Separated By Semicolon", "ctl"=>"input"),
+                array("name"=>"Mode",                 "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                array("name"=>"Count Method",         "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                array("name"=>"Debounce Interval",    "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
               );
 
-              $arrDI = dct_rules_common_add_fields($arrDI);
+              $arrDI = dct_rules_common_add_fields_behind($arrDI);
             ?>
               <div class="cbi-section cbi-tblsection" id="pageDI" name="pageDI">
                 <input type="hidden" name="tableDataDI" value="" id="hidTD_di">
                 <input type="hidden" name="option_list_di" value="" id="option_list_di">
-                <h4><?php echo _("DI Setting"); ?></h4>
+                <h4>DI <?php echo _("Setting"); ?></h4>
                 <?php page_table_title('di', $arrDI);?>
                 <div class="cbi-section-create">
-                  <input type="button" class="cbi-button-add" name="btnDI" value="ADD" onclick="addDataIO(this, 'io')">
+                  <input type="button" class="cbi-button-add" name="btnDI" value=<?=_("ADD")?> onclick="addDataIO(this, 'io')">
                   <?php conf_im_ex('DI'); ?>
                 </div>
               </div>
@@ -73,22 +73,22 @@
             <?php
             if ($do_index_count > 0) { 
               $arrDO = array(
-                array("name"=>"Device Name",          "style"=>"", "descr"=>"", "ctl"=>"input"),
-                array("name"=>"DO Channel",           "style"=>"", "descr"=>"", "ctl"=>"select"),
-                array("name"=>"Tag Name",          "style"=>"", "descr"=>"Multiple Tags Are Separated By Semicolon", "ctl"=>"input"),
-                array("name"=>"Init Status",          "style"=>"", "descr"=>"", "ctl"=>"input"),
-                array("name"=>"Current Status",       "style"=>"", "descr"=>"", "ctl"=>"input"),
+                array("name"=>"Device Name",          "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+                array("name"=>"DO Channel",           "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                array("name"=>"Tag Name",             "data-field" => "factor_name", "style"=>"", "descr"=>"Multiple Tags Are Separated By Semicolon", "ctl"=>"input"),
+                array("name"=>"Init Status",          "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+                array("name"=>"Current Status",       "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
               );
 
-              $arrDO = dct_rules_common_add_fields($arrDO);
+              $arrDO = dct_rules_common_add_fields_behind($arrDO);
             ?>
               <div class="cbi-section cbi-tblsection" id="pageDO" name="pageDO">
                 <input type="hidden" name="tableDataDO" value="" id="hidTD_do">
                 <input type="hidden" name="option_list_do" value="" id="option_list_do">
-                <h4><?php echo _("DO Setting"); ?></h4>
+                <h4>DO <?php echo _("Setting"); ?></h4>
                 <?php page_table_title('do', $arrDO); ?>
                 <div class="cbi-section-create">
-                  <input type="button" class="cbi-button-add" name="btnDO" value="ADD" onclick="addDataIO(this, 'io')">
+                  <input type="button" class="cbi-button-add" name="btnDO" value=<?=_("ADD")?> onclick="addDataIO(this, 'io')">
                   <?php conf_im_ex('DO'); ?>
                 </div>
               </div>
@@ -106,7 +106,8 @@
   <input hidden="hidden" name="page_type" id="page_type" value="0">
   <input hidden="hidden" name="model" id="model" value="<?php echo $model ?>">
   <input hidden="hidden" name="page_name" id="page_name" value="0">
-  <h4 name="popBoxTitle" id="popBoxTitle"><?php echo _("ADC Setting"); ?></h4>
+  <input type="hidden" data-i18n="setting" value="<?=_("Setting")?>">
+  <h4 name="popBoxTitle" id="popBoxTitle">ADC <?php echo _("Setting"); ?></h4>
   <div class="cbi-section">
     <?php
       $table_name = 'io';
@@ -151,14 +152,14 @@
       $mode = ['Counting Mode', 'Status Mode'];
       SelectControlCustom(_('Mode'), $table_name.'.mode', $mode, $mode[0], $table_name.'.mode', null, 'selectMode()');
       echo '<div id="pageCount" name="pageCount">';
-      $count_method = ['Rising Edge', 'Falling Edge'];
+      $count_method = [_('Rising Edge'), -('Falling Edge')];
       SelectControlCustom(_('Count Method'), $table_name.'.count_method', $count_method, $count_method[0], $table_name.'.count_method');
       InputControlCustom(_('Debounce Interval'), $table_name.'.debounce_interval', $table_name.'.debounce_interval', _('ms'));
       echo '</div>
       </div>';
 
       echo '<div name="pageDOMod" id="pageDOMod">';
-      $init_status = ['Open', 'Close'];
+      $init_status = [_('Open'), _('Close')];
       SelectControlCustom(_('Init Status'), $table_name.'.init_status', $init_status, $init_status[0], $table_name.'.init_status');
       
       LabelControlCustom(_("Current Status"), $table_name.'.cur_status', $table_name.'.cur_status');

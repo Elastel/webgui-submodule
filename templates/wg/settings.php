@@ -13,8 +13,8 @@
     <div class="cbi-value" id="page_role">
       <label class="cbi-value-title"><?php echo _("Role"); ?></label>
       <select id="role" name="role" class="cbi-input-select" onchange="roleChangeWg()">
-        <option value="client">Client</option>
-        <option value="server">Server</option>
+        <option value="client"><?=_("Client")?></option>
+        <option value="server"><?=_("Server")?></option>
       </select>
     </div>
 
@@ -75,7 +75,7 @@
 
       <div id="page_server">
         <div class="cbi-value">
-          <label class="cbi-value-title"><?php echo _("Enable Client2"); ?></label>
+          <label class="cbi-value-title"><?php echo _("Enable Client"); ?>2</label>
           <input type="checkbox" class="cbi-input-checkbox" name="enable_client2" id="enable_client2" <?php echo ($enable_client[2] == true ? 'checked' : ''); ?> value="1" onchange="enableClient(2)"/>
         </div>
         <div style="display:<?php echo ($enable_client[2] == true ? 'block' : 'none'); ?>" id="client2">
@@ -97,7 +97,7 @@
         </div>
 
         <div class="cbi-value">
-          <label class="cbi-value-title"><?php echo _("Enable Client3"); ?></label>
+          <label class="cbi-value-title"><?php echo _("Enable Client"); ?>3</label>
           <input type="checkbox" class="cbi-input-checkbox" name="enable_client3" id="enable_client3" <?php echo ($enable_client[3] == true ? 'checked' : ''); ?> value="1" onchange="enableClient(3)"/>
         </div>
         <div style="display:<?php echo ($enable_client[3] == true ? 'block' : 'none'); ?>;" id="client3">

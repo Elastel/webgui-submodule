@@ -149,23 +149,23 @@ function get_belonged_interface($com_proto, $tcp_proto)
     $found = true;
   }  
   if ($tcp1_enable[0] == "1" && $tcp1_proto[0] == $tcp_proto) {
-    $option_list["TCP1"] = "Network Node1";
+    $option_list["TCP1"] = _("Network Node")."1";
     $found = true;
   }
   if ($tcp2_enable[0] == "1" && $tcp2_proto[0] == $tcp_proto) {
-    $option_list["TCP2"] = "Network Node2";
+    $option_list["TCP2"] = _("Network Node")."2";
     $found = true;
   }
   if ($tcp3_enable[0] == "1" && $tcp3_proto[0] == $tcp_proto) {
-    $option_list["TCP3"] = "Network Node3";
+    $option_list["TCP3"] = _("Network Node")."3";
     $found = true;
   }
   if ($tcp4_enable[0] == "1" && $tcp4_proto[0] == $tcp_proto) {
-    $option_list["TCP4"] = "Network Node4";
+    $option_list["TCP4"] = _("Network Node")."4";
     $found = true;
   }
   if ($tcp5_enable[0] == "1" && $tcp5_proto[0] == $tcp_proto) {
-    $option_list["TCP5"] = "Network Node5";
+    $option_list["TCP5"] = _("Network Node")."5";
     $found = true;
   }
 
@@ -185,7 +185,7 @@ function page_interface_com($num)
 
   echo '<div class="tab-pane '.$active.'" id="com'.$num.'">
         <div class="row">';
-  RadioControlCustom(_('Enabled'), 'com_enabled', 'com', 'enableCom', $num);
+  RadioControlCustom(_('Serial Port'), 'com_enabled', 'com', 'enableCom', $num);
   echo '<div id="page_com'.$num.'" name="page_com'.$num.'">';
 
   $baudrate_list = array('300'=>'300', '600'=>'600', '1200'=>'1200', '2400'=>'2400', '4800'=>'4800', '9600'=>'9600', '19200'=>'19200', '38400'=>'38400',
@@ -273,7 +273,7 @@ function page_interface_tcp($num)
 
   echo '<div class="tab-pane '.$active.'" id="tcp'.$num.'">
         <div class="row">';
-  RadioControlCustom(_('Enabled'), 'tcp_enabled', 'tcp', 'enableTcp', $num);
+  RadioControlCustom(_('Network Node'), 'tcp_enabled', 'tcp', 'enableTcp', $num);
   echo '<div id="page_tcp'.$num.'" name="page_tcp'.$num.'">';
 
   InputControlCustom(_("Server Address"), 'server_addr'.$num, 'server_addr'.$num);
@@ -640,32 +640,32 @@ echo "<div class=\"tab-pane $active\" id=\"server$num\">
 
               <div name=\"page_var$num\" id=\"page_var$num\">
                 <div class=\"cbi-value\">
-                  <label class=\"cbi-value-title\">"; echo _("Variable Name1"); echo "</label>
+                  <label class=\"cbi-value-title\">"; echo _("Variable Name"); echo "1</label>
                   <input type=\"text\" class=\"cbi-input-text\" name=\"var_name1_$num\" id=\"var_name1_$num\" />
                 </div>
 
                 <div class=\"cbi-value\">
-                  <label class=\"cbi-value-title\">"; echo _("Variable Value1"); echo "</label>
+                  <label class=\"cbi-value-title\">"; echo _("Variable Value"); echo "1</label>
                   <input type=\"text\" class=\"cbi-input-text\" name=\"var_value1_$num\" id=\"var_value1_$num\" />
                 </div>
 
                 <div class=\"cbi-value\">
-                  <label class=\"cbi-value-title\">"; echo _("Variable Name2"); echo "</label>
+                  <label class=\"cbi-value-title\">"; echo _("Variable Name"); echo "2</label>
                   <input type=\"text\" class=\"cbi-input-text\" name=\"var_name2_$num\" id=\"var_name2_$num\" />
                 </div>
 
                 <div class=\"cbi-value\">
-                  <label class=\"cbi-value-title\">"; echo _("Variable Value2"); echo "</label>
+                  <label class=\"cbi-value-title\">"; echo _("Variable Value"); echo "2</label>
                   <input type=\"text\" class=\"cbi-input-text\" name=\"var_value2_$num\" id=\"var_value2_$num\" />
                 </div>
 
                 <div class=\"cbi-value\">
-                  <label class=\"cbi-value-title\">"; echo _("Variable Name3"); echo "</label>
+                  <label class=\"cbi-value-title\">"; echo _("Variable Name"); echo "3</label>
                   <input type=\"text\" class=\"cbi-input-text\" name=\"var_name3_$num\" id=\"var_name3_$num\" />
                 </div>
 
                 <div class=\"cbi-value\">
-                  <label class=\"cbi-value-title\">"; echo _("Variable Value3"); echo "</label>
+                  <label class=\"cbi-value-title\">"; echo _("Variable Value"); echo "3</label>
                   <input type=\"text\" class=\"cbi-input-text\" name=\"var_value3_$num\" id=\"var_value3_$num\" />
                 </div>
               </div><!-- /.page_var1 -->
@@ -703,11 +703,6 @@ echo "<div class=\"tab-pane $active\" id=\"server$num\">
       </div><!-- /.tab-pane | basic tab -->";
 }
 
-function conf_im_ex($conf_name)
-{
-  echo "<input type=\"button\" class=\"cbi-button-add\" name=\"confBox\" value=\"Configure Import Export\" onclick=\"conf_im_ex('$conf_name')\">";
-}
-
 function page_im_ex($conf_name) {
   $conf_name_lower = strtolower($conf_name);
   echo "<div id=\"confLayer\"></div>
@@ -718,7 +713,7 @@ function page_im_ex($conf_name) {
     </br>
     <div class=\"card\">
       <div class=\"card-header\">
-        <h4 id=\"title\" >";echo _("$conf_name Configure Import Export");echo "</h4>
+        <h4 id=\"title\" >$conf_name "._("Configure Import Export")."</h4>
       </div>
       </br></br></br>
       <div class=\"cbi-value\">
@@ -733,7 +728,7 @@ function page_im_ex($conf_name) {
           <label class=\"cbi-value-title\">"; echo _("Configure Import"); echo "</label>
           <label for=\"upload\" class=\"cbi-file-lable\">
             <input type=\"file\" name=\"upload_file\" id=\"upload_file\">
-            <input type=\"submit\" value=\"Upload\" name=\"upload\" data-toggle=\"modal\" data-target=\"#hostapdModal\">
+            <input type=\"submit\" value=\""._("Upload")."\" name=\"upload\" data-toggle=\"modal\" data-target=\"#hostapdModal\">
           </label>
         </div>
       </form>
@@ -776,7 +771,7 @@ function save_import_file($section, $status, $file) {
             exec("sudo dos2unix $new_file_path");
             exec("sudo conf_im_ex import $section");
         } else {
-            $status->addMessage('fail to upload file', 'danger');
+            $status->addMessage('Fail to upload file', 'danger');
         }
 
         return $status;
@@ -786,10 +781,16 @@ function save_import_file($section, $status, $file) {
     }
 }
 
+function conf_im_ex($conf_name)
+{
+  echo "<input type=\"button\" class=\"cbi-button-add\" name=\"confBox\" value=\""._("Configure Import Export")."\" onclick=\"conf_im_ex('$conf_name')\">";
+}
+
 function page_table_title($section, $option_list) {
+  echo '<input type="hidden" data-i18n="cur_value" value="'._("Current Value").'">';
+  echo '<input type="hidden" data-i18n="write_value" value="'._("Write Value").'">';
   echo "<table class=\"table cbi-section-table\" name=\"table_$section\" id=\"table_$section\">
       <tr class=\"tr cbi-section-table-titles\">";
-
   $name_buf = '';
   $descr_buf = '';
   
@@ -798,13 +799,12 @@ function page_table_title($section, $option_list) {
 
     if ($option_list[$i]['name'] !== '') {
       $name = _($option_list[$i]['name']);
-      $name_buf .= "<th class=\"th cbi-section-table-cell\" $style>$name</th>";
+      $data_field = $option_list[$i]['data-field'] != '' ? "data-field="._($option_list[$i]['data-field']) : '';
+      $name_buf .= "<th class=\"th cbi-section-table-cell\" $data_field $style>$name</th>";
     }
-    
-    if ($option_list[$i]['descr'] !== '') {
-      $descr = _($option_list[$i]['descr']);
-      $descr_buf .= "<th class=\"th cbi-section-table-cell\" $style>$descr</th>";
-    }
+
+    $descr = $option_list[$i]['descr'] != '' ? _($option_list[$i]['descr']) : '';
+    $descr_buf .= "<th class=\"th cbi-section-table-cell\" $style>$descr</th>";
     
     unset($name);
     unset($style);
@@ -818,12 +818,16 @@ function page_table_title($section, $option_list) {
   echo $descr_buf;
   echo "<th class=\"th cbi-section-table-cell cbi-section-actions\"></th>
         <th class=\"th cbi-section-table-cell cbi-section-actions\"></th>
-        <th class=\"th cbi-section-table-cell cbi-section-actions\"></th>
-        <th class=\"th cbi-section-table-cell cbi-section-actions\"></th>
-        <th class=\"th cbi-section-table-cell cbi-section-actions\"></th>
-        <th class=\"th cbi-section-table-cell cbi-section-actions\"></th>
       </tr>
     </table>";
+  if ($section != 'adc' && $section != 'di' && $section != 'do' && $section != 'system_param' &&
+      $section != 'modbus_slave_point' && $section != 'dnp3') {
+    $section_t = ucfirst($section);
+    echo "<div class=\"cbi-section-create\">
+      <input type=\"button\" class=\"cbi-button-add\" name=\"popBox\" value="._("Add")." onclick=\"addData('$section')\">
+      <input type=\"button\" class=\"cbi-button-add\" name=\"confBox\" value=\""._("Configure Import Export")."\" onclick=\"conf_im_ex('$section_t')\">
+      </div>";
+  }
 }
 
 function page_progressbar($title, $content) {
@@ -847,7 +851,7 @@ function page_progressbar($title, $content) {
   </div>';
 }
 
-function dct_rules_common_add_fields($arrOri) {
+function dct_rules_common_add_fields_behind($arrOri) {
   $common = array(
     array("name"=>"Reporting Center",     "style"=>"", "descr"=>"Multiple Servers Are Separated By Minus", "ctl"=>"input"),
     array("name"=>"Operator",             "style"=>"display:none", "descr"=>"0 + - * /", "ctl"=>"select"),
@@ -868,11 +872,24 @@ function dct_rules_common_add_fields($arrOri) {
   return array_merge($arrOri, $common);
 }
 
+function dct_rules_common_add_fields($arrOri) {
+  $common_pre = array(
+    array("name"=>"Order",                "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+    array("name"=>"Device Name",          "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+    array("name"=>"Belonged Interface",   "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+    array("name"=>"Tag Name",             "data-field" => "factor_name", "style"=>"", "descr"=>"", "ctl"=>"input"),
+  );
+
+  $tmp_array = array_merge($common_pre, $arrOri);
+
+  return dct_rules_common_add_fields_behind($tmp_array);
+}
+
 function dct_rules_common($table_name) {
   InputControlCustom(_('Reporting Center'), $table_name.'.server_center', $table_name.'.server_center', _('Multiple Servers Are Separated By Minus'));
 
   $operator_list = [_('None'), '+', '-', '*', '/', _('Expression')];
-  SelectControlCustom(_('Operator'), $table_name.'.operator', $operator_list, $operator_list[0], $table_name.'.operator', _('0 + - * /'), "selectOperator('$table_name')");
+  SelectControlCustom(_('Operator (math)'), $table_name.'.operator', $operator_list, $operator_list[0], $table_name.'.operator', _('0 + - * /'), "selectOperator('$table_name')");
 
   echo '<div name="page_operand" id="page_operand">';
   InputControlCustom(_('Operand'), $table_name.'.operand', $table_name.'.operand');
@@ -888,7 +905,7 @@ function dct_rules_common($table_name) {
   CheckboxControlCustom(_('Event Reporting'), $table_name.'.sms_reporting', $table_name.'.sms_reporting', null, null, "enableAlarm('$table_name')");
 
   echo '<div name="page_sms" id="page_sms">';
-  $report_type = ['Change reporting', 'Alarm reporting'];
+  $report_type = [_('Change reporting'), _('Alarm reporting')];
   SelectControlCustom(_('Report Type'), $table_name.'.report_type', $report_type, $report_type[0], $table_name.'.report_type', null, "selectReportType('$table_name')");
   
   echo '<div name="page_alarm" id="page_alarm">';

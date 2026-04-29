@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("BACnet Server"); ?>
+          BACnet <?php echo _("Server"); ?>
           </div>
         </div><!-- ./row -->
       </div><!-- ./card-header -->
@@ -24,7 +24,7 @@
           <form method="POST" action="bacnet" role="form">
           <?php echo \ElastPro\Tokens\CSRF::hiddenField();;
             echo '<div class="cbi-section cbi-tblsection">';
-            RadioControlCustom(_('BACnet Server'), 'enabled', 'bacnet', 'enableBACnet');
+            RadioControlCustom('BACnet '._('Server'), 'enabled', 'bacnet', 'enableBACnet');
 
             echo '<div id="page_bacnet" name="page_bacnet">';
 

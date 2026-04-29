@@ -24,10 +24,10 @@
                   <div class="row ml-1">
                       <div class="col-sm">
                         <div class="row mb-1">
-                            <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Version:"); ?></div><div class="col-xs-3"><?php echo $version; ?></div>
+                            <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Version"); ?>:</div><div class="col-xs-3"><?php echo $version; ?></div>
                         </div>
                         <div class="row mb-1">
-                            <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Status:"); ?></div>
+                            <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Status"); ?>:</div>
                             <div class="col-xs-3">
                                 <?php 
                                 if ($enable) {
@@ -41,13 +41,13 @@
                             </div>
                         </div>
                         <div class="row mb-1">
-                            <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Use SN:"); ?></div><div class="col-xs-3"><?php echo $use_sn; ?></div>
+                            <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Use SN"); ?>:</div><div class="col-xs-3"><?php echo $use_sn; ?></div>
                         </div>
                         <div class="row mb-1">
-                            <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Auth Code:"); ?></div><div class="col-xs-3"><?php echo $auth_code; ?></div>
+                            <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Auth Code"); ?>:</div><div class="col-xs-3"><?php echo $auth_code; ?></div>
                         </div>
                         <div class="row mb-1">
-                            <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("URL Entry:"); ?></div>
+                            <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("URL Entry"); ?>:</div>
                             <input class="btn btn-outline btn-primary" type="submit" value="ThingsWing" onClick="window.open('https://device.thingswing.com','nr');">
                         </div>
                         </br>

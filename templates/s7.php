@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("S7 Setting"); ?>
+          S7 <?php echo _("Setting"); ?>
           </div>
         </div><!-- ./row -->
       </div><!-- ./card-header -->
@@ -26,24 +26,16 @@
           <input type="hidden" name="option_list_s7" value="" id="option_list_s7">
           <?php echo \ElastPro\Tokens\CSRF::hiddenField();
           $arr= array(
-            array("name"=>"Order",                "style"=>"", "descr"=>"", "ctl"=>"input"),
-            array("name"=>"Device Name",          "style"=>"", "descr"=>"", "ctl"=>"input"),
-            array("name"=>"Belonged Interface",   "style"=>"", "descr"=>"", "ctl"=>"select"),
-            array("name"=>"Tag Name",          "style"=>"", "descr"=>"Multiple Tags Are Separated By Semicolon", "ctl"=>"input"),
-            array("name"=>"Register Type",        "style"=>"", "descr"=>"", "ctl"=>"select"),
-            array("name"=>"Register Address",     "style"=>"", "descr"=>"", "ctl"=>"input"),
-            array("name"=>"Count",                "style"=>"", "descr"=>"1~120", "ctl"=>"input"),
-            array("name"=>"Data Type",            "style"=>"", "descr"=>"", "ctl"=>"select"),
+            array("name"=>"Register Type",        "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+            array("name"=>"Register Address",     "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+            array("name"=>"Count",                "data-field" => "", "style"=>"", "descr"=>"1~120", "ctl"=>"input"),
+            array("name"=>"Data Type",            "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
           );
           
           $arr = dct_rules_common_add_fields($arr);
           ?>       
             <div class="cbi-section cbi-tblsection" id="page_s7" name="page_s7">
               <?php page_table_title('s7', $arr); ?>
-              <div class="cbi-section-create">
-                <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addData('s7')">
-                <?php conf_im_ex('S7'); ?>
-              </div>
             </div>
             <?php echo $buttons ?>
           </form>
@@ -56,7 +48,7 @@
 <div id="popLayer"></div>
 <div id="popBox" style="overflow:auto">
   <input hidden="hidden" name="page_type" id="page_type" value="0">
-  <h4><?php echo _("S7 Rules Setting"); ?></h4>
+  <h4>S7 <?php echo _("Rules Setting"); ?></h4>
   <div class="cbi-section">
     <?php
       $table_name = 's7';

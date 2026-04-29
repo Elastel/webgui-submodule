@@ -13,7 +13,8 @@ function DisplayDnp3()
                 $status->addMessage('Error data', 'danger');
             } else {
                 if (isset($_POST['applydnp3settings'])) {
-                    exec('sudo /etc/init.d/dct restart >/dev/null'); 
+                    exec('sudo /etc/init.d/dct restart >/dev/null');
+                    $status->addMessage('Configuration applied.', 'success'); 
                 }
             }
         }
@@ -45,7 +46,7 @@ function saveDnp3Config($status)
 
     exec('sudo uci commit dct');
     
-    $status->addMessage('DNP3 configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
 }
 

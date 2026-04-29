@@ -17,8 +17,8 @@ textarea {
 
 <div class="tab-pane active" id="actions">
     <div class="cbi-section">
-        <h3>Backup</h3>
-        <div class="cbi-section-descr">Click "Generate archive" to download a tar archive of the current configuration files.</div>
+        <h3><?=_('Backup')?></h3>
+        <div class="cbi-section-descr"><?=_('Click "Generate archive" to download a tar archive of the current configuration files.')?></div>
         </br>
         <div class="cbi-value">
             <label class="cbi-value-title"><?php echo _("Download backup") ?></label>
@@ -26,23 +26,23 @@ textarea {
         </div>
     </div>
     <div class="cbi-section">
-        <h3>Restore</h3>
-        <div class="cbi-section-descr">To restore configuration files, you can upload a previously generated backup archive here.</div>
+        <h3><?=_('Restore')?></h3>
+        <div class="cbi-section-descr"><?=_('To restore configuration files, you can upload a previously generated backup archive here.')?></div>
         </br>
         <div class="cbi-value">
           <input hidden="hidden" name="page_im_ex_name" id="page_im_ex_name" value="0">
           <label class="cbi-value-title"><?php echo _("Restore backup"); ?></label>
           <label for="upload" class="cbi-file-lable\">
             <input type="file" name="upload_file" id="upload_file">
-            <input type="submit" value="Upload" name="upload">
+            <input type="submit" value="<?=_('Upload')?>" name="upload">
           </label>
         </div>
     </div>
 
     <div style="display:<?php echo strlen($upload_backup_list) > 0 ? "block" : "none" ?>">
       <div style="position: fixed; top: 10%; background-color: white; padding: 10px; border: 1px solid rgb(204, 204, 204); box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 10px; z-index: 1000;">
-        <h4>Apply backup?</h4>
-        <p>The uploaded backup archive appears to be valid and contains the files listed below. Press "Continue" to restore the backup and reboot, or "Cancel" to abort the operation.</p>
+        <h4><?=_('Apply backup?')?></h4>
+        <p><?=_('The uploaded backup archive appears to be valid and contains the files listed below. Press "Continue" to restore the backup and reboot, or "Cancel" to abort the operation.')?></p>
         <textarea rows="10"><?php echo $upload_backup_list; ?></textarea>
         <div class="right">
           <button class="btn btn-outline btn-primary"><?php echo _("Cancel") ?></button> 

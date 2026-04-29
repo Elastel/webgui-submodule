@@ -13,7 +13,8 @@ function DisplayBACnetRouter()
                 $status->addMessage('Error data', 'danger');
             } else {
                 if (isset($_POST['applybacnetroutersettings'])) {
-                    exec('sudo /etc/init.d/bacnet_router restart >/dev/null'); 
+                    exec('sudo /etc/init.d/bacnet_router restart >/dev/null');
+                    $status->addMessage('Configuration applied.', 'success');
                 }
             }
         }
@@ -56,7 +57,7 @@ function saveBACnetRouterConfig($status)
     exec("sudo /usr/local/bin/uci set bacnet_router.bacnet.frames=" .$_POST['frames']);
     exec("sudo /usr/local/bin/uci commit bacnet_router");
 
-    $status->addMessage('BACnet configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
 }
 

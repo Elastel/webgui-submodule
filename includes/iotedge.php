@@ -28,6 +28,7 @@ function DisplayIotedge()
             if (isset($_POST['applyiotedgesettings'])) {
                 exec('sudo /etc/init.d/iotedge start &');
                 exec('sudo rm /tmp/iotedgelist');
+                $status->addMessage('Configuration applied.', 'success');
             }
         }
     }
@@ -177,7 +178,7 @@ function saveIotedgeConfig($status, $iotedge_option)
 
     file_put_contents('/tmp/iotedge.json', $jsonData);
     exec('sudo /usr/sbin/set_config /tmp/iotedge.json iotedge iotedge');
-    $status->addMessage('iotedge configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
 
     return true;
 }

@@ -16,6 +16,8 @@ function DisplayDetectionConfig()
                 } else {
                     exec('sudo /etc/init.d/failover stop > /dev/null');
                 }
+
+                $status->addMessage('Configuration applied.', 'success');
             }
         }
     }
@@ -59,7 +61,7 @@ function saveDetectionConfig($status)
     
     exec("sudo /usr/local/bin/uci commit network");
 
-    $status->addMessage('configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
  
 }

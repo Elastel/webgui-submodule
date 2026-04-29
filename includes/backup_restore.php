@@ -44,12 +44,12 @@ function DisplayBackupRestore()
 {
     // checkBox name, filename
     $checkBoxList = [
-        "wan_lan"           => ["WAN&LAN", "/etc/config/network;/etc/dhcpcd.conf;/etc/dnsmasq.d/090_br0.conf", "0"],
-        "wifi_ap"           => ["WiFi AP", "/etc/hostapd/hostapd.conf", "0"],
-        "wifi_client"       => ["WiFi Client", "/etc/wpa_supplicant/wpa_supplicant.conf", "0"],
-        "data_collect"      => ["Data Collect", "/etc/config/dct", "0"],
-        "bacnet_router"     => ["BACnet Router", "/etc/config/bacnet_router", "0"],
-        "modbus_router"     => ["Modbus Rouoter", "/etc/config/modbus_router", "0"]
+        "wan_lan"           => [_("WAN&LAN"), "/etc/config/network;/etc/dhcpcd.conf;/etc/dnsmasq.d/090_br0.conf", "0"],
+        "wifi_ap"           => [_("WiFi AP"), "/etc/hostapd/hostapd.conf", "0"],
+        "wifi_client"       => [_("WiFi Client"), "/etc/wpa_supplicant/wpa_supplicant.conf", "0"],
+        "data_collect"      => [_("Data Collect"), "/etc/config/dct", "0"],
+        "bacnet_router"     => ["BACnet "._("Router"), "/etc/config/bacnet_router", "0"],
+        "modbus_router"     => ["Modbus "._("Router"), "/etc/config/modbus_router", "0"]
     ];
 
     $paths = [];

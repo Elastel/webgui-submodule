@@ -2,7 +2,7 @@
 <div class="tab-pane fade" id="static-leases">
   <div class="row">
     <div class="col-md-12">
-      <h4 class="mt-3 mb-3"><?php echo _("Static leases") ?></h4>
+      <h4 class="mt-3 mb-3"><?php echo _("Static Leases") ?></h4>
       <p id="static-lease-description">
         <small><?php echo _("Clients with a particular hardware MAC address can always be allocated the same IP address.") ?></small>
         <small class="text-muted"><?php echo _("This option adds <code>dhcp-host</code> entries to the dnsmasq configuration.") ?></small>

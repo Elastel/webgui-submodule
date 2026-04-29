@@ -31,7 +31,7 @@
             <?php echo \ElastPro\Tokens\CSRF::hiddenField(); ?>
             <!-- Nav tabs -->
             <ul class="nav nav-tabs">
-                <li class="nav-item"><a class="nav-link active" id="restapisettingstab" href="#restapisettings" data-toggle="tab"><?php echo _("Settings"); ?></a></li>
+                <li class="nav-item"><a class="nav-link active" id="restapisettingstab" href="#restapisettings" data-toggle="tab"><?php echo _("Setting"); ?></a></li>
                 <li class="nav-item"><a class="nav-link" id="restapistatustab" href="#restapistatus" data-toggle="tab"><?php echo _("Status"); ?></a></li>
             </ul>
 

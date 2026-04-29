@@ -13,15 +13,16 @@ globalThis.enableIotedge = enableIotedge;
 
 export function iotedgeSourceChange() {
     var source = document.getElementById('source').value;
-
+    const auth_method = document.querySelector('input[data-i18n="auth_method"]').value;
+    const attestion_method = document.querySelector('input[data-i18n="attestion_method"]').value;
     if (source == 'manual') {
         $('#page_source_manual').show();
         $('#page_source_dps').hide();
-        changeLabel('attestion_method', 'Authentication Method');
+        changeLabel('attestion_method', auth_method);
     } else {
         $('#page_source_manual').hide();
         $('#page_source_dps').show();
-        changeLabel('attestion_method', 'Attestation Method');
+        changeLabel('attestion_method', attestion_method);
     }
 
     var attestionMethod = document.getElementById('attestion_method');

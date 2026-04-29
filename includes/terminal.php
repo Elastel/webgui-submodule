@@ -12,9 +12,10 @@ function DisplayTerminal()
             exec("sudo /usr/local/bin/uci set terminal.terminal.interface=" .$_POST['interface']);
 	        exec("sudo /usr/local/bin/uci commit terminal");
 
+            $status->addMessage('Configuration updated.', 'success');
             if (isset($_POST['applyterminalsettings'])) {
                 exec("sudo /etc/init.d/terminal restart");
-                $status->addMessage('Restart terminal successfully', 'info');
+                $status->addMessage('Configuration applied.', 'info');
             }
         }
     }
@@ -24,7 +25,7 @@ function DisplayTerminal()
             if (is_uploaded_file($_FILES['upload_file']['tmp_name'])) {
                 SaveUploadFile($status, $_FILES['upload_file']);
             } else {
-                $status->addMessage('fail to upload file', 'danger');
+                $status->addMessage('Fail to upload file', 'danger');
             }
         }
     }
@@ -95,7 +96,7 @@ function SaveUploadFile($status, $file)
             system("sudo chmod -R 755 /tmp/terminal");
             $status->addMessage('file uploaded successfully:' . $new_file_path, 'info');
         } else {
-            $status->addMessage('fail to upload file', 'danger');
+            $status->addMessage('Fail to upload file', 'danger');
         }
 
         return $status;

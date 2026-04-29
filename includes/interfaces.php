@@ -15,6 +15,8 @@ function DisplayInterfaces()
             if (isset($_POST['applyinterfacesettings'])) {
                 sleep(2);
                 exec('sudo /etc/init.d/dct restart > /dev/null');
+
+                $status->addMessage('Configuration applied.', 'success');
             }
         }
     }
@@ -232,6 +234,6 @@ function saveInterfaceConfig($status, $model)
     saveComConfig($status, $model);
     saveTcpConfig($status);
 
-    $status->addMessage('dct configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
 }
 

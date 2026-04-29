@@ -28,10 +28,6 @@
                 <?php
                 echo \ElastPro\Tokens\CSRF::hiddenField();
                 $arr= array(
-                  array("name"=>"Order",                "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Device Name",          "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Belonged Interface",   "style"=>"", "descr"=>"", "ctl"=>"select"),
-                  array("name"=>"Tag Name",             "style"=>"", "descr"=>"", "ctl"=>"input"),
                   array("name"=>"OID",                  "style"=>"", "descr"=>"", "ctl"=>"input"),
                   array("name"=>"Data Type",            "style"=>"", "descr"=>"", "ctl"=>"select"),
                 );
@@ -39,10 +35,6 @@
                 $arr = dct_rules_common_add_fields($arr);
                 page_table_title('snmpcli', $arr);
                 ?>
-                <div class="cbi-section-create">
-                  <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addData('snmpcli')">
-                  <?php conf_im_ex('snmpcli'); ?>
-                </div>
               </div>
             <?php echo $buttons ?>
           </form>
@@ -55,7 +47,7 @@
 <div id="popLayer"></div>
 <div id="popBox" style="overflow:auto">
   <input hidden="hidden" name="page_type" id="page_type" value="0">
-  <h4><?php echo _("SNMP Rules Setting"); ?></h4>
+  <h4>SNMP <?php echo _("Rules Setting"); ?></h4>
   <div class="cbi-section">
     <?php
       $table_name = 'snmpcli';
@@ -89,7 +81,7 @@
     <h4><?php echo _("Tip: Use an OID scan to identify the data that needs to be collected.");?></h4>
   </div>
   <div class="cbi-value">
-    <a><?php echo _("Interface:");?></a>
+    <a><?php echo _("Interface");?>:</a>
     <select id="scan_interface" class="cbi-input-select" name="scan_interface" style="width: 100%; max-width: 15rem; min-width: 5rem;">
     <?php
       foreach ($interface_list as $key => $value) {

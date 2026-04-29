@@ -13,6 +13,7 @@ function DisplayScheduled()
             
             if (isset($_POST['applyscheduledsettings'])) {
                 exec('sudo /etc/init.d/schedule restart > /dev/null');
+                $status->addMessage('Configuration applied.', 'success');
             }
         }
     }
@@ -62,6 +63,6 @@ function saveScheduledConfig($arrInfo, $status)
     
     exec("sudo /usr/local/bin/uci commit system");
 
-    $status->addMessage('configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
 }

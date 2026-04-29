@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("IEC104 Setting"); ?>
+          IEC104 <?php echo _("Setting"); ?>
           </div>
         </div><!-- ./row -->
       </div><!-- ./card-header -->
@@ -26,24 +26,13 @@
             <input type="hidden" name="option_list_iec104" value="" id="option_list_iec104">
             <?php echo \ElastPro\Tokens\CSRF::hiddenField();
             $arr= array(
-              array("name"=>"Order",                "style"=>"", "descr"=>""),
-              array("name"=>"Device Name",          "style"=>"", "descr"=>""),
-              array("name"=>"Belonged Interface",   "style"=>"", "descr"=>""),
-              array("name"=>"Tag Name",             "style"=>"", "descr"=>"Multiple Tags Are Separated By Semicolon"),
-              array("name"=>"Type ID - IOA",          "style"=>"", "descr"=>""),
-              // array("name"=>"Start IOA",            "style"=>"", "descr"=>"0~255"),
-              // array("name"=>"Common Address",       "style"=>"", "descr"=>""),
-              // array("name"=>"Data Type",            "style"=>"", "descr"=>""),
+              array("name"=>"Type ID - IOA",        "data-field" => "", "style"=>"", "descr"=>""),
             );
 
             $arr = dct_rules_common_add_fields($arr);
             ?>
             <div class="cbi-section cbi-tblsection" id="page_iec104" name="page_iec104">
               <?php page_table_title('iec104', $arr); ?>
-              <div class="cbi-section-create">
-                <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addData('iec104')">
-                <?php conf_im_ex('Iec104'); ?>
-              </div>
             </div>
             <?php echo $buttons ?>
           </form>
@@ -56,7 +45,7 @@
 <div id="popLayer"></div>
 <div id="popBox" style="overflow:auto">
   <input hidden="hidden" name="page_type" id="page_type" value="0">
-  <h4><?php echo _("Iec104 Rules Setting"); ?></h4>
+  <h4>IEC104 <?php echo _("Rules Setting"); ?></h4>
   <div class="cbi-section">
     <?php
       $table_name = 'iec104';

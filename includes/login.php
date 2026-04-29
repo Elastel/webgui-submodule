@@ -26,7 +26,7 @@ function DisplayLogin()
                 header('Location: ' . $redirectUrl);
                 die();
             } else {
-                $status = "Login failed";
+                $status = _("Login failed");
             }
         }
     }

@@ -48,7 +48,7 @@
   </div>
 
   <div name="static_ip" id="static_ip" value="1">
-    <h5 class="mt-1">Static IP options</h5>
+    <h5 class="mt-1"><?php echo _("Static IP options"); ?></h5>
     <div class="row">
       <div class="form-group col-md-6">
         <label for="code"><?php echo _("IP Address"); ?></label>

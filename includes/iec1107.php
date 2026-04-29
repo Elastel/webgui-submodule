@@ -17,6 +17,7 @@ function DisplayIec1107()
             if (isset($_POST['applyiec1107settings'])) {
                 sleep(2);
                 exec('sudo /etc/init.d/dct restart > /dev/null');
+                $status->addMessage('Configuration applied.', 'success');
             }
         }
     }
@@ -30,6 +31,6 @@ function saveIec1107Config($status, $data_type_list)
     file_put_contents(ELASTEL_DCT_CONFIG_JSON, $data);
     exec('sudo /usr/sbin/set_config ' . ELASTEL_DCT_CONFIG_JSON . ' dct iec1107');
 
-    $status->addMessage('dct configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
 }

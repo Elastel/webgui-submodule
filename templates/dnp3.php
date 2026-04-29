@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("DNP3 Server"); ?>
+          DNP3 <?php echo _("Server"); ?>
           </div>
         </div><!-- ./row -->
       </div><!-- ./card-header -->
@@ -24,7 +24,7 @@
           <form method="POST" action="dnp3" role="form">
           <?php echo \ElastPro\Tokens\CSRF::hiddenField();
             echo '<div class="cbi-section cbi-tblsection">';
-            RadioControlCustom(_('DNP3 Server'), 'dnp3_enabled', 'dnp3_server', 'enableDnp3');
+            RadioControlCustom('DNP3 '._('Server'), 'dnp3_enabled', 'dnp3_server', 'enableDnp3');
 
             echo '<div id="page_dnp3" name="page_dnp3">';
 
@@ -62,18 +62,18 @@
                 <div class="cbi-section cbi-tblsection" id="page_dnp3" name="page_dnp3">
                   <?php
                   $arr= array(
-                    array("name"=>"Source Object",        "style"=>"", "descr"=>"", "ctl"=>"select"),
-                    array("name"=>"Group ID",             "style"=>"", "descr"=>"", "ctl"=>"select"),
-                    array("name"=>"Index Number",         "style"=>"", "descr"=>"0~100", "ctl"=>"input"),
-                    array("name"=>"Ivent Class",          "style"=>"", "descr"=>"", "ctl"=>"select"),
-                    array("name"=>"Event Variation",      "style"=>"", "descr"=>"", "ctl"=>"select"),
-                    array("name"=>"Static Variation",     "style"=>"", "descr"=>"", "ctl"=>"select"),
-                    array("name"=>"Enable",               "style"=>"", "descr"=>"", "ctl"=>"check"),
+                    array("name"=>"Source Object",        "data-field" => "factor_name", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                    array("name"=>"Group ID",             "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                    array("name"=>"Index Number",         "data-field" => "", "style"=>"", "descr"=>"0~100", "ctl"=>"input"),
+                    array("name"=>"Ivent Class",          "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                    array("name"=>"Event Variation",      "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                    array("name"=>"Static Variation",     "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                    array("name"=>"Enable",               "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"check"),
                   );
                   page_table_title('dnp3', $arr);
                   ?>
                   <div class="cbi-section-create">
-                    <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addData('dnp3')">
+                    <input type="button" class="cbi-button-add" name="popBox" value="<?=_('Add')?>" onclick="addData('dnp3')">
                   </div>
                 </div>
           <?php

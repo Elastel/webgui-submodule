@@ -27,9 +27,9 @@ function DisplayWireGuardConfig()
                 exec("sudo /usr/local/bin/uci del wireguard.wg.wg_file");
                 SaveWireGuardConfig($status, $role);
             }
-
+            
             if (isset($_POST['applywgsettings'])) {
-                $status->addMessage('Attempting to stop WireGuard', 'info');
+                // $status->addMessage('Attempting to stop WireGuard', 'info');
                 if (model_category('no_buildroot')) {
                     exec('sudo /bin/systemctl stop wg-quick@wg0', $return);
                     exec('sudo /bin/systemctl disable wg-quick@wg0', $return);
@@ -39,13 +39,15 @@ function DisplayWireGuardConfig()
                 
                 sleep(1);
                 if ($type != 'off') {
-                    $status->addMessage('Attempting to start WireGuard', 'info');
+                    // $status->addMessage('Attempting to start WireGuard', 'info');
                     if (model_category('no_buildroot')) {
                         exec('sudo /bin/systemctl enable wg-quick@wg0', $return);
                         exec('sudo /bin/systemctl start wg-quick@wg0', $return);
                     } else {
                         exec('sudo /etc/init.d/S80wireguard restart', $return);
                     }
+
+                    $status->addMessage('Configuration applied.', 'success');
                 } else {
                     # remove selected conf + keys
                     system('sudo rm '. RASPI_WIREGUARD_PATH .'wg-server-private.key', $return);
@@ -381,9 +383,9 @@ function SaveWireGuardConfig($status, $role)
             $status->addMessage($line, 'info');
         }
         if ($return == 0) {
-            $status->addMessage('WireGuard configuration updated successfully', 'success');
+            $status->addMessage('Configuration updated.', 'success');
         } else {
-            $status->addMessage('WireGuard configuration failed to be updated', 'danger');
+            $status->addMessage('Configuration failed to be updated', 'danger');
         }
     }
 }

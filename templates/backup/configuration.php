@@ -1,7 +1,7 @@
 <div class="tab-pane" id="configuration">
     <div class="cbi-section">
-        <h3>Configuration</h3>
-        <div class="cbi-section-descr">The following list allows you to customize the files that need to be backed up. After setting, you need to execute the Save button.</div>
+        <h3><?=_('Configuration')?></h3>
+        <div class="cbi-section-descr"><?=_('The following list allows you to customize the files that need to be backed up. After setting, you need to execute the Save button.')?></div>
         <div class="cbi-value" id="cbi-json-config-editlist">
             <?php
                 $i = 0;

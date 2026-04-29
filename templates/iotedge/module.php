@@ -2,10 +2,10 @@
 <?php
     $html = "<table class=\"table cbi-section-table\">";
     $html .= '<tr class="tr cbi-section-table-titles">
-    <th style=\"text-align:left;width:30%;font-weight:bold; padding:0.5rem; font-size:0.8rem\">Name</th>
-    <th style=\"text-align:left;width:30%;font-weight:bold; padding:0.5rem; font-size:0.8rem\">Status</th>
-    <th style=\"text-align:left;width:30%;font-weight:bold; padding:0.5rem; font-size:0.8rem\">Description</th>
-    <th style=\"text-align:left;width:30%;font-weight:bold; padding:0.5rem; font-size:0.8rem\">Config</th></tr>';
+    <th style=\"text-align:left;width:30%;font-weight:bold; padding:0.5rem; font-size:0.8rem\">'._('Name').'</th>
+    <th style=\"text-align:left;width:30%;font-weight:bold; padding:0.5rem; font-size:0.8rem\">'._('Status').'</th>
+    <th style=\"text-align:left;width:30%;font-weight:bold; padding:0.5rem; font-size:0.8rem\">'._('Description').'</th>
+    <th style=\"text-align:left;width:30%;font-weight:bold; padding:0.5rem; font-size:0.8rem\">'._('Config').'</th></tr>';
 
     foreach ($iotedge_data as $row) {
         $html .= "<tr class=\"tr cbi-section-table-titles\">";

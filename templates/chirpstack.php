@@ -18,16 +18,16 @@
                     <div class="row ml-1">
                         <div class="col-sm">
                         <div class="row mb-1">
-                            <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Version:"); ?></div><div class="col-xs-3"><?php echo $version[0]; ?></div>
+                            <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Version"); ?>:</div><div class="col-xs-3"><?php echo $version[0]; ?></div>
                         </div>
                         <div class="row mb-1">
-                            <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Status:"); ?></div>
+                            <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Status"); ?>:</div>
                             <div class="col-xs-3">
-                                <?php echo _(($run_status[0] != null) ? "<font color=\"green\">Running</font>" : "<font color=\"red\">Stop</font>"); ?>
+                                <?php echo _(($run_status[0] != null) ? "<font color=\"green\">"._('Running')."</font>" : "<font color=\"red\">"._('Stop')."</font>"); ?>
                             </div>
                         </div>
                         <div class="row mb-1" style="margin-bottom: 1rem !important;">
-                          <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Region:"); ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("Region"); ?>:</div>
                           <div class="col-xs-3">
                             <select name="chirpstack_region" id="chirpstack_region">
                             <?php
@@ -52,7 +52,7 @@
                           </div>
                         </div>
                         <div class="row mb-1">
-                            <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("URL Entry:"); ?></div>
+                            <div class="col-xs-3" style="color: #858796; width: 10rem"><?php echo _("URL Entry"); ?>:</div>
                             <input class="btn btn-outline btn-primary" type="submit" value="Chirpstack" onClick="window.open(window.location.protocol+'//'+window.location.host+':8080','nr');">
                         </div>
                         <form method="POST" action="chirpstack" role="form">

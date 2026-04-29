@@ -9,6 +9,8 @@ function DisplayAscii()
 
         if (!empty($_POST['applyasciisettings'])) {
             restartDctService();
+
+            $status->addMessage('Configuration applied.', 'success');
         }
     }
 
@@ -30,7 +32,7 @@ function saveAsciiConfig($status)
         }
 
         exec('sudo /usr/sbin/set_config ' . escapeshellarg(ELASTEL_DCT_CONFIG_JSON) . ' dct ascii');
-        $status->addMessage('dct configuration updated', 'success');
+        $status->addMessage('Configuration updated.', 'success');
     } else {
         $status->addMessage('No data provided for configuration', 'warning');
     }

@@ -19,7 +19,7 @@ function DisplaySystem()
             exec("sudo ln -sf /usr/share/zoneinfo/$timezone /etc/localtime");
         }
 
-        $status->addMessage('Update success', 'success');
+        $status->addMessage('Configuration applied.', 'success');
     }
 
     if (isset($_POST['SaveLanguage'])) {
@@ -86,7 +86,7 @@ function DisplaySystem()
         'en_GB.UTF-8' => 'English',
         // 'cs_CZ.UTF-8' => 'Čeština',
         // 'zh_TW.UTF-8' => '正體中文 (Chinese traditional)',
-        // 'zh_CN.UTF-8' => '简体中文 (Chinese simplified)',
+        'zh_CN.UTF-8' => '简体中文 (Chinese simplified)',
         // 'da_DK.UTF-8' => 'Dansk',
         // 'de_DE.UTF-8' => 'Deutsch',
         // 'es_MX.UTF-8' => 'Español',

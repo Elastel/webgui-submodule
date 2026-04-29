@@ -30,7 +30,7 @@
           <?php echo \ElastPro\Tokens\CSRF::hiddenField(); ?>
           <!-- Nav tabs -->
           <ul class="nav nav-tabs">
-              <li class="nav-item"><a class="nav-link active" id="settingstab" href="#wgsettings" data-toggle="tab"><?php echo _("Settings"); ?></a></li>
+              <li class="nav-item"><a class="nav-link active" id="settingstab" href="#wgsettings" data-toggle="tab"><?php echo _("Setting"); ?></a></li>
               <li class="nav-item"><a class="nav-link" id="statustab" href="#wgstatus" data-toggle="tab"><?php echo _("Status"); ?></a></li>
           </ul>
 

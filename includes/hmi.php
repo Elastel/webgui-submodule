@@ -22,7 +22,7 @@ function DisplayHmi()
             if (is_uploaded_file($_FILES['upload_file']['tmp_name'])) {
                 replaceLogo($status, $_FILES['upload_file']);
             } else {
-                $status->addMessage('fail to upload file', 'danger');
+                $status->addMessage('Fail to upload file', 'danger');
             }
         }
     }

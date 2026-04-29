@@ -60,22 +60,14 @@
                 <?php
                 echo \ElastPro\Tokens\CSRF::hiddenField();
                 $arr= array(
-                  array("name"=>"Order",                "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Device Name",          "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Belonged Interface",   "style"=>"", "descr"=>"", "ctl"=>"select"),
-                  array("name"=>"Tag Name",             "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Address",              "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"ID",                   "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Data Type",            "style"=>"", "descr"=>"", "ctl"=>"select"),
+                  array("name"=>"Address",              "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+                  array("name"=>"ID",                   "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+                  array("name"=>"Data Type",            "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
                 );
 
                 $arr = dct_rules_common_add_fields($arr);
                 page_table_title('mbuscli', $arr);
                 ?>
-                <div class="cbi-section-create">
-                  <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addData('mbuscli')">
-                  <?php conf_im_ex('mbuscli'); ?>
-                </div>
               </div>
             <?php echo $buttons ?>
           </form>
@@ -88,7 +80,7 @@
 <div id="popLayer"></div>
 <div id="popBox" style="overflow:auto">
   <input hidden="hidden" name="page_type" id="page_type" value="0">
-  <h4><?php echo _("Mbus Rules Setting"); ?></h4>
+  <h4>Mbus <?php echo _("Rules Setting"); ?></h4>
   <div class="cbi-section">
     <?php
       $table_name = 'mbuscli';
@@ -123,7 +115,7 @@
     <h4><?php echo _("Tip: Use an Mbus address scan to identify the data that needs to be collected.");?></h4>
   </div>
   <div class="cbi-value">
-    <a><?php echo _("Interface:");?></a>
+    <a><?php echo _("Interface");?>:</a>
     <select id="scan_interface" class="cbi-input-select" name="scan_interface" style="width: 100%; max-width: 10rem; min-width: 5rem;">
     <?php
       foreach ($interface_list as $key => $value) {
@@ -132,7 +124,7 @@
     ?>
     </select>
     &nbsp;&nbsp;&nbsp;
-    <a><?php echo _("Address:");?></a>
+    <a><?php echo _("Address");?>:</a>
     <input type="text" class="cbi-input-text" id="scan_address" name="scan_address" value="" style="width: 100%; max-width: 10rem; min-width: 5rem;" placeholder="<?php echo _("Enter address");?>">
     <button class="cbi-button cbi-button-positive important" id="btn_scan" onclick="mbusScan()"><?php echo _("Scan"); ?></button>
   </div>

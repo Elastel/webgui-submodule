@@ -13,6 +13,7 @@ function DisplayBasic()
             if (isset($_POST['applybasicsettings'])) {
                 sleep(2);
                 exec('sudo /etc/init.d/dct restart > /dev/null');
+                $status->addMessage('Configuration applied.', 'success');
             }
         }
     }
@@ -41,6 +42,6 @@ function saveBasicConfig($status)
     $json_data = json_encode($data);
     file_put_contents(ELASTEL_DCT_CONFIG_JSON, $json_data);
     exec('sudo /usr/sbin/set_config ' . ELASTEL_DCT_CONFIG_JSON . ' dct basic');
-    $status->addMessage('dct configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
 }
 

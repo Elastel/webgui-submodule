@@ -41,12 +41,12 @@
 
               <div id="page_scheduled" name="page_scheduled">
                 <?php 
-                    $mode_list = array('0'=>'Every Day', '1'=>'Every Week', '2'=>'Every Month');
+                    $mode_list = array('0'=>_('Every Day'), '1'=>_('Every Week'), '2'=>_('Every Month'));
                     SelectControlCustom(_('Scheduled Mode'), 'mode', $mode_list, $mode_list[$scheduled['mode']], 'mode', null, 'changeScheduledMode()');
                 ?>
                 <div id="page_week" name="page_week">
                 <?php 
-                    $weekday_list = array( '0'=>'Sunday', '1'=>'Monday', '2'=>'Tuesday', '3'=>'Wednesday', '4'=>'Thursday', '5'=>'Friday', '6'=>'Saturday');
+                    $weekday_list = array( '0'=>_('Sunday'), '1'=>_('Monday'), '2'=>_('Tuesday'), '3'=>_('Wednesday'), '4'=>_('Thursday'), '5'=>_('Friday'), '6'=>_('Saturday'));
                     SelectControlCustom(_('Weekday'), 'weekday', $weekday_list, $weekday_list[$scheduled['weekday']], 'weekday');
                 ?>
                 </div>
@@ -65,7 +65,7 @@
                     <label class="cbi-value-description">eg:16:30:30</label>
                 </div>
                 <?php 
-                    $task_list = array('reboot'=>'reboot', 'custom'=>'custom');
+                    $task_list = array('reboot'=>_('reboot'), 'custom'=>_('custom'));
                     SelectControlCustom(_('Task'), 'task', $task_list, $task_list[$scheduled['task']], 'task', null, 'changeTask()');
                 ?>
                 <div id="page_custom" name="page_custom">

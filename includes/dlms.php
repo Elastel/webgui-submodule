@@ -16,6 +16,7 @@ function DisplayDlms()
             if (isset($_POST['applydlmssettings'])) {
                 sleep(2);
                 exec('sudo /etc/init.d/dct restart > /dev/null');
+                $status->addMessage('Configuration applied.', 'success');
             }
         }
     }
@@ -29,6 +30,6 @@ function saveDlmsConfig($status, $data_type_list)
     file_put_contents(ELASTEL_DCT_CONFIG_JSON, $data);
     exec('sudo /usr/sbin/set_config ' . ELASTEL_DCT_CONFIG_JSON . ' dct dlms');
 
-    $status->addMessage('dct configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
 }

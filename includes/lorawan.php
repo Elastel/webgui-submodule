@@ -13,6 +13,7 @@ function DisplayLorawan()
             if (isset($_POST['applysettings'])) {
                 sleep(1);
                 exec('sudo /etc/init.d/loragw restart > /dev/null');
+                $status->addMessage('Configuration applied.', 'success');
             }
         }
     }
@@ -59,11 +60,6 @@ function SaveLorawanUpload($status, $file, $file_name)
         // Move processed file from tmp to destination
         system("sudo mv $tmp_serverconfig /etc/basic_station/" . $file_name, $return);
 
-        // if ($return ==0) {
-        //     $status->addMessage('mqtt certificate uploaded successfully', 'info');
-        // } else {
-        //     $status->addMessage('Unable to save mqtt certificate', 'danger');
-        // }
         return $status;
 
     } catch (RuntimeException $e) {
@@ -240,7 +236,7 @@ function saveLorawanConfig($status)
         exec("sudo /usr/local/bin/uci delete loragw.loragw.lora_key");
     }
 
-    $status->addMessage('lorawan configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     exec("sudo /usr/local/bin/uci set loragw.loragw.type=" .$_POST['type']);
     exec("sudo /usr/local/bin/uci commit loragw");
 }

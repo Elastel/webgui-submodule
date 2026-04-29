@@ -26,7 +26,7 @@
 
           <?php if ($model != "ElastBox400") { ?>
           <div class="cbi-section">
-            <h4>Serial Port Setting</h4>
+            <h4><?php echo _("Serial Port Setting"); ?></h4>
             <ul class="nav nav-tabs">
               <?php if ($model == "EG500" || $model == "EG410" || $model == "EG510") { ?>
                 <li role="presentation" class="nav-item"><a class="nav-link active" href="#com1" aria-controls="com1" role="tab" data-toggle="tab"><?php echo _("COM1/RS485"); ?></a></li>
@@ -52,13 +52,13 @@
           <?php } ?>
 
           <div class="cbi-section">
-            <h4>Network Node Setting</h4>
+            <h4><?php echo _("Network Node Setting"); ?></h4>
             <ul class="nav nav-tabs">
-              <li role="presentation" class="nav-item"><a class="nav-link active" href="#tcp1" aria-controls="tcp1" role="tab" data-toggle="tab"><?php echo _("Network Node1"); ?></a></li>
-              <li role="presentation" class="nav-item"><a class="nav-link" href="#tcp2" aria-controls="tcp2" role="tab" data-toggle="tab"><?php echo _("Network Node2"); ?></a></li>
-              <li role="presentation" class="nav-item"><a class="nav-link" href="#tcp3" aria-controls="tcp3" role="tab" data-toggle="tab"><?php echo _("Network Node3"); ?></a></li>
-              <li role="presentation" class="nav-item"><a class="nav-link" href="#tcp4" aria-controls="tcp4" role="tab" data-toggle="tab"><?php echo _("Network Node4"); ?></a></li>
-              <li role="presentation" class="nav-item"><a class="nav-link" href="#tcp5" aria-controls="tcp5" role="tab" data-toggle="tab"><?php echo _("Network Node5"); ?></a></li>
+              <li role="presentation" class="nav-item"><a class="nav-link active" href="#tcp1" aria-controls="tcp1" role="tab" data-toggle="tab"><?php echo _("Network Node")."1"; ?></a></li>
+              <li role="presentation" class="nav-item"><a class="nav-link" href="#tcp2" aria-controls="tcp2" role="tab" data-toggle="tab"><?php echo _("Network Node")."2"; ?></a></li>
+              <li role="presentation" class="nav-item"><a class="nav-link" href="#tcp3" aria-controls="tcp3" role="tab" data-toggle="tab"><?php echo _("Network Node")."3"; ?></a></li>
+              <li role="presentation" class="nav-item"><a class="nav-link" href="#tcp4" aria-controls="tcp4" role="tab" data-toggle="tab"><?php echo _("Network Node")."4"; ?></a></li>
+              <li role="presentation" class="nav-item"><a class="nav-link" href="#tcp5" aria-controls="tcp5" role="tab" data-toggle="tab"><?php echo _("Network Node")."5"; ?></a></li>
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">

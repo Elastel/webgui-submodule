@@ -33,8 +33,9 @@ function DisplayOpenVPNConfig()
         }
 
         saveOpenVpnConfig($status);
+        $status->addMessage('Configuration updated.', 'success');
         if (isset($_POST['ApplyOpenVpnSettings'])) {
-            $status->addMessage('Attempting to stop OpenVPN', 'info');
+            // $status->addMessage('Attempting to stop OpenVPN', 'info');
             
             if (isset($_POST['role'])) { 
                 $role = $_POST['role'];
@@ -55,7 +56,7 @@ function DisplayOpenVPNConfig()
             
             sleep(1);
             if ($type != 'off') {
-                $status->addMessage('Attempting to start OpenVPN', 'info');
+                // $status->addMessage('Attempting to start OpenVPN', 'info');
                 if (model_category('no_buildroot')) {
                     if ($role == 'client') {
                         exec('sudo /bin/systemctl enable openvpn-client@client', $return);
@@ -68,6 +69,8 @@ function DisplayOpenVPNConfig()
                 } else {
                     exec('sudo /etc/init.d/S60openvpn restart');
                 }
+
+                $status->addMessage('Configuration applied.', 'success');
             } else {
                 system('sudo rm /etc/openvpn/client/client.conf', $return);
                 system('sudo rm /etc/openvpn/server/server.conf', $return);

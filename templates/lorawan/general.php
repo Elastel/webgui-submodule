@@ -3,7 +3,7 @@
     <div class="cbi-value">
         <label class="cbi-value-title"><?php echo _("Working Mode"); ?></label>
         <select id="type" name="type" class="cbi-input-select" onchange="typeChangeLorawan()">
-            <option value="0">Disabled</option>
+            <option value="0"><?php echo _("Disable");?></option>
             <option value="1">Packet Forwarder</option>
             <option value="2">Basic Station</option>
         </select>
@@ -81,7 +81,7 @@
         </div>
 
         <div class="cbi-value">
-            <label class="cbi-value-title"><?php echo _("CA File(*.trust)"); ?></label>
+            <label class="cbi-value-title"><?php echo _("CA"); ?>(*.trust)</label>
             <label for="lora_ca" class="cbi-file-lable">
                 <input type="button" class="cbi-file-btn" id="ca_btn" value="<?php echo _("Choose file"); ?>">
                 <span id="ca_text"><?php echo _("No file chosen"); ?></span>
@@ -91,7 +91,7 @@
 
         <div name="page_one" id="page_one">
             <div class="cbi-value">
-                <label class="cbi-value-title"><?php echo _("Client Certificate File(*.crt)"); ?></label>
+                <label class="cbi-value-title"><?php echo _("Client Certificate"); ?>(*.crt)</label>
                 <label class="cbi-file-lable" for="lora_crt">
                     <input type="button" class="cbi-file-btn" id="crt_btn" value="<?php echo _("Choose file"); ?>">
                     <span id="crt_text"><?php echo _("No file chosen"); ?></span>
@@ -101,7 +101,7 @@
         </div>
         <div name="page_two" id="page_two">
             <div class="cbi-value">
-                <label class="cbi-value-title"><?php echo _("Client Key File(*.key)"); ?></label>
+                <label class="cbi-value-title"><?php echo _("Client Key"); ?>(*.key)</label>
                 <label class="cbi-file-lable" for="lora_key">
                     <input type="button" class="cbi-file-btn" id="key_btn" value="<?php echo _("Choose file"); ?>">
                     <span id="key_text"><?php echo _("No file chosen"); ?></span>

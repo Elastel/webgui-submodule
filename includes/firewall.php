@@ -103,9 +103,10 @@ function DisplayFirewall()
     if (isset($_POST['savefirewallsettings']) || isset($_POST['applyfirewallsettings'])) {
         saveFirewallConfig($status);
         exec('sudo /usr/local/bin/uci commit firewall');
-        
+        $status->addMessage('Configuration updated.', 'success');
         if (isset($_POST['applyfirewallsettings'])) {
             exec('sudo /etc/init.d/firewall restart');
+            $status->addMessage('Configuration applied.', 'success');
         }
     }
 

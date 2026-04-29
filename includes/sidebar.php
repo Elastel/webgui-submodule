@@ -40,7 +40,7 @@
                 <li class="nav-item" name="online_detection" id="network_online_detection" ><a class="nav-link" href="detection_conf"><?php echo _("Online Detection"); ?></a></li>
                 <?php endif; ?>
                 <?php if (isBinExists("lora_pkt_fwd")) : ?>
-                <li class="nav-item" name="lorawan" id="network_lorawan" ><a class="nav-link" href="lorawan_conf"><?php echo _("LoRaWan"); ?></a></li>
+                <li class="nav-item" name="lorawan" id="network_lorawan" ><a class="nav-link" href="lorawan_conf"><?php echo _("LoRaWAN"); ?></a></li>
                 <?php endif; ?>
                 <?php if (isBinExists("efw")) : ?>
                 <li class="nav-item" name="firewall" id="network_firewall" ><a class="nav-link" href="firewall_conf"><?php echo _("Firewall"); ?></a></li>
@@ -64,23 +64,23 @@
                     </a>
                     <div class="collapse navbar-collapse" id="navbar-collapse-south">
                         <ul class="nav navbar-nav navbar-right">
-                            <li class="nav-item" name="modbus" id="dct_south_modbus"><a class="nav-link" href="modbus_conf"><?php echo _("Modbus Rules"); ?></a></li>
-                            <li class="nav-item" name="ascii" id="dct_south_ascii"><a class="nav-link" href="ascii_conf"><?php echo _("ASCII Rules"); ?></a></li>
-                            <li class="nav-item" name="s7" id="dct_south_s7"><a class="nav-link" href="s7_conf"><?php echo _("S7 Rules"); ?></a></li>
-                                <li class="nav-item" name="fx" id="dct_south_fx"><a class="nav-link" href="fx_conf"><?php echo _("FX Rules"); ?></a></li>
-                            <li class="nav-item" name="mc" id="dct_south_mc"><a class="nav-link" href="mc_conf"><?php echo _("MC Rules"); ?></a></li>
-                            <li class="nav-item" name="iec104" id="dct_south_iec104"><a class="nav-link" href="iec104_conf"><?php echo _("IEC104 Rules"); ?></a></li>
-                            <li class="nav-item" name="dnp3_client" id="dct_south_dnp3_client"><a class="nav-link" href="dnp3cli_conf"><?php echo _("DNP3 Rules"); ?></a></li>
-                            <li class="nav-item" name="opcua_client" id="dct_south_opcua_client"><a class="nav-link" href="opcuacli_conf"><?php echo _("OPCUA Rules"); ?></a></li>
+                            <li class="nav-item" name="modbus" id="dct_south_modbus"><a class="nav-link" href="modbus_conf"><?php echo "Modbus "._("Rules"); ?></a></li>
+                            <li class="nav-item" name="ascii" id="dct_south_ascii"><a class="nav-link" href="ascii_conf"><?php echo "ASCII "._("Rules"); ?></a></li>
+                            <li class="nav-item" name="s7" id="dct_south_s7"><a class="nav-link" href="s7_conf"><?php echo "S7 "._("Rules"); ?></a></li>
+                                <li class="nav-item" name="fx" id="dct_south_fx"><a class="nav-link" href="fx_conf"><?php echo "FX "._("Rules"); ?></a></li>
+                            <li class="nav-item" name="mc" id="dct_south_mc"><a class="nav-link" href="mc_conf"><?php echo "MC "._("Rules"); ?></a></li>
+                            <li class="nav-item" name="iec104" id="dct_south_iec104"><a class="nav-link" href="iec104_conf"><?php echo "IEC104 "._("Rules"); ?></a></li>
+                            <li class="nav-item" name="dnp3_client" id="dct_south_dnp3_client"><a class="nav-link" href="dnp3cli_conf"><?php echo "DNP3 "._("Rules"); ?></a></li>
+                            <li class="nav-item" name="opcua_client" id="dct_south_opcua_client"><a class="nav-link" href="opcuacli_conf"><?php echo "OPCUA "._("Rules"); ?></a></li>
                             <?php if (isBinExists("baccli")) : ?>
-                            <li class="nav-item" name="bacnet_client" id="dct_south_bacnet_client"><a class="nav-link" href="baccli_conf"><?php echo _("BACnet Rules"); ?></a></li>
+                            <li class="nav-item" name="bacnet_client" id="dct_south_bacnet_client"><a class="nav-link" href="baccli_conf"><?php echo "BACnet "._("Rules"); ?></a></li>
                             <?php endif; ?>
-                            <li class="nav-item" name="ethernetip" id="dct_south_ethernetip"><a class="nav-link" href="ethernetip_conf"><?php echo _("EtherNet/IP Rules"); ?></a></li>
-                            <li class="nav-item" name="mbus_client" id="dct_south_mbus_client"><a class="nav-link" href="mbuscli_conf"><?php echo _("Mbus Rules"); ?></a></li>
-                            <li class="nav-item" name="snmp_client" id="dct_south_snmp_client"><a class="nav-link" href="snmpcli_conf"><?php echo _("SNMP Rules"); ?></a></li>
-                            <li class="nav-item" name="iec1107" id="dct_south_iec1107"><a class="nav-link" href="iec1107_conf"><?php echo _("IEC62056-21 Rules"); ?></a></li>
-                            <li class="nav-item" name="dlms" id="dct_south_dlms"><a class="nav-link" href="dlms_conf"><?php echo _("DLMS Rules"); ?></a></li>
-                            <li class="nav-item" name="iec61850_client" id="dct_south_iec61850_client"><a class="nav-link" href="iec61850cli_conf"><?php echo _("IEC61850 Rules"); ?></a></li>
+                            <li class="nav-item" name="ethernetip" id="dct_south_ethernetip"><a class="nav-link" href="ethernetip_conf"><?php echo "EtherNet/IP "._("Rules"); ?></a></li>
+                            <li class="nav-item" name="mbus_client" id="dct_south_mbus_client"><a class="nav-link" href="mbuscli_conf"><?php echo "Mbus "._("Rules"); ?></a></li>
+                            <li class="nav-item" name="snmp_client" id="dct_south_snmp_client"><a class="nav-link" href="snmpcli_conf"><?php echo "SNMP "._("Rules"); ?></a></li>
+                            <li class="nav-item" name="iec1107" id="dct_south_iec1107"><a class="nav-link" href="iec1107_conf"><?php echo "IEC62056-21 "._("Rules"); ?></a></li>
+                            <li class="nav-item" name="dlms" id="dct_south_dlms"><a class="nav-link" href="dlms_conf"><?php echo "DLMS "._("Rules"); ?></a></li>
+                            <li class="nav-item" name="iec61850_client" id="dct_south_iec61850_client"><a class="nav-link" href="iec61850cli_conf"><?php echo "IEC61850 "._("Rules"); ?></a></li>
                             <?php if (isIoExistts()) : ?>
                             <li class="nav-item" name="io" id="dct_south_io"><a class="nav-link" href="io_conf"><?php echo _("IO"); ?></a></li>
                             <?php endif; ?>
@@ -95,12 +95,12 @@
                     <div class="collapse navbar-collapse" id="navbar-collapse-north">
                         <ul class="nav navbar-nav navbar-right">
                             <li class="nav-item" name="server" id="dct_north_server"><a class="nav-link" href="server_conf"><?php echo _("Reporting Center"); ?></a></li>
-                            <li class="nav-item" name="modbus_slave" id="dct_north_modbus_slave"><a class="nav-link" href="modbus_slave"><?php echo _("Modbus Slave"); ?></a></li>
-                            <li class="nav-item" name="opcua" id="dct_north_opcua"><a class="nav-link" href="opcua"><?php echo _("OPCUA Server"); ?></a></li>
+                            <li class="nav-item" name="modbus_slave" id="dct_north_modbus_slave"><a class="nav-link" href="modbus_slave"><?php echo "Modbus "._("Slave"); ?></a></li>
+                            <li class="nav-item" name="opcua" id="dct_north_opcua"><a class="nav-link" href="opcua"><?php echo "OPCUA "._("Server"); ?></a></li>
                             <?php if(isBinExists("bacserv")) : ?>
-                            <li class="nav-item" name="bacnet" id="dct_north_bacnet"><a class="nav-link" href="bacnet"><?php echo _("BACnet Server"); ?></a></li>
+                            <li class="nav-item" name="bacnet" id="dct_north_bacnet"><a class="nav-link" href="bacnet"><?php echo "BACnet "._("Server"); ?></a></li>
                             <?php endif; ?>
-                            <li class="nav-item" name="dnp3" id="dct_north_dnp3"><a class="nav-link" href="dnp3"><?php echo _("DNP3 Server"); ?></a></li>
+                            <li class="nav-item" name="dnp3" id="dct_north_dnp3"><a class="nav-link" href="dnp3"><?php echo "DNP3 "._("Server"); ?></a></li>
                         </ul>
                     </div>
                 </li>
@@ -118,10 +118,10 @@
             <div class="collapse navbar-collapse" id="navbar-collapse-convert">
             <ul class="nav navbar-nav navbar-right">
                 <?php if(isBinExists("router-mstp")) : ?>
-                    <li class="nav-item" name="bacnet_router" id="convert_bacnet_router"> <a class="nav-link" href="bacnet_router"><?php echo _("BACnet Router"); ?></a></li>
+                    <li class="nav-item" name="bacnet_router" id="convert_bacnet_router"> <a class="nav-link" href="bacnet_router"><?php echo "BACnet "._("Router"); ?></a></li>
                 <?php endif; ?>
                 <?php if(isBinExists("router-modbus")) : ?>
-                    <li class="nav-item" name="modbus_router" id="convert_modbus_router"> <a class="nav-link" href="modbus_router"><?php echo _("Modbus Router"); ?></a></li>
+                    <li class="nav-item" name="modbus_router" id="convert_modbus_router"> <a class="nav-link" href="modbus_router"><?php echo "Modbus "._("Router"); ?></a></li>
                 <?php endif; ?>
             </ul>
             </div>

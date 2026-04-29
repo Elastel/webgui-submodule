@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("ASCII Setting"); ?>
+          ASCII <?php echo _("Setting"); ?>
           </div>
         </div><!-- ./row -->
       </div><!-- ./card-header -->
@@ -26,21 +26,17 @@
             <input type="hidden" name="option_list_ascii" value="" id="option_list_ascii">
             <?php echo \ElastPro\Tokens\CSRF::hiddenField();;
             $arr= array(
-              array("name"=>"Order",                "style"=>"", "descr"=>"", "ctl"=>"input"),
-              array("name"=>"Device Name",          "style"=>"", "descr"=>"", "ctl"=>"input"),
-              array("name"=>"Belonged Interface",   "style"=>"", "descr"=>"", "ctl"=>"select"),
-              array("name"=>"Tag Name",          "style"=>"", "descr"=>"", "ctl"=>"input"),
-              array("name"=>"Tx Command",            "style"=>"", "descr"=>"", "ctl"=>"input"),
-              array("name"=>"Command Format",        "style"=>"", "descr"=>"", "ctl"=>"select"),
-              array("name"=>"Reporting Center",     "style"=>"", "descr"=>"Multiple Servers Are Separated By Minus", "ctl"=>"input"),
-              array("name"=>"Enable",               "style"=>"", "descr"=>"", "ctl"=>"check"),
+              array("name"=>"Order",                "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+              array("name"=>"Device Name",          "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+              array("name"=>"Belonged Interface",   "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+              array("name"=>"Tag Name",             "data-field" => "factor_name", "style"=>"", "descr"=>"", "ctl"=>"input"),
+              array("name"=>"Tx Command",           "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+              array("name"=>"Command Format",       "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+              array("name"=>"Reporting Center",     "data-field" => "", "style"=>"", "descr"=>"Multiple Servers Are Separated By Minus", "ctl"=>"input"),
+              array("name"=>"Enable",               "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"check"),
             );?>       
-              <div class="cbi-section cbi-tblsection" id="page_ascii" name="page_ascii">
-                <?php page_table_title('ascii', $arr); ?>
-              <div class="cbi-section-create">
-                <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addData('ascii')">
-                <?php conf_im_ex('Ascii'); ?>
-              </div>
+            <div class="cbi-section cbi-tblsection" id="page_ascii" name="page_ascii">
+              <?php page_table_title('ascii', $arr); ?>
             </div>
             <?php echo $buttons ?>
           </form>
@@ -53,7 +49,7 @@
 <div id="popLayer"></div>
 <div id="popBox" style="overflow:auto">
   <input hidden="hidden" name="page_type" id="page_type" value="0">
-  <h4><?php echo _("ASCII Rules Setting"); ?></h4>
+  <h4>ASCII <?php echo _("Rules Setting"); ?></h4>
   <div class="cbi-section">
   <?php
       $table_name = 'ascii';

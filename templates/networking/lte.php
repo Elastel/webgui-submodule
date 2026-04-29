@@ -51,6 +51,7 @@
       <input type="text" id="txtpassword" class="form-control" name="password" value="" />
     </div>
   </div>
+  <?php if (exec("uci get dct.basic.enabled") == "1") { ?>
   <div class="row">
     <div class="form-group col-md-6">
       <div class="custom-control custom-switch">
@@ -59,6 +60,7 @@
       </div>
     </div>
   </div>
+  <?php } ?>
 </div><!-- /.tab-pane | basic tab -->
 <script type="text/javascript">
     function authTypeChange(){

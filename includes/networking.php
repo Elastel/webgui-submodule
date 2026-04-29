@@ -28,6 +28,7 @@ function DisplayNetworkingConfig($type)
             } elseif ($type == 'wlan0') {
                 saveWlan0Config($status);
             }
+            $status->addMessage('Configuration updated.', 'success');
 
             exec('sudo /usr/local/bin/uci commit network');
 
@@ -76,7 +77,7 @@ function DisplayNetworkingConfig($type)
                     exec('sudo dhcpcd -n wlan0');
                 }
 
-                $status->addMessage('Network for '.$type.' updated.', 'success');
+                $status->addMessage('Configuration applied.', 'success');
                 exec('sudo /etc/init.d/failover restart > /dev/null');
             }
         }
@@ -196,7 +197,6 @@ function saveLteConfig($status)
             $status->addMessage($errors, 'danger');
         }
 
-        $status->addMessage('LTE configuration for '.$iface.' updated.', 'success');
         return true;
     }
 }
@@ -350,7 +350,7 @@ function updateDHCPConfigNetwork($iface0, $head, $status)
     if (!preg_match('/^interface\s'.$iface0.'$/m', $dhcp_cfg)) {
         $cfg = join(PHP_EOL, $cfg) . PHP_EOL;
         $dhcp_cfg .= $cfg;
-        $status->addMessage('DHCP configuration for '.$iface0.' added.', 'success');
+        $status->addMessage('Configuration added.', 'success');
     } else {
         $cfg = join(PHP_EOL, $cfg) . PHP_EOL;
         $pattern = "/^#\s$keyword\s" . preg_quote($iface0, '/') . "\sconfiguration.*?(?=^#\s$keyword\s|\z)/ms";
@@ -410,15 +410,13 @@ function updateDHCPConfigMetric($iface0, $head, $status)
     if (!preg_match('/^interface\s'.$iface0.'$/m', $dhcp_cfg)) {
         $cfg = join(PHP_EOL, $cfg) . PHP_EOL;
         $dhcp_cfg .= $cfg;
-        $status->addMessage('DHCP configuration for '.$iface0.' added.', 'success');
+        $status->addMessage('Configuration added.', 'success');
     } else {
         $cfg = join(PHP_EOL, $cfg) . PHP_EOL;
         $pattern = "/^#\s$keyword\s" . preg_quote($iface0, '/') . "\sconfiguration.*?(?=^#\s$keyword\s|\z)/ms";
         if (preg_match($pattern, $dhcp_cfg)) {
             $dhcp_cfg = preg_replace($pattern, $cfg, $dhcp_cfg, 1);
         }
-
-        $status->addMessage('DHCP configuration for '.$iface0.' updated.', 'success');
     }
     file_put_contents('/tmp/dhcpddata', $dhcp_cfg);
     system('sudo cp /tmp/dhcpddata '.RASPI_DHCPCD_CONFIG, $result);
@@ -445,15 +443,13 @@ function updateLteMetric($iface0,$status)
     if (!preg_match('/^interface\s'.$iface0.'$/m', $dhcp_cfg)) {
         $cfg = join(PHP_EOL, $cfg) . PHP_EOL;
         $dhcp_cfg .= $cfg;
-        $status->addMessage('DHCP configuration for '.$iface0.' added.', 'success');
+        $status->addMessage('Configuration added.', 'success');
     } else {
         $cfg = join(PHP_EOL, $cfg) . PHP_EOL;
         $pattern = "/^#\s$keyword\s" . preg_quote($iface0, '/') . "\sconfiguration.*?(?=^#\s$keyword\s|\z)/ms";
         if (preg_match($pattern, $dhcp_cfg)) {
             $dhcp_cfg = preg_replace($pattern, $cfg, $dhcp_cfg, 1);
         }
-
-        $status->addMessage('DHCP configuration for '.$iface0.' updated.', 'success');
     }
     file_put_contents('/tmp/dhcpddata', $dhcp_cfg);
     system('sudo cp /tmp/dhcpddata '.RASPI_DHCPCD_CONFIG, $result);

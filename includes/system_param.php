@@ -13,7 +13,8 @@ function DisplaySystemParam()
                 $status->addMessage('Error data', 'danger');
             } else {
                 if (isset($_POST['applysystemparamsettings'])) {
-                    exec('sudo /etc/init.d/dct restart >/dev/null'); 
+                    exec('sudo /etc/init.d/dct restart >/dev/null');
+                    $status->addMessage('Configuration applied.', 'success');
                 }
             }
         }
@@ -28,7 +29,7 @@ function saveSystemParamConfig($status)
     file_put_contents(ELASTEL_DCT_CONFIG_JSON, $data);
     exec('sudo /usr/sbin/set_config ' . ELASTEL_DCT_CONFIG_JSON . ' dct system_param');
 
-    $status->addMessage('System parameters configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
 }
 

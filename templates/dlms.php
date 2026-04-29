@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("DLMS Setting"); ?>
+          DLMS <?php echo _("Setting"); ?>
           </div>
         </div><!-- ./row -->
       </div><!-- ./card-header -->
@@ -26,10 +26,6 @@
             <input type="hidden" name="option_list_dlms" value="" id="option_list_dlms">
             <?php echo \ElastPro\Tokens\CSRF::hiddenField();
             $arr= array(
-              array("name"=>"Order",                "style"=>"", "descr"=>""),
-              array("name"=>"Device Name",          "style"=>"", "descr"=>""),
-              array("name"=>"Belonged Interface",   "style"=>"", "descr"=>""),
-              array("name"=>"Tag Name",             "style"=>"", "descr"=>""),
               array("name"=>"Interface Class",      "style"=>"", "descr"=>""),
               array("name"=>"OBIS",                 "style"=>"", "descr"=>""),
               array("name"=>"Data Type",            "style"=>"", "descr"=>""),
@@ -39,10 +35,6 @@
             ?>
             <div class="cbi-section cbi-tblsection" id="page_dlms" name="page_dlms">
               <?php page_table_title('dlms', $arr); ?>
-              <div class="cbi-section-create">
-                <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addData('dlms')">
-                <?php conf_im_ex('DLMS'); ?>
-              </div>
             </div>
             <?php echo $buttons ?>
           </form>
@@ -55,7 +47,7 @@
 <div id="popLayer"></div>
 <div id="popBox" style="overflow:auto">
   <input hidden="hidden" name="page_type" id="page_type" value="0">
-  <h4><?php echo _("DLMS Rules Setting"); ?></h4>
+  <h4>DLMS <?php echo _("Rules Setting"); ?></h4>
   <div class="cbi-section">
     <?php
       $table_name = 'dlms';
@@ -91,7 +83,7 @@
     <h4><?php echo _("Tip: Scan to identify the data that needs to be collected.");?></h4>
   </div>
   <div class="cbi-value">
-    <a><?php echo _("Interface:");?></a>
+    <a><?php echo _("Interface");?>:</a>
     <select id="scan_interface" class="cbi-input-select" name="scan_interface" style="width: 100%; max-width: 15rem; min-width: 5rem;">
     <?php
       foreach ($interface_list as $key => $value) {

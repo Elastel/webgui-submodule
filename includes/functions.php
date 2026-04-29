@@ -812,7 +812,7 @@ function setLoginGuide($target, $hostname)
     }
 
     echo '<a href="'.$url.'" class="mt-2 d-block text-decoration-none" target="_blank">
-           <i class="fas fa-book me-1"></i> User Guide
+           <i class="fas fa-book me-1"></i> '. _("User Guide") . '
          </a>';
 }
 

@@ -6,7 +6,7 @@
         <?php $checked = $arrConfig['disable_wifi_ap_bool'] == 1 ? 'checked="checked"' : '' ?>
         <?php $disabled = $arrConfig['enable_wifi_client_bool'] == 1 ? 'disabled="disabled"' : '' ?>
         <input class="custom-control-input" id="disablewifiap" name="disable_wifi_ap" type="checkbox" value="1" <?php echo $checked ?> <?php echo $disabled ?> />
-        <label class="custom-control-label" for="disablewifiap"><?php echo _("Disable <code>Disable WIFI</code>"); ?></label>
+        <label class="custom-control-label" for="disablewifiap"><?php echo _("Disable WIFI"); ?></label>
       </div>
     </div>
   </div>

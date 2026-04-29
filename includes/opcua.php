@@ -13,7 +13,8 @@ function DisplayOpcua()
                 $status->addMessage('Error data', 'danger');
             } else {
                 if (isset($_POST['applysettings'])) {
-                    exec('sudo /etc/init.d/dct restart >/dev/null'); 
+                    exec('sudo /etc/init.d/dct restart >/dev/null');
+                    $status->addMessage('Configuration applied.', 'success');
                 }
             }
         }
@@ -143,7 +144,7 @@ function saveOpcuaConfig($status)
         }
     }
     
-    $status->addMessage('OPC UA configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
 }
 

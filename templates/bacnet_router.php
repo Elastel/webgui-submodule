@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("BACnet Router"); ?>
+          BACnet <?php echo _("Router"); ?>
           </div>
           <div class="col">
             <button class="btn btn-light btn-icon-split btn-sm service-status float-right">
@@ -30,17 +30,17 @@
           <form method="POST" action="bacnet_router" role="form">
           <?php echo \ElastPro\Tokens\CSRF::hiddenField();;
             echo '<div class="cbi-section cbi-tblsection">';
-            RadioControlCustom(_('BACnet Router'), 'enabled', 'bacnet', 'enableBACnet');
+            RadioControlCustom('BACnet '._('Router'), 'enabled', 'bacnet', 'enableBACnet');
 
             echo '<div id="page_bacnet" name="page_bacnet">';
 
             // $mode = array('BACnet/IP To BACnet/MSTP', 'BACnet/MSTP To BACnet/IP');
             // SelectControlCustom(_('Mode'), 'mode', $mode, $mode[0], 'mode');
-            echo '<h5>'._("BACnet/IP Settings").'</h5>';
+            echo '<h5>BACnet/IP '._("Setting").'</h5>';
             SelectControlCustom(_('IP Interface'), 'ifname', $interface_list, $interface[0], 'ifname');
             InputControlCustom(_('Port'), 'port', 'port', _('1~65535'));
 
-            echo '<h5>'._("BACnet/MSTP Settings").'</h5>';
+            echo '<h5>BACnet/MSTP '._("Setting").'</h5>';
 
             $model = getModel();
             

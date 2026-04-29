@@ -12,6 +12,7 @@ function DisplayGps()
             
             if (isset($_POST['applygpssettings'])) {
                 exec('sudo /etc/init.d/gps restart > /dev/null');
+                $status->addMessage('Configuration applied.', 'success');
             }
         }
     }
@@ -36,7 +37,7 @@ function saveGpsConfig($status)
     
     exec("sudo /usr/local/bin/uci commit gps");
 
-    $status->addMessage('configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
 }
 

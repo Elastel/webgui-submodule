@@ -1,5 +1,5 @@
 <div class="tab-pane active" id="restapisettings">
-  <h4 class="mt-3"><?php echo ("RestAPI settings") ;?></h4>
+  <h4 class="mt-3">RestAPI <?php echo _("Setting") ;?></h4>
   <div class="row">
     <div class="mb-3 col-lg-12 mt-2">
       <div class="row">

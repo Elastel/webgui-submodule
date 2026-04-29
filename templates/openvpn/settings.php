@@ -12,8 +12,8 @@
     <div class="cbi-value" id="page_role">
       <label class="cbi-value-title"><?php echo _("Role"); ?></label>
       <select id="role" name="role" class="cbi-input-select" onchange="roleChange()">
-        <option value="client">Client</option>
-        <option value="server">Server</option>
+        <option value="client"><?=_("Client")?></option>
+        <option value="server"><?=_("Server")?></option>
       </select>
     </div>
     
@@ -76,7 +76,7 @@
       </div>
 
       <div class="cbi-value">
-        <label class="cbi-value-title"><?php echo _("Authentication algorithm"); ?></label>
+        <label class="cbi-value-title"><?php echo _("Authentication Algorithm"); ?></label>
         <select id="auth" name="auth" class="cbi-input-select">
           <option value="none">None</option>
           <?php 
@@ -94,7 +94,7 @@
       </div>
 
       <div class="cbi-value">
-        <label class="cbi-value-title"><?php echo _("TA Key(.key)"); ?></label>
+        <label class="cbi-value-title"><?php echo _("TA Key"); ?>(.key)</label>
         <label class="cbi-file-lable" for="ta">
             <input type="button" class="cbi-file-btn" id="ta_btn" value="<?php echo _("Choose file"); ?>">
             <span id="ta_text"><?php echo _("No file chosen"); ?></span>
@@ -113,7 +113,7 @@
 
       <div name="page_cert" id="page_cert">
         <div class="cbi-value">
-          <label class="cbi-value-title"><?php echo _("Public Certificate(.crt)"); ?></label>
+          <label class="cbi-value-title"><?php echo _("Public Certificate"); ?>(.crt)</label>
           <label class="cbi-file-lable" for="cert">
               <input type="button" class="cbi-file-btn" id="cert_btn" value="<?php echo _("Choose file"); ?>">
               <span id="cert_text"><?php echo _("No file chosen"); ?></span>
@@ -121,7 +121,7 @@
           </label>
         </div>
         <div class="cbi-value">
-          <label class="cbi-value-title"><?php echo _("Private Key(.key)"); ?></label>
+          <label class="cbi-value-title"><?php echo _("Private Key"); ?>(.key)</label>
           <label class="cbi-file-lable" for="key">
               <input type="button" class="cbi-file-btn" id="key_btn" value="<?php echo _("Choose file"); ?>">
               <span id="key_text"><?php echo _("No file chosen"); ?></span>
@@ -143,7 +143,7 @@
     </div>
     
     <div id="page_ovpn" name="page_ovpn" class="cbi-value">
-      <label class="cbi-value-title"><?php echo _("OVPN File(.ovpn)"); ?></label>
+      <label class="cbi-value-title"><?php echo _("OVPN File"); ?>(.ovpn)</label>
       <label class="cbi-file-lable" for="ovpn">
           <input type="button" class="cbi-file-btn" id="ovpn_btn" value="<?php echo _("Choose file"); ?>">
           <span id="ovpn_text"><?php echo _("No file chosen"); ?></span>

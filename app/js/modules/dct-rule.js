@@ -88,7 +88,7 @@ export function doesColumnExist(tableId, columnName) {
     var table = document.getElementById(tableId);
     var headers = table.querySelectorAll('th');
     for (var i = 0; i < headers.length; i++) {
-        if (headers[i].textContent.trim() === columnName) {
+        if (headers[i].dataset.field === columnName) {
             return true;
         }
     }
@@ -224,11 +224,11 @@ export function insertColumn(tableId, name, headerName, newHeaderName) {
     if (tableId == 'table_system_param') {
         return;
     }
-    if (doesColumnExist(tableId, newHeaderName))
+    if (doesColumnExist(tableId, name))
         return;
 
     if ((tableId == 'table_adc' || tableId == 'table_di' || tableId == 'table_modbus_slave_point' || 
-        tableId == 'table_dnp3') && newHeaderName == 'Write Value') {
+        tableId == 'table_dnp3') && name == 'write_value') {
         return;
     }
 
@@ -240,8 +240,9 @@ export function insertColumn(tableId, name, headerName, newHeaderName) {
     var columnIndex = 0;
     
     for (var i = 0; i < headers.length; i++) {
-        if (headers[i].textContent === headerName) {
+        if (headers[i].dataset.field === headerName) {
             columnIndex = i + 1;
+            break;
         } else if (headers[i].textContent === 'Source Object') {
             columnIndex = i + 1;
         }
@@ -254,7 +255,7 @@ export function insertColumn(tableId, name, headerName, newHeaderName) {
         td.style.fontWeight = "bold";
         td.style.color = "blue";
         td.style.textAlign = 'center';
-        if (newHeaderName == 'Write Value') {
+        if (name == 'write_value') {
             let button = document.createElement("button");
             button.textContent = "Write";
             button.classList.add("btn-primary");
@@ -269,16 +270,15 @@ export function insertColumn(tableId, name, headerName, newHeaderName) {
             td.innerHTML = '-';
         }
         
-
         if (row.getElementsByTagName('th').length > 0) {
             var th = document.createElement('th');
             th.classList.add("th");
             th.classList.add("cbi-section-table-cell");
+            th.dataset.field = name;
             if (th_num == 0) {
                 th.innerHTML = newHeaderName;
                 th_num++;
             }
-
             row.insertBefore(th, row.cells[columnIndex]);
         } else {
             row.insertBefore(td, row.cells[columnIndex]);
@@ -295,7 +295,7 @@ export function deleteColumnByHeader(tableId, headerName) {
     var table = document.getElementById(tableId);
     const cells = table.getElementsByTagName('th');
     for (let i = 0; i < cells.length; i++) {
-        if (cells[i].textContent === headerName) {
+        if (cells[i].dataset.field === headerName) {
             const columnIndex = i;
             const rows = table.rows;
             for (let j = 0; j < rows.length; j++) {
@@ -450,8 +450,10 @@ export function addSectionTable(table_name, jsonData, option_list) {
         table.innerHTML += contents;
     }
 
-    insertColumn("table_" + table_name, 'cur_value', 'Tag Name', 'Current Value');
-    insertColumn("table_" + table_name, 'write_value', 'Current Value', 'Write Value');
+    const curValue = document.querySelector('[data-i18n="cur_value"]').value;
+    const writeValue = document.querySelector('[data-i18n="write_value"]').value;
+    insertColumn("table_" + table_name, 'cur_value', 'factor_name', curValue);
+    insertColumn("table_" + table_name, 'write_value', 'cur_value', writeValue);
 
     var result = get_table_data(table_name, option_list);
     var json_data = JSON.stringify(result);
@@ -819,8 +821,8 @@ export function saveData(table_name) {
 
     var table = document.getElementById("table_" + table_name);
     if (page_type == "0") {
-        deleteColumnByHeader("table_" + table_name, 'Current Value');
-        deleteColumnByHeader("table_" + table_name, 'Write Value');
+        deleteColumnByHeader("table_" + table_name, 'cur_value');
+        deleteColumnByHeader("table_" + table_name, 'write_value');
         var contents = '';
         contents += '<tr  class="tr cbi-section-table-descr">\n';
         option_list.forEach(function(option){
@@ -843,8 +845,8 @@ export function saveData(table_name) {
             '   </tr>';
         table.innerHTML += contents;
 
-        insertColumn("table_" + table_name, 'cur_value', 'Tag Name', 'Current Value');
-        insertColumn("table_" + table_name, 'write_value', 'Current Value', 'Write Value');
+        insertColumn("table_" + table_name, 'cur_value', 'factor_name', 'Current Value');
+        insertColumn("table_" + table_name, 'write_value', 'cur_value', 'Write Value');
     } else {
         var num = 0;
         option_list.forEach(function (option){
@@ -989,7 +991,11 @@ export function closeConfBox() {
 globalThis.closeConfBox = closeConfBox;
 
 export function conf_im_ex(conf_name) {
-    document.getElementById('title').innerHTML = conf_name + ' Configure Import Export';
+    const title = document.querySelector('input[name="confBox"]');
+    if (conf_name == "Iec1107") {
+        conf_name = "IEC62056-21";
+    }
+    document.getElementById('title').innerHTML = conf_name + ' ' + title.value;
     openConfBox();
     if (conf_name == "ADC") {
         document.getElementById("page_im_ex_name").value = "adc";
@@ -1052,8 +1058,9 @@ function selectMode() {
 globalThis.selectMode = selectMode;
 
 export function switchPage(name) {
+    const setting = document.querySelector('input[data-i18n="setting"]').value;
     if (name == "btnADC") {
-        document.getElementById("popBoxTitle").innerHTML="ADC Setting";
+        document.getElementById("popBoxTitle").innerHTML="ADC "+ setting;
         document.getElementById("page_name").value = "0"; /* 0 is ADC. 1 is DI, 2 is DO */
         $('#pageIndexADC').show();
         $('#pageIndexDI').hide();
@@ -1062,7 +1069,7 @@ export function switchPage(name) {
         $('#pageDIMod').hide();
         $('#pageDOMod').hide();
     } else if (name == "btnDI") {
-        document.getElementById("popBoxTitle").innerHTML="DI Setting";
+        document.getElementById("popBoxTitle").innerHTML="DI "+ setting;
         document.getElementById("page_name").value = "1";
         $('#pageIndexADC').hide();
         $('#pageIndexDI').show();
@@ -1072,7 +1079,7 @@ export function switchPage(name) {
         $('#pageDOMod').hide();
         selectMode();
     } else if (name == "btnDO") {
-        document.getElementById("popBoxTitle").innerHTML="DO Setting";
+        document.getElementById("popBoxTitle").innerHTML="DO "+ setting;
         document.getElementById("page_name").value = "2";
         $('#pageIndexADC').hide();
         $('#pageIndexDI').hide();

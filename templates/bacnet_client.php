@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("BACnet Rules"); ?>
+          BACnet <?php echo _("Setting"); ?>
           </div>
         </div><!-- ./row -->
       </div><!-- ./card-header -->
@@ -28,21 +28,13 @@
             <div class="cbi-section cbi-tblsection" id="page_baccli" name="page_baccli">
               <?php
               $arr= array(
-                array("name"=>"Order",                "style"=>"", "descr"=>"", "ctl"=>"input"),
-                array("name"=>"Device Name",          "style"=>"", "descr"=>"", "ctl"=>"input"),
-                array("name"=>"Belonged Interface",   "style"=>"", "descr"=>"", "ctl"=>"select"),
-                array("name"=>"Tag Name",             "style"=>"", "descr"=>"", "ctl"=>"input"),
-                array("name"=>"Object Device ID",     "style"=>"", "descr"=>"", "ctl"=>"input"),
-                array("name"=>"Object Identifier",    "style"=>"", "descr"=>"", "ctl"=>"input"),
+                array("name"=>"Object Device ID",     "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
+                array("name"=>"Object Identifier",    "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"input"),
               );
               
               $arr = dct_rules_common_add_fields($arr);
               page_table_title('baccli', $arr);
               ?>
-              <div class="cbi-section-create">
-                <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addData('baccli')">
-                <?php conf_im_ex('Baccli'); ?>
-              </div>
             </div>
             <?php echo $buttons ?>
           </form>
@@ -55,7 +47,7 @@
 <div id="popLayer"></div>
 <div id="popBox" style="overflow:auto">
   <input hidden="hidden" name="page_type" id="page_type" value="0">
-  <h4><?php echo _("BACnet Rules Object Setting"); ?></h4>
+  <h4>BACnet <?php echo _("Rules Setting"); ?></h4>
   <div class="cbi-section">
     <?php
       $table_name = 'baccli';

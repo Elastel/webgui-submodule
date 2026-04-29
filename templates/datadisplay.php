@@ -22,7 +22,7 @@
                   }
                 ?>
               </select>
-              <input type="text" class="cbi-input-text" name="keywords" value="" placeholder="Please enter keywords" />
+              <input type="text" class="cbi-input-text" name="keywords" value="" placeholder="<?=_('Please enter keywords')?>" />
             </div>
             <div class="cbi-section cbi-tblsection" id="page_datadisplay" name="page_datadisplay">
               <table class="table cbi-section-table" name="table_modbus" id="table_modbus">

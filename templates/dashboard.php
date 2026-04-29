@@ -104,24 +104,24 @@
                     <div class="row ml-1">
                       <div class="col-sm">
                         <div class="row mb-1">
-                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Interface:"); ?></div><div class="col-xs-3"><?php echo $route['interface']; ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Interface").":"; ?></div><div class="col-xs-3"><?php echo $route['interface']; ?></div>
                         </div>
                         <div class="row mb-1">
-                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Ip Address:"); ?></div><div class="col-xs-3"><?php echo $route['ip-address']; ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("IP Address").":"; ?></div><div class="col-xs-3"><?php echo $route['ip-address']; ?></div>
                         </div>
                         <div class="row mb-1">
-                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Gateway:"); ?></div><div class="col-xs-3"><?php echo $route['gateway']; ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Gateway").":"; ?></div><div class="col-xs-3"><?php echo $route['gateway']; ?></div>
                         </div>
                         <div class="row mb-1">
-                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Netmask:"); ?></div><div class="col-xs-3"><?php echo $route["netmask"]; ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Netmask").":"; ?></div><div class="col-xs-3"><?php echo $route["netmask"]; ?></div>
                         </div>
                         <div class="row mb-1">
                           <?php if ( $route["mac"] != null && $route["mac"] != ' ') {  ?>
-                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("MAC:"); ?></div><div class="col-xs-3" > <?php echo $route["mac"]; ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("MAC").":"; ?></div><div class="col-xs-3" > <?php echo $route["mac"]; ?></div>
                           <?php } ?>
                         </div>
                         <div class="row mb-1">
-                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Metric:"); ?></div><div class="col-xs-3"><?php echo $route["metric"]; ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Metric").":"; ?></div><div class="col-xs-3"><?php echo $route["metric"]; ?></div>
                         </div>
                       </div>
                     </div>
@@ -134,37 +134,37 @@
                     <div class="row ml-1">
                       <div class="col-sm">
                         <div class="row mb-1">
-                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Interface:"); ?></div><div class="col-xs-3"><?php echo $lteInfo['interface']; ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Interface").":"; ?></div><div class="col-xs-3"><?php echo $lteInfo['interface']; ?></div>
                         </div>
                         <div class="row mb-1">
-                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Ip Address:"); ?></div><div class="col-xs-3"><?php echo $lteInfo['ip_address']; ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("IP Address").":"; ?></div><div class="col-xs-3"><?php echo $lteInfo['ip_address']; ?></div>
                         </div>
                         <div class="row mb-1">
-                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Netmask:"); ?></div><div class="col-xs-3"><?php echo $lteInfo['netmask']; ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Netmask").":"; ?></div><div class="col-xs-3"><?php echo $lteInfo['netmask']; ?></div>
                         </div>
                         <div class="row mb-1">
-                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Signal:"); ?></div><div class="col-xs-3"><?php echo $lteInfo["signal"]; ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Signal").":"; ?></div><div class="col-xs-3"><?php echo $lteInfo["signal"]; ?></div>
                         </div>
                         <div class="row mb-1">
-                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Operator:"); ?></div><div class="col-xs-3"><?php echo $lteInfo["operator"]; ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Operator").":"; ?></div><div class="col-xs-3"><?php echo $lteInfo["operator"]; ?></div>
                         </div>
                         <div class="row mb-1">
-                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("ICCID:"); ?></div><div class="col-xs-3"><?php echo $lteInfo["iccid"]; ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("ICCID").":"; ?></div><div class="col-xs-3"><?php echo $lteInfo["iccid"]; ?></div>
                         </div>
                         <div class="row mb-1">
-                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("IMEI:"); ?></div><div class="col-xs-3"><?php echo $lteInfo["imei"]; ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("IMEI").":"; ?></div><div class="col-xs-3"><?php echo $lteInfo["imei"]; ?></div>
                         </div>
                         <div class="row mb-1">
-                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("SIM:"); ?></div><div class="col-xs-3"><?php echo $lteInfo["sim"]; ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("SIM").":"; ?></div><div class="col-xs-3"><?php echo $lteInfo["sim"]; ?></div>
                         </div>
                         <div class="row mb-1">
-                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Status:"); ?></div><div class="col-xs-3"><?php echo $lteInfo["lte_status"]; ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Status").":"; ?></div><div class="col-xs-3"><?php echo $lteInfo["lte_status"]; ?></div>
                         </div>
                         <div class="row mb-1">
                           <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Uptime:"); ?></div><div class="col-xs-3"><?php echo $lteInfo["uptime"]; ?></div>
                         </div>
                         <div class="row mb-1">
-                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Metric:"); ?></div><div class="col-xs-3"><?php echo $lteInfo["metric"]; ?></div>
+                          <div class="col-xs-3" style="color: #858796; width: 7rem"><?php echo _("Metric").":"; ?></div><div class="col-xs-3"><?php echo $lteInfo["metric"]; ?></div>
                         </div>
                       </div>
                     </div>

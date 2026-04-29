@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("Modbus Router"); ?>
+          Modbus <?php echo _("Router"); ?>
           </div>
           <div class="col">
             <button class="btn btn-light btn-icon-split btn-sm service-status float-right">
@@ -30,18 +30,18 @@
           <form method="POST" action="modbus_router" role="form">
           <?php echo \ElastPro\Tokens\CSRF::hiddenField();
             echo '<div class="cbi-section cbi-tblsection">';
-            RadioControlCustom(_('Modbus Router'), 'enabled', 'modbus', 'enableModbusRouter', NULL, $modbusRouterConf['enabled']);
+            RadioControlCustom('Modbus '._('Router'), 'enabled', 'modbus', 'enableModbusRouter', NULL, $modbusRouterConf['enabled']);
 
             $enable = $modbusRouterConf['enabled'] == '1' ? '' : 'style="display: none;"';
             echo '<div id="page_modbus_router" name="page_modbus_router" '.$enable.'>';
 
             $mode = array('Modbus RTU To Modbus TCP', 'Modbus TCP To Modbus RTU');
             SelectControlCustom(_('Mode'), 'mode', $mode, ($modbusRouterConf['mode'] != NULL) ? $mode[$modbusRouterConf['mode']] : $mode[0], 'mode', null, 'modbusRouterModeChange()');
-            echo '<h5>'._("Modbus TCP Settings").'</h5>';
+            echo '<h5>Modbus TCP '._("Setting").'</h5>';
             InputControlCustom(_('IP Address'), 'address', 'address', NULL, $modbusRouterConf['address']);
             InputControlCustom(_('Port'), 'port', 'port', _('1~65535'), ($modbusRouterConf['port'] != NULL) ? $modbusRouterConf['port'] : '502');
 
-            echo '<h5>'._("Modbus RTU Settings").'</h5>';
+            echo '<h5>Modbus RTU '._("Setting").'</h5>';
             
             SelectControlCustom(_('COM Interface'), 'com', $comlist, ($modbusRouterConf['com'] != NULL) ? $comlist[$modbusRouterConf['com']] : $comlist[0], 'com');
 

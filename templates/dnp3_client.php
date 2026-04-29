@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("DNP3 Rules"); ?>
+          DNP3 <?php echo _("Setting"); ?>
           </div>
         </div><!-- ./row -->
       </div><!-- ./card-header -->
@@ -28,21 +28,13 @@
               <div class="cbi-section cbi-tblsection" id="page_dnp3cli" name="page_dnp3cli">
                 <?php
                 $arr= array(
-                  array("name"=>"Order",                "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Device Name",          "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Belonged Interface",   "style"=>"", "descr"=>"", "ctl"=>"select"),
-                  array("name"=>"Tag Name",             "style"=>"", "descr"=>"", "ctl"=>"input"),
-                  array("name"=>"Group ID",             "style"=>"", "descr"=>"", "ctl"=>"select"),
-                  array("name"=>"Number of Points",     "style"=>"", "descr"=>"0~100", "ctl"=>"input"),
+                  array("name"=>"Group ID",             "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                  array("name"=>"Index Number",     "data-field" => "", "style"=>"", "descr"=>"0~100", "ctl"=>"input"),
                 );
 
                 $arr = dct_rules_common_add_fields($arr);
                 page_table_title('dnp3cli', $arr);
                 ?>
-                <div class="cbi-section-create">
-                  <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addData('dnp3cli')">
-                  <?php conf_im_ex('dnp3cli'); ?>
-                </div>
               </div>
             <?php echo $buttons ?>
           </form>
@@ -55,7 +47,7 @@
 <div id="popLayer"></div>
 <div id="popBox" style="overflow:auto">
   <input hidden="hidden" name="page_type" id="page_type" value="0">
-  <h4><?php echo _("DNP3 Rules Setting"); ?></h4>
+  <h4>DNP3 <?php echo _("Rules Setting"); ?></h4>
   <div class="cbi-section">
     <?php
       $table_name = 'dnp3cli';
@@ -73,7 +65,7 @@
                       'ANALOG_INPUT' => 'ANALOG_INPUT', 'ANALOG_OUTPUTS' => 'ANALOG_OUTPUTS'];
       SelectControlCustom(_('Group ID'), $table_name.'.group_id', $group_id_list, $group_id_list['ANALOG_INPUT'], $table_name.'.group_id');
 
-      InputControlCustom(_('Number of Points'), $table_name.'.point_number', $table_name.'.point_number', '0~100');
+      InputControlCustom(_('Index Number'), $table_name.'.point_number', $table_name.'.point_number', '0~100');
 
       dct_rules_common($table_name);
     ?>

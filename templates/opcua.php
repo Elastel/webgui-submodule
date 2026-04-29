@@ -3,7 +3,7 @@
   if (!RASPI_MONITOR_ENABLED) :
     BtnSaveApplyCustom('savesettings', 'applysettings');
   endif;
-  $msg = _('Restarting OPC UA Server');
+  $msg = _('Restarting OPCUA Server');
   page_progressbar($msg, _("Executing dct start"));
   $buttons = ob_get_clean(); 
   ob_end_clean();
@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("OPC UA Server"); ?>
+          OPCUA <?php echo _("Server"); ?>
           </div>
         </div><!-- ./row -->
       </div><!-- ./card-header -->
@@ -25,7 +25,7 @@
           <?php echo \ElastPro\Tokens\CSRF::hiddenField();
             echo '<div class="cbi-section cbi-tblsection">';
 
-            RadioControlCustom(_('OPC UA Server'), 'enabled', 'opcua', 'enableOpcua');
+            RadioControlCustom('OPCUA '._('Server'), 'enabled', 'opcua', 'enableOpcua');
             echo '<div id="page_opcua" name="page_opcua">';
 
             InputControlCustom(_('Port'), 'port', 'port', _('1~65535'));

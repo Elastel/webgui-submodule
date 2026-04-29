@@ -40,10 +40,11 @@ function DisplayDDNS()
                                 $status->addMessage("Failed to restart DDNS", 'danger');
                             } else {
                                 exec('sudo /etc/init.d/ddns restart');
+                                $status->addMessage('Configuration applied.', 'success');
                             }
                         } else {
                             $status->addMessage("No network, failed to restart DDNS.", 'danger');
-                        }  
+                        }
                     }   
                 }
             }
@@ -74,7 +75,7 @@ function saveDDNSConfig($status)
     
     exec("sudo /usr/local/bin/uci commit ddns");
 
-    $status->addMessage('DDNS configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
 }
 

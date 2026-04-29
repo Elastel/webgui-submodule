@@ -23,13 +23,15 @@
           <?php $status->showMessages(); ?>
           <form role="form" action="iotedge" enctype="multipart/form-data" method="POST">
           <?php echo \ElastPro\Tokens\CSRF::hiddenField();
+            echo '<input type="hidden" data-i18n="attestion_method" value="'._("Attestation Method").'">';
+            echo '<input type="hidden" data-i18n="auth_method" value="'._("Authentication Method").'">';
             echo '<div class="cbi-section cbi-tblsection">';
               RadioControlCustom(_('Azure IoT Edge'), 'enabled', 'iotedge', 'enableIotedge');
 
               echo '<div id="page_iotedge" name="page_iotedge">';
                 $source_list = array('manual'=>'manual', 'dps'=>'dps');
                 SelectControlCustom(_('Source'), 'source', $source_list, $source_list['manual'], 'source', null, "iotedgeSourceChange()");
-                SelectControlCustom(_('Attestaion Method'), 'attestion_method', $method_list, $method_list[0], 'attestion_method', null, "iotedgeMethodChange()");
+                SelectControlCustom(_('Attestation Method'), 'attestion_method', $method_list, $method_list[0], 'attestion_method', null, "iotedgeMethodChange()");
 
                 echo '<div id="page_source_manual" name="page_source_manual">';
                   echo '<div id="page_source_manual_connection_string" name="page_source_manual_connection_string">';
@@ -56,7 +58,7 @@
                 echo '</div>';
               echo '</div>';
               LabelControlCustom(_("Version"), 'version', 'status', $version);
-              LabelControlCustom(_("Status"), 'status', 'status', $run_status != '0' ? "<font color=\"green\">Running</font>" : "<font color=\"red\">Stop</font>");
+              LabelControlCustom(_("Status"), 'status', 'status', $run_status != '0' ? "<font color=\"green\">"._('Running')."</font>" : "<font color=\"red\">"._('Stop')."</font>");
               ?>
                   <div class="cbi-section cbi-tblsection">
                     <!-- Nav tabs -->

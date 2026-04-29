@@ -38,7 +38,7 @@
                 page_table_title('system_param', $arr);
                 ?>
                 <div class="cbi-section-create">
-                  <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addData('system_param')">
+                  <input type="button" class="cbi-button-add" name="popBox" value=<?=_("ADD")?> onclick="addData('system_param')">
                   <?php conf_im_ex('system_param'); ?>
                 </div>
               </div>
@@ -53,7 +53,7 @@
 <div id="popLayer"></div>
 <div id="popBox" style="overflow:auto">
   <input hidden="hidden" name="page_type" id="page_type" value="0">
-  <h4><?php echo _("IEC61850 Rules Object Setting"); ?></h4>
+  <h4><?php echo _("System Parameter Setting"); ?></h4>
   <div class="cbi-section">
     <?php
       $table_name = 'system_param';

@@ -13,7 +13,8 @@ function DisplayBACnetClient()
                 $status->addMessage('Error data', 'danger');
             } else {
                 if (isset($_POST['applybacclisettings'])) {
-                    exec('sudo /etc/init.d/dct restart >/dev/null'); 
+                    exec('sudo /etc/init.d/dct restart >/dev/null');
+                    $status->addMessage('Configuration applied.', 'success');
                 }
             }
         }
@@ -24,7 +25,7 @@ function DisplayBACnetClient()
             if (is_uploaded_file($_FILES['upload_file']['tmp_name'])) {
                 save_import_file('baccli', $status, $_FILES['upload_file']);
             } else {
-                $status->addMessage('fail to upload file', 'danger');
+                $status->addMessage('Fail to upload file', 'danger');
             }
         }
     }
@@ -82,7 +83,7 @@ function saveBACnetClientConfig($status)
         }
     }
     
-    $status->addMessage('BACnet Rules configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
 }
 

@@ -13,7 +13,8 @@ function DisplayBACnet()
                 $status->addMessage('Error data', 'danger');
             } else {
                 if (isset($_POST['applybacnetsettings'])) {
-                    exec('sudo /etc/init.d/dct restart >/dev/null'); 
+                    exec('sudo /etc/init.d/dct restart >/dev/null');
+                    $status->addMessage('Configuration applied.', 'success');
                 }
             }
         }
@@ -54,7 +55,7 @@ function saveBACnetConfig($status)
     exec("sudo /usr/local/bin/uci commit dct");
 
     
-    $status->addMessage('BACnet configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
 }
 

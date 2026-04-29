@@ -35,34 +35,34 @@
 
               <div id="page_detection" name="page_detection">
                   <div class="cbi-value">
-                      <label class="cbi-value-title">Primary Detection Server</label>
+                      <label class="cbi-value-title"><?php echo _("Primary Detection Server"); ?></label>
                       <input type="text" class="cbi-input-text" name="primary_addr" id="primary_addr" 
                       value="<?php echo ($primary_addr[0] != null ? $primary_addr[0] : ""); ?>" />
                   </div>
                   
                   <div class="cbi-value">
-                      <label class="cbi-value-title">Second Detection Server</label>
+                      <label class="cbi-value-title"><?php echo _("Second Detection Server"); ?></label>
                       <input type="text" class="cbi-input-text" name="secondary_addr" id="secondary_addr" 
                       value="<?php echo ($secondary_addr[0] != null ? $secondary_addr[0] : ""); ?>" />
                   </div>
 
                   <div class="cbi-value">
-                      <label class="cbi-value-title">Detection Period</label>
+                      <label class="cbi-value-title"><?php echo _("Detection Period"); ?></label>
                       <input type="text" class="cbi-input-text" name="detect_period" id="detect_period" 
                       value="<?php echo ($detect_period[0] != null ? $detect_period[0] : ""); ?>" />
-                      <label class="cbi-value-description">Minutes</label>
+                      <label class="cbi-value-description"><?php echo _("Minutes"); ?></label>
                   </div>
 
                   <div class="cbi-value">
-                      <label class="cbi-value-title">Enable Reboot</label>
+                      <label class="cbi-value-title"><?php echo _("Enable Reboot"); ?></label>
                       <input type="checkbox" class="cbi-input-checkbox" onchange="enableReboot(this)" name="enabled_reboot" id="enabled_reboot" 
                       value="1" <?php echo ($enabled_reboot[0] == 1 ? 'checked' : ""); ?> />
                   </div>
                   <div class="cbi-value" id="page_reboot" name="page_reboot" <?php if ($enabled_reboot[0] != 1) { ?> style="display: none;" <?php } ?> >
-                      <label class="cbi-value-title">Reboot After Interval</label>
+                      <label class="cbi-value-title"><?php echo _("Reboot After Interval"); ?></label>
                       <input type="text" class="cbi-input-text" name="reboot_inter" id="reboot_inter" 
                       value="<?php echo ($reboot_inter[0] != null ? $reboot_inter[0] : ""); ?>" />
-                      <label class="cbi-value-description">Minutes</label>
+                      <label class="cbi-value-description"><?php echo _("Minutes"); ?></label>
                   </div>
               </div>
             </div>

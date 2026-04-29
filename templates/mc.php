@@ -15,7 +15,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col">
-          <?php echo _("MC Setting ( Qna-3E & ASCII)"); ?>
+          MC <?php echo _("Setting"); ?> ( Qna-3E & ASCII)
           </div>
         </div><!-- ./row -->
       </div><!-- ./card-header -->
@@ -26,24 +26,16 @@
           <input type="hidden" name="option_list_mc" value="" id="option_list_mc">
           <?php echo \ElastPro\Tokens\CSRF::hiddenField();
           $arr= array(
-            array("name"=>"Order",                "style"=>"", "descr"=>"", "ctl"=>"input"),
-            array("name"=>"Device Name",          "style"=>"", "descr"=>"", "ctl"=>"input"),
-            array("name"=>"Belonged Interface",   "style"=>"", "descr"=>"", "ctl"=>"select"),
-            array("name"=>"Tag Name",             "style"=>"", "descr"=>"Multiple Tags Are Separated By Semicolon", "ctl"=>"input"),
-            array("name"=>"Register Type",        "style"=>"", "descr"=>"", "ctl"=>"select"),
-            array("name"=>"Start Address",        "style"=>"", "descr"=>"000000~00FFFF", "ctl"=>"input"),
-            array("name"=>"Count",                "style"=>"", "descr"=>"0001~0120", "ctl"=>"input"),
-            array("name"=>"Data Type",            "style"=>"", "descr"=>"", "ctl"=>"select"),
+            array("name"=>"Register Type",        "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+            array("name"=>"Start Address",        "data-field" => "", "style"=>"", "descr"=>"000000~00FFFF", "ctl"=>"input"),
+            array("name"=>"Count",                "data-field" => "", "style"=>"", "descr"=>"0001~0120", "ctl"=>"input"),
+            array("name"=>"Data Type",            "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
           );
 
           $arr = dct_rules_common_add_fields($arr);
           ?>       
             <div class="cbi-section cbi-tblsection" id="page_mc" name="page_mc">
               <?php page_table_title('mc', $arr); ?>
-              <div class="cbi-section-create">
-                <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addData('mc')">
-                <?php conf_im_ex('MC'); ?>
-              </div>
             </div>
             <?php echo $buttons ?>
           </form>
@@ -56,7 +48,7 @@
 <div id="popLayer"></div>
 <div id="popBox" style="overflow:auto">
   <input hidden="hidden" name="page_type" id="page_type" value="0">
-  <h4><?php echo _("Mc Rules Setting"); ?></h4>
+  <h4>MC <?php echo _("Rules Setting"); ?></h4>
   <div class="cbi-section">
   <?php
     $table_name = 'mc';

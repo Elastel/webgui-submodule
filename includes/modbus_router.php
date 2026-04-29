@@ -14,7 +14,8 @@ function DisplayModbusRouter()
                 $status->addMessage('Error data', 'danger');
             } else {
                 if (isset($_POST['applymodbusroutersettings'])) {
-                    exec('sudo /etc/init.d/modbus_router restart >/dev/null'); 
+                    exec('sudo /etc/init.d/modbus_router restart >/dev/null');
+                    $status->addMessage('Configuration applied.', 'success');
                 }
             }
         }
@@ -92,7 +93,7 @@ function saveModbusRouterConfig($status, $comlist)
     }
     exec("sudo /usr/local/bin/uci commit modbus_router");
 
-    $status->addMessage('Modbus router configuration updated ', 'success');
+    $status->addMessage('Configuration updated.', 'success');
     return true;
 }
 
