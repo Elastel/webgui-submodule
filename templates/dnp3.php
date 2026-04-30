@@ -111,7 +111,7 @@
       $event_var = ['var1' => 'var1', 'var2' => 'var2', 'var3' => 'var3', 'var4' => 'var4', 'var5' => 'var5', 'var6' => 'var6', 'var7' => 'var7', 'var8' => 'var8'];
       SelectControlCustom(_('Event Variation'), $table_name.'.event_var', $event_var, $event_var['var1'], $table_name.'.event_var');
 
-      $static_var = ['var1' => 'var1', 'var2' => 'var2', 'var3' => 'var3', 'var4' => 'var4', 'var5' => 'var5', 'var6' => 'var6', 'var7' => 'var7', 'var8' => 'var8'];
+      $static_var = ['var1' => 'var1', 'var2' => 'var2', 'var3' => 'var3', 'var4' => 'var4'];
       SelectControlCustom(_('Static Variation'), $table_name.'.static_var', $static_var, $static_var['var1'], $table_name.'.static_var');
 
       CheckboxControlCustom(_('Enable'), $table_name.'.enabled', $table_name.'.enabled', 'checked');
