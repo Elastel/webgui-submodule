@@ -194,8 +194,6 @@ function DisplayDashboard(&$extraFooterScripts)
 
     $routeInfo = getRouteInfo(true);
 
-    $lte_ifname = ["wwan0"];
-
     $lteInfo = getLteInfo($lte_ifname[0]);
 
     $cur_hostname = getHostname();
