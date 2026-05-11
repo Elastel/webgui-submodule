@@ -841,7 +841,7 @@ function getSn()
     if (file_exists('/etc/sn')) {
         return trim(file_get_contents('/etc/sn'));
     } else {
-        return '';
+        return exec("cat /proc/cpuinfo | grep Serial | awk -F ':' '{print $2}'");
     }
 }
 
