@@ -48,6 +48,7 @@ export function initDctDataDisplay() {
     function getWebshowDate() {
         $.get('ajax/dct/get_dctcfg.php?type=datadisplay', function(data) {
             let jsonData = '';
+            let factorList = '';
             if (data.includes("data")) {
                 const tmp = JSON.parse(data);
                 jsonData = JSON.parse(tmp['data']);
