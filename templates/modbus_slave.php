@@ -103,10 +103,13 @@
 
       InputControlCustom(_('Start Address'), $table_name.'.start_address', $table_name.'.start_address');
 
-      $data_type_list = ["Bit", "Unsigned 16Bits AB", "Unsigned 16Bits BA", "Signed 16Bits AB", "Signed 16Bits BA", 
-                          "Unsigned 32Bits ABCD", "Unsigned 32Bits BADC", "Unsigned 32Bits CDAB", "Unsigned 32Bits DCBA", 
-                          "Signed 32Bits ABCD", "Signed 32Bits BADC", "Signed 32Bits CDAB", "Signed 32Bits DCBA", 
-                          "Float ABCD", "Float BADC", "Float CDAB", "Float DCBA"];
+      $data_type_list = ["Bit", "Unsigned 16Bits AB", "Unsigned 16Bits BA", "Signed 16Bits AB", "Signed 16Bits BA",
+                          "Unsigned 32Bits ABCD", "Unsigned 32Bits BADC", "Unsigned 32Bits CDAB", "Unsigned 32Bits DCBA",
+                          "Signed 32Bits ABCD", "Signed 32Bits BADC", "Signed 32Bits CDAB", "Signed 32Bits DCBA",
+                          "Float ABCD", "Float BADC", "Float CDAB", "Float DCBA", 
+                          'Unsigned 64Bits ABCDEFGH', 'Unsigned 64Bits BADCFEHG', 'Unsigned 64Bits HGFEDCBA', 'Unsigned 64Bits GHEFCDAB',
+                          'Signed 64Bits ABCDEFGH', 'Signed 64Bits BADCFEHG', 'Signed 64Bits HGFEDCBA', 'Signed 64Bits GHEFCDAB',
+                          'Double ABCDEFGH', 'Double BADCFEHG','Double HGFEDCBA', 'Double GHEFCDAB'];
       SelectControlCustom(_('Data Type'), $table_name.'.data_type', $data_type_list, $data_type_list[1], $table_name.'.data_type', _("A highest byte"));
 
       InputControlCustom(_('Count'), $table_name.'.count', $table_name.'.count');

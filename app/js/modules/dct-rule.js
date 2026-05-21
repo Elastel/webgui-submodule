@@ -315,7 +315,10 @@ export function get_data_type_value(table_name) {
         data_type_value = ['Bit', 'Unsigned 16Bits AB', 'Unsigned 16Bits BA', 'Signed 16Bits AB', 'Signed 16Bits BA',
         'Unsigned 32Bits ABCD', 'Unsigned 32Bits BADC', 'Unsigned 32Bits CDAB', 'Unsigned 32Bits DCBA',
         'Signed 32Bits ABCD', 'Signed 32Bits BADC', 'Signed 32Bits CDAB', 'Signed 32Bits DCBA',
-        'Float ABCD', 'Float BADC', 'Float CDAB', 'Float DCBA'];
+        'Float ABCD', 'Float BADC', 'Float CDAB', 'Float DCBA',
+        'Unsigned 64Bits ABCDEFGH', 'Unsigned 64Bits BADCFEHG', 'Unsigned 64Bits HGFEDCBA', 'Unsigned 64Bits GHEFCDAB',
+        'Signed 64Bits ABCDEFGH', 'Signed 64Bits BADCFEHG', 'Signed 64Bits HGFEDCBA', 'Signed 64Bits GHEFCDAB',
+        'Double ABCDEFGH', 'Double BADCFEHG','Double HGFEDCBA', 'Double GHEFCDAB'];
     } else if (table_name == 'fx') {
         data_type_value = ['Bit', 'Byte', 'Word', 'DWord', 'Real'];
     } else if (table_name == 's7') {

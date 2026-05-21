@@ -152,7 +152,7 @@
       $mode = ['Counting Mode', 'Status Mode'];
       SelectControlCustom(_('Mode'), $table_name.'.mode', $mode, $mode[0], $table_name.'.mode', null, 'selectMode()');
       echo '<div id="pageCount" name="pageCount">';
-      $count_method = [_('Rising Edge'), -('Falling Edge')];
+      $count_method = [_('Rising Edge'), _('Falling Edge')];
       SelectControlCustom(_('Count Method'), $table_name.'.count_method', $count_method, $count_method[0], $table_name.'.count_method');
       InputControlCustom(_('Debounce Interval'), $table_name.'.debounce_interval', $table_name.'.debounce_interval', _('ms'));
       echo '</div>
