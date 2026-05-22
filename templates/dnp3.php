@@ -101,7 +101,7 @@
                       'BINARY_OUTPUT' => 'BINARY_OUTPUT', 'COUNTER_INPUT' => 'COUNTER_INPUT', 
                       'ANALOG_INPUT' => 'ANALOG_INPUT', 'ANALOG_OUTPUTS' => 'ANALOG_OUTPUTS', 
                       /*'OCTECT_STRING' => 'OCTECT_STRING'*/];
-      SelectControlCustom(_('Group ID'), $table_name.'.group_id', $group_id_list, $group_id_list['ANALOG_INPUT'], $table_name.'.group_id');
+      SelectControlCustom(_('Group ID'), $table_name.'.group_id', $group_id_list, $group_id_list['ANALOG_INPUT'], $table_name.'.group_id', null, "groupIdChange()");
     
       InputControlCustom(_('Index Number'), $table_name.'.point_number', $table_name.'.point_number');
 

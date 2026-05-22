@@ -25,6 +25,56 @@ export function dnp3ProtocolChange() {
 
 globalThis.dnp3ProtocolChange = dnp3ProtocolChange;
 
+const dnp3LinkMap = {
+    'BINARY_INPUT': {
+        static_var: ['var1', 'var2'],
+        event_var: ['var1', 'var2', 'var3']
+    },
+    'DOUBLE_INPUT': {
+        static_var: ['var1', 'var2'],
+        event_var: ['var1', 'var2', 'var3']
+    },
+    'BINARY_OUTPUT': {
+        static_var: ['var1', 'var2'],
+        event_var: ['var1', 'var2']
+    },
+    'COUNTER_INPUT': {
+        static_var: ['var1', 'var2', 'var5', 'var6'],
+        event_var: ['var1', 'var2', 'var5', 'var6']
+    },
+    'ANALOG_INPUT': {
+        static_var: ['var1', 'var2', 'var3', 'var4', 'var5', 'var6'],
+        event_var: ['var1', 'var2', 'var3', 'var4', 'var5', 'var6', 'var7', 'var8']
+    },
+    'ANALOG_OUTPUTS': {
+        static_var: ['var1', 'var2', 'var3', 'var4'],
+        event_var: ['var1', 'var2', 'var3', 'var4', 'var5', 'var6', 'var7', 'var8']
+    }
+};
+
+function setSelectOptions(selectId, options) {
+    var select = document.getElementById(selectId);
+    if (!select) return;
+    select.innerHTML = '';
+    options.forEach(function(opt) {
+        var option = document.createElement('option');
+        option.value = opt;
+        option.text = opt;
+        select.appendChild(option);
+    });
+}
+
+function groupIdChange() {
+    var groupId = document.getElementById('dnp3.group_id').value;
+    var link = dnp3LinkMap[groupId];
+    if (link) {
+        setSelectOptions('dnp3.event_var', link.event_var);
+        setSelectOptions('dnp3.static_var', link.static_var);
+    }
+}
+
+globalThis.groupIdChange = groupIdChange;
+
 export function initDctDnp3Server() {
     function loadDnp3Config() {
         $('#loading').show();

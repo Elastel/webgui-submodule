@@ -657,6 +657,9 @@ export function addData(table_name) {
     openBox(table_name);
     document.getElementById("page_type").value = "0"; /* 0 is add. other is edit */
     enableAlarm(table_name);
+    if (table_name == 'dnp3') {
+        groupIdChange();
+    }
 }
 
 globalThis.addData = addData;
@@ -961,6 +964,9 @@ export function editData(object, table_name) {
             document.getElementById(table_name + '.'  + option).value = 'TCP' + val.slice(-1);
         } else {
             document.getElementById(table_name + '.'  + option).value = val;
+            if (table_name == 'dnp3' && option == 'group_id') {
+                groupIdChange();
+            }
         }
     })
     
