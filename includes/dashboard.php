@@ -190,7 +190,9 @@ function DisplayDashboard(&$extraFooterScripts)
     
     $leases = array();
 
-    $leases = file(RASPI_DNSMASQ_LEASES, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    if (file_exists(RASPI_DNSMASQ_LEASES)) {
+        $leases = file(RASPI_DNSMASQ_LEASES, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    }
 
     $routeInfo = getRouteInfo(true);
 
