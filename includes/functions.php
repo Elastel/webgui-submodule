@@ -864,6 +864,11 @@ function getTarget()
     }
 }
 
+function getSystemTime()
+{
+    return trim(shell_exec('date "+%Y-%m-%d %H:%M:%S" 2>/dev/null'));
+}
+
 function model_category($option)
 {
     $model = getModel();

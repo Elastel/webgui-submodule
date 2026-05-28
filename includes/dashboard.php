@@ -204,7 +204,7 @@ function DisplayDashboard(&$extraFooterScripts)
 
     $kernel_version = trim(file_get_contents('/proc/sys/kernel/osrelease'));
 
-    $local_time = date('Y-m-d H:i:s');
+    $local_time = getSystemTime();
 
     $sn = getSn();
 

@@ -6,8 +6,7 @@ require_once '../../includes/config.php';
 
 $dashboarddata = [];
 
-$dashboarddata['local_time'] = date('Y-m-d H:i:s');
-
+$dashboarddata['local_time'] = getSystemTime();
 
 $uptimeStr = trim(@file_get_contents('/proc/uptime'));
 

@@ -167,8 +167,7 @@ function DisplaySystem()
     }
 
     // properties
-    exec("date '+%Y-%m-%d %H:%M:%S'", $tmp);
-    $current_time = $tmp[0];
+    $current_time = getSystemTime();
 
     exec("readlink /etc/localtime", $cur_timezone);
     if ($cur_timezone[0] == null) {
