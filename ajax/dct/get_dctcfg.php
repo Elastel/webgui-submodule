@@ -43,7 +43,7 @@ if ($type == 'datadisplay') {
     }
     
     exec('sudo conf_im_ex export ' . $right);
-    $data = file('/tmp/config_export.csv', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    $data = file_exists('/tmp/config_export.csv') ? file('/tmp/config_export.csv', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) : [];
     echo implode(PHP_EOL, $data);
 } else if (strstr($type, 'bacdiscover')) {
     $interface = $_GET['interface'];

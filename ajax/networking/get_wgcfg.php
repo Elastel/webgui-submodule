@@ -36,8 +36,9 @@ if (isset($type)) {
 
         echo json_encode($wgdata); 
     } else if ($type == "download") {
-        $return = file(RASPI_WIREGUARD_PATH . 'client.conf', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        echo implode(PHP_EOL,$return);
+        $file = RASPI_WIREGUARD_PATH . 'client.conf';
+        $return = file_exists($file) ? file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) : [];
+        echo implode(PHP_EOL, $return);
     }  
 }
 
