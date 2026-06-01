@@ -896,6 +896,7 @@ function model_category($option)
 function get_revison()
 {
     $dev_model = getModel();
+    $target_model = getTarget();
     // Lookup table from http://www.raspberrypi-spy.co.uk/2012/09/checking-your-raspberry-pi-board-version/
     if ($dev_model != "EG324" && $dev_model != "EC212") {
         $revisions = array(
@@ -939,6 +940,8 @@ function get_revison()
             } else {
                 return 'Unknown Device';
             }
+        } else if ($target_model == 'EG600') {
+            return 'ET3576';
         } else {
             $cpuinfo_array = '';
             $cpuinfo_array = file('/proc/cpuinfo', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

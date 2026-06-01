@@ -22,3 +22,6 @@
 [submodule "Elastel/EC212"]
 	path = Elastel/EC212
 	url = https://github.com/Elastel/EC212
+[submodule "Elastel/EG600"]
+	path = Elastel/EG600
+	url = https://github.com/Elastel/EG600
