@@ -62,7 +62,7 @@
 
       InputControlCustom(_('Node Name'), $table_name.'.node_name', $table_name.'.node_name');
 
-      $data_type_list = ["Bool", "Byte", "Int16", "UInt16", "Int32", "UInt32", "Float", "String"];
+      $data_type_list = ['Bool', 'Int8', 'Uint8', 'Int16', 'UInt16', 'Int32', 'UInt32', 'Int64', 'UInt64', 'Float', 'Double', 'String', 'DateTime', 'GUID', 'ByteString', 'Opaque'];
       SelectControlCustom(_('Data Type'), $table_name.'.data_type', $data_type_list, $data_type_list[0], $table_name.'.data_type');
 
       dct_rules_common($table_name);

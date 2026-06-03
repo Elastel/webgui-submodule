@@ -326,7 +326,7 @@ export function get_data_type_value(table_name) {
     } else if (table_name == 'mc' || table_name == 'iec104') {
         data_type_value = ['Bit', 'Int', 'Float'];
     } else if (table_name == 'opcuacli') {
-        data_type_value = ['Bool', 'Byte', 'Int16', 'UInt16', 'Int32', 'UInt32', 'Float', 'String'];
+        data_type_value = ['Bool', 'Int8', 'Uint8', 'Int16', 'UInt16', 'Int32', 'UInt32', 'Int64', 'UInt64', 'Float', 'Double', 'String', 'DateTime', 'GUID', 'ByteString', 'Opaque'];
     } else if (table_name == 'ethernetip') {
         data_type_value = ['Bool', 'Int16', 'UInt16', 'Int32', 'UInt32', 'Int64', 'UInt64', 'Float', 'Double', 'String'];
     } else if (table_name == 'snmpcli') {
