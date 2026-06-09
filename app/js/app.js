@@ -227,7 +227,7 @@ function initMenu() {
     const $sidebarLinks = $('.sidebar a');
     const $navItems = $('.nav-item');
     
-    const MENU_GROUPS = ['dct', 'remote', 'network', 'protocol_convert', 'services', 'system'];
+    const MENU_GROUPS = ['dct', 'remote', 'network', 'convert', 'services', 'system'];
     
     const MENU_MAP = [
         { match: 'dct_', parent: 'dct', extra: [

@@ -111,7 +111,7 @@
         <?php endif; ?>
         <?php if(isBinExists("router-mstp") || isBinExists("router-modbus")) : ?>
         <li class="nav-item" id="page_convert">
-            <a class="nav-link navbar-toggle collapsed" id="protocol_convert" href="#" data-toggle="collapse" data-target="#navbar-collapse-convert">
+            <a class="nav-link navbar-toggle collapsed" id="convert" href="#" data-toggle="collapse" data-target="#navbar-collapse-convert">
                 <i class="fas fa-server fa-fw mr-2"></i>
                 <span class="nav-label"><?php echo _("Protocol Convert"); ?></a>
             </a>
