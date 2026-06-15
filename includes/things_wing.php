@@ -69,18 +69,24 @@ function DisplayThingsWing()
         }
     } else if (isset($_POST['install'])) {
         if (model_category('debian11'))
-            exec('curl -L https://storage.thingswing.com/package/install_eg500.sh | sudo bash -s', $return);
+            exec("curl -L -o /tmp/install.sh https://storage.thingswing.com/package/install_eg500.sh");
         else if ($model == 'EG324')
-            exec('curl -L https://storage.thingswing.com/package/install_eg324.sh | sudo bash -s', $return);
+            exec("curl -L -o /tmp/install.sh https://storage.thingswing.com/package/install_eg324.sh");
         else if ($model == 'EG324L')
-            exec('curl -L https://storage.thingswing.com/package/install_eg324l_merge.sh | sudo bash -s', $return);
+            exec("curl -L -o /tmp/install.sh https://storage.thingswing.com/package/install_eg324l_merge.sh");
 
-        if (strstr(end($return), "success")) {
-            $status->addMessage("ThingsWing installed successfully", 'info');
-            $enable = true;
-        }  else {
-            $status->addMessage("ThingsWing installation failed", 'danger');
-        }
+        if (file_exists("/tmp/install.sh")) {
+            exec("chmod +x /tmp/install.sh");
+            exec("sudo bash /tmp/install.sh", $return);
+            if (strstr(end($return), "success")) {
+                $status->addMessage("ThingsWing installed successfully", 'info');
+                $enable = true;
+            }  else {
+                $status->addMessage("ThingsWing installation failed", 'danger');
+            }
+        } else {
+            $status->addMessage("Failed to download the installation script", 'danger');
+        }  
     }
 
     $version = '-';
