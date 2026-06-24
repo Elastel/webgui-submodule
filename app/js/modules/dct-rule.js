@@ -388,7 +388,7 @@ export function addSectionTable(table_name, jsonData, option_list) {
                 key == 'email' || key == 'event_server_center' || key == 'contents' || key == 'retry_interval' || 
                 key == 'again_interval' || key == 'command') {
                     contents += '   <td style="display:none" name="'+key+'">-</td>\n';
-                } else if (key == 'enabled' || key == 'sms_reporting') {
+                } else if (key == 'enabled' || key == 'sms_reporting' || key == 'interpreter') {
                     contents += '   <td style="' + ((key == 'enabled') ? 'text-align:center' : 'display:none') + '"><input type="checkbox" name="' +
                              key + '" ' + (jsonData[i][key] == '1' ? 'checked' : ' ') + 
                              ' onclick="updateData(\''+table_name+'\')"></td>\n';
@@ -436,7 +436,7 @@ export function addSectionTable(table_name, jsonData, option_list) {
                     cur_status = status_value[Number(cur_status)];
                 
                 contents += '   <td style="text-align:center" name="'+key+'">'+ cur_status +'</td>\n';
-            } else if (key == 'enabled' || key == 'sms_reporting') {
+            } else if (key == 'enabled' || key == 'sms_reporting' || key == 'interpreter') {
                 contents += '   <td style="' + ((key == 'enabled') ? 'text-align:center' : 'display:none') + '"><input type="checkbox" name="' +
                              key + '" ' + (jsonData[i][key] == '1' ? 'checked' : ' ') + 
                              ' onclick="updateData(\''+table_name+'\')"></td>\n';
@@ -702,7 +702,7 @@ export function get_table_data(table_name, option_list) {
                 var val = tds.filter('[name="'+ option +'"]').text();
                 // console.log(val);
 
-                if (option == 'enabled' || option == 'sms_reporting') {
+                if (option == 'enabled' || option == 'sms_reporting' || option == 'interpreter') {
                     var check = tds.find('input[name="' + option + '"]').is(':checked');
                     // console.log(check);
                     tmp += '"' + option + '":"' + ( check ? 1 : 0) + '",';
@@ -806,7 +806,7 @@ export function saveData(table_name) {
                 option_value[option] = status_value[Number(cur_status)];
             else
                 option_value[option] = cur_status;
-        } else if (option == 'enabled' || option == 'sms_reporting') {
+        } else if (option == 'enabled' || option == 'sms_reporting' || option == 'interpreter') {
             option_value[option] = document.getElementById(table_name + '.'  + option).checked ? '1' : '0';
         } else if (option == 'index') {
             option_value[option] = document.getElementById(table_name + '.'  + option + '.' + io_type).value;
@@ -835,9 +835,9 @@ export function saveData(table_name) {
             if (option == 'operator' || option == 'operand' || option == 'ex' || option == 'accuracy' ||
                 option == 'report_type' || option == 'alarm_up' || option == 'alarm_down' || option == 'phone_num' || 
                 option == 'email' || option == 'event_server_center' || option == 'contents' || option == 'retry_interval' || 
-                option == 'again_interval' || option == 'command') {
+                option == 'again_interval' || option == 'command' || option == 'interpreter') {
                 contents += '   <td style="display:none" name="'+option+'">'+ (option_value[option].length > 0 ? option_value[option] : "-") +'</td>\n';
-            } else if (option == 'enabled' || option == 'sms_reporting') {
+            } else if (option == 'enabled' || option == 'sms_reporting' || option == 'interpreter') {
                 contents += '   <td style="' + ((option == 'enabled') ? 'text-align:center' : 'display:none') + '"><input type="checkbox" name="' + option
                 +'" ' + (option_value[option] == '1' ? 'checked' : ' ') + ' onclick="updateData(\''+table_name+'\')"></td>\n';
             } else if (option == "belonged_com"  && option_value[option].includes('TCP')) {
@@ -856,7 +856,7 @@ export function saveData(table_name) {
     } else {
         var num = 0;
         option_list.forEach(function (option){
-            if (option == 'enabled' || option == 'sms_reporting') {
+            if (option == 'enabled' || option == 'sms_reporting' || option == 'interpreter') {
                 // Get all checkbox elements
                 var trs = table.getElementsByTagName("tr");
                 var checkboxes = trs[page_type].getElementsByTagName("input");
@@ -955,7 +955,7 @@ export function editData(object, table_name) {
             setSelectByText(table_name + '.'  + option, val);
         } else if (option == 'index') {
             document.getElementById(table_name + '.'  + option + '.' + io_type).value = val;
-        } else if (option == 'enabled' || option == 'sms_reporting') {
+        } else if (option == 'enabled' || option == 'sms_reporting' || option == 'interpreter') {
             var check = tds.find('input[name="' + option + '"]').is(':checked');
             document.getElementById(table_name + '.'  + option).checked = check;
         } else if (option == 'cur_status') {
@@ -1221,7 +1221,8 @@ globalThis.selectItemIec104 = selectItemIec104;
 
 export function iec104FilterFunction() {
     const list = document.getElementById('typeIdList');
-    const options_type_id = [];
+    let options_type_id = [];
+    let filteredOptions = [];
     var data = document.getElementById('iec104_discover_data').value;
 
     if (data.length < 3)
@@ -1305,7 +1306,8 @@ globalThis.selectItemIec1107 = selectItemIec1107;
 
 export function iec1107FilterFunction() {
     const list = document.getElementById('obisList');
-    const options_type_id = [];
+    let options_type_id = [];
+    let filteredOptions = [];
     var data = document.getElementById('iec1107_discover_data').value;
 
     if (data.length < 3)
@@ -1392,7 +1394,8 @@ globalThis.selectItemObject = selectItemObject;
 export function filterFunction() {
     const input = document.getElementById('baccli.object_device_id');
     const device_id_list = document.getElementById('deviceIdList');
-    const options_device_id = [];
+    let options_device_id = [];
+    let filteredOptions = [];
     var data = document.getElementById('bacnet_discover_data').value;
 
     if (data.length < 3)
@@ -1427,7 +1430,8 @@ globalThis.filterFunction = filterFunction;
 
 export function filterFunctionObject() {
     const object_id_list = document.getElementById('objectIdList');
-    const options_object_id = [];
+    let options_object_id = [];
+    let filteredOptions = [];
     var cur_device_id = document.getElementById('baccli.object_device_id');
     if (!cur_device_id.value) {
         return;

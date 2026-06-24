@@ -917,6 +917,8 @@ function dct_rules_common($table_name) {
 
   InputControlCustom(_('Email'), $table_name.'.email', $table_name.'.email', _('Multiple emails Are Separated By Comma'));
 
+  CheckboxControlCustom(_('Interpreter'), $table_name.'.interpreter', $table_name.'.interpreter');
+
   InputControlCustom(_('Contents'), $table_name.'.contents', $table_name.'.contents');
 
   InputControlCustom(_('Event Reporting Center'), $table_name.'.event_server_center', $table_name.'.event_server_center', _('Multiple Servers Are Separated By Minus'));
