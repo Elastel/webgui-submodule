@@ -433,7 +433,7 @@ echo "<div class=\"tab-pane $active\" id=\"server$num\">
             <label >"; echo _("Disable"); echo "</label>
           </div>
 
-          <div id=\"page_server$num\" name=\"page_server$num\">
+          <div class=\"cbi-value\" id=\"page_server$num\" name=\"page_server$num\">
             <div class=\"cbi-value\">
               <label class=\"cbi-value-title\">"; echo _("Protocol"); echo "</label>
               <select id=\"proto$num\" name=\"proto$num\" class=\"cbi-input-select\" onchange=\"protocolChange($num)\">
