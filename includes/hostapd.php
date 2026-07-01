@@ -54,7 +54,10 @@ function DisplayHostAPDConfig()
         if (isset($_POST['SaveHostAPDSettings']) || isset($_POST['applyHostAPDsettings'])) {
             SaveHostAPDConfig($arrSecurity, $arrEncType, $arr80211Standard, $interfaces, $status, $model);
             $arrHostapdConf = parse_ini_file('/etc/raspap/hostapd.ini');
-
+			
+			exec("sudo uci set wifi.wifi.enabled=". ($_POST['disable_wifi_ap'] == '1' ? '0' : '1'));
+            exec("sudo uci commit wifi");
+			
             if (isset($_POST['applyHostAPDsettings'])) {
                 if (model_category('HT')) {
                     exec("sudo /usr/sbin/init-wlan0 &");
