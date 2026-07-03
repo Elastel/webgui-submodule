@@ -940,7 +940,7 @@ function get_revison()
             } else {
                 return 'Unknown Device';
             }
-        } else if ($target_model == 'EG600') {
+        } else if ($target_model == 'EG600' || $dev_model == 'EG600') {
             return 'ET3576';
         } else {
             $cpuinfo_array = '';
