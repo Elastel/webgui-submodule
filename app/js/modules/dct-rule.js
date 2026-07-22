@@ -386,7 +386,7 @@ export function addSectionTable(table_name, jsonData, option_list) {
                 if (key == 'operator' || key == 'operand' || key == 'ex' || key == 'accuracy' ||
                 key == 'report_type' || key == 'alarm_up' || key == 'alarm_down' || key == 'phone_num' || 
                 key == 'email' || key == 'event_server_center' || key == 'contents' || key == 'retry_interval' || 
-                key == 'again_interval' || key == 'command') {
+                key == 'again_interval' || key == 'command' || key == 'timeout_count') {
                     contents += '   <td style="display:none" name="'+key+'">-</td>\n';
                 } else if (key == 'enabled' || key == 'sms_reporting' || key == 'interpreter') {
                     contents += '   <td style="' + ((key == 'enabled') ? 'text-align:center' : 'display:none') + '"><input type="checkbox" name="' +
@@ -412,7 +412,7 @@ export function addSectionTable(table_name, jsonData, option_list) {
             if (key == 'operator' || key == 'operand' || key == 'ex' || key == 'accuracy' ||
             key == 'report_type' || key == 'alarm_up' || key == 'alarm_down' || key == 'phone_num' || 
             key == 'email' || key == 'event_server_center' || key == 'contents' || key == 'retry_interval' || 
-            key == 'again_interval' || key == 'command') {
+            key == 'again_interval' || key == 'command' || key == 'timeout_count') {
                 contents += '   <td style="display:none" name="'+key+'">'+ (jsonData[i][key] != null ? jsonData[i][key] : "-") +'</td>\n';
             } else if (key == 'data_type') {
                 contents += '   <td style="text-align:center" name="'+key+'">'+ (data_type_value[Number(jsonData[i][key])]) +'</td>\n';
@@ -659,6 +659,8 @@ export function addData(table_name) {
     enableAlarm(table_name);
     if (table_name == 'dnp3') {
         groupIdChange();
+    } else if (table_name == 'system_param') {
+        systemParamChange(table_name)
     }
 }
 
@@ -811,7 +813,7 @@ export function saveData(table_name) {
         } else if (option == 'index') {
             option_value[option] = document.getElementById(table_name + '.'  + option + '.' + io_type).value;
         } else {
-            // console.log(option);
+            console.log(option);
             if (option != null)
                 option_value[option] = (mode == 1 && option == 'debounce_interval') ? '-' : document.getElementById(table_name + '.'  + option).value;
         }
@@ -835,7 +837,7 @@ export function saveData(table_name) {
             if (option == 'operator' || option == 'operand' || option == 'ex' || option == 'accuracy' ||
                 option == 'report_type' || option == 'alarm_up' || option == 'alarm_down' || option == 'phone_num' || 
                 option == 'email' || option == 'event_server_center' || option == 'contents' || option == 'retry_interval' || 
-                option == 'again_interval' || option == 'command' || option == 'interpreter') {
+                option == 'again_interval' || option == 'command' || option == 'timeout_count') {
                 contents += '   <td style="display:none" name="'+option+'">'+ (option_value[option].length > 0 ? option_value[option] : "-") +'</td>\n';
             } else if (option == 'enabled' || option == 'sms_reporting' || option == 'interpreter') {
                 contents += '   <td style="' + ((option == 'enabled') ? 'text-align:center' : 'display:none') + '"><input type="checkbox" name="' + option

@@ -245,22 +245,21 @@ if [[ $model != "EG324L" && $model != "EC212" ]]; then
         install_package_if_needed "openvpn" "openvpn"
         install_package_if_needed "wireguard" "wg"
         install_package_if_needed  "snmp" "snmpget" 
+        install_package_if_needed "msmtp" "msmtp"
+        install_package_if_needed "mutt" "mutt"
+        install_package_if_needed "dos2unix" "dos2unix"
+        install_package_if_needed "wireless-tools" "iwconfig"
+        install_package_if_needed "bridge-utils" "brctl"
+        install_package_if_needed "blogrotate" "logrotate"
         install_lib_if_needed "libsnmp.so" "libsnmp-dev"
+
+        set_resolvconf
 
         systemctl stop nftables.service
         systemctl disable nftables.service
 fi
 
 iotedge_package_check
-
-if [[ $model != "EG324L" && $model != "EC212" ]]; then
-        install_package_if_needed "msmtp" "msmtp"
-        install_package_if_needed "mutt" "mutt"
-        install_package_if_needed "dos2unix" "dos2unix"
-        install_package_if_needed "wireless-tools" "iwconfig"
-        install_package_if_needed "bridge-utils" "brctl"
-        set_resolvconf
-fi
 
 sleep 1
 if [ $model == "EG324" ]; then
@@ -287,6 +286,7 @@ cp $path/installers/service*.sh /etc/raspap/hostapd
 cp $path/installers/configport.sh /etc/raspap/lighttpd/
 cp $path/installers/bacnet_update /usr/sbin/
 cp $path/config/edaemon.conf /etc/edaemon.conf
+cp $path/config/rsyslog /etc/logrotate.d/
 sync
 sleep 1
 

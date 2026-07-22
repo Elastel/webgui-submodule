@@ -18,12 +18,14 @@ export function protocolChange(num) {
     cerChange(num);
     if (selectedText != 'SparkPlugB') {
         enableVar(num);
+        enableHeader(num);
         encapChange(num);
     } else {
         $('#page_json' + num).hide();
         $('#page_hj212_' + num).hide();
     }
     
+    $('#page_http' + num).hide();
     if (selectedText == 'TCP' || selectedText == 'UDP') {
         $('#page_mqtt' + num).hide();
         $('#page_url' + num).hide(); 
@@ -59,6 +61,7 @@ export function protocolChange(num) {
         $('#page_encap' + num).show(); 
         $('#page_status' + num).hide();
         $('#page_cache' + num).hide();
+        $('#page_http' + num).show();
     } else if (selectedText == 'MODBUS TCP' || selectedText == 'TCP Server') {
         $('#page_mqtt' + num).hide();
         $('#page_url' + num).hide(); 
@@ -113,6 +116,18 @@ export function jsonChange(num) {
 }
 
 globalThis.jsonChange = jsonChange;
+
+export function enableHeader(num) {
+    var enable = document.getElementById('self_define_header' + num).checked;
+
+    if (enable == true) {
+        $('#page_header' + num).show();
+    } else {
+        $('#page_header' + num).hide();
+    }
+}
+
+globalThis.enableHeader = enableHeader;
 
 export function enableVar(num) {
     var enable_var = document.getElementById('self_define_var' + num).checked;
@@ -184,6 +199,7 @@ export function initDctServer() {
             "register_packet", "register_packet_hex", "heartbeat_packet", "heartbeat_packet_hex", "heartbeat_interval",
             "mqtt_heartbeat_interval", "mqtt_pub_topic", "mqtt_sub_topic", "mqtt_username", "mqtt_password", "sparkplug_group_id",
             "sparkplug_node_id", "sparkplug_device_id", "mqtt_client_id", "mqtt_tls_enabled", "certificate_type", "mqtt_ca", "mqtt_cert", "mqtt_key", 
+            "self_define_header", "header_name1_", "header_value1_", "header_name2_", "header_value2_", "header_name3_", "header_value3_",
             "self_define_var", "var_name1_", "var_value1_", "var_name2_", "var_value2_", "var_name3_", "var_value3_", 
             "mn", "st", "pw"];
 
@@ -194,7 +210,7 @@ export function initDctServer() {
                     $('#enable' + i).prop('checked', true);
                     arr.forEach(function (info) {
                         if (info == "cache_enabled" || info == "register_packet_hex" || info == "heartbeat_packet_hex" ||
-                            info == "mqtt_tls_enabled" ||  info == "self_define_var") {
+                            info == "mqtt_tls_enabled" ||  info == "self_define_var" ||  info == "self_define_header") {
                             $('#' + info + i).prop('checked', (jsonData[info + i] == '1') ? true:false);
                         } else if (info == "mqtt_ca") {
                             if (jsonData['mqtt_ca' + i]) {

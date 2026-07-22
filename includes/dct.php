@@ -632,6 +632,44 @@ echo "<div class=\"tab-pane $active\" id=\"server$num\">
               </div>
             </div>
 
+            <div name=\"page_http$num\" id=\"page_http$num\">
+              <div class=\"cbi-value\">
+                <label class=\"cbi-value-title\">"; echo _("Enable Self Defined Header"); echo "</label>
+                <input type=\"checkbox\" class=\"cbi-input-checkbox\" name=\"self_define_header$num\" id=\"self_define_header$num\" onchange=\"enableHeader($num)\" value=\"1\"/>
+              </div>
+              <div name=\"page_header$num\" id=\"page_header$num\">
+                <div class=\"cbi-value\">
+                  <label class=\"cbi-value-title\">"; echo _("Header Name"); echo "1</label>
+                  <input type=\"text\" class=\"cbi-input-text\" name=\"header_name1_$num\" id=\"header_name1_$num\" />
+                </div>
+
+                <div class=\"cbi-value\">
+                  <label class=\"cbi-value-title\">"; echo _("Header Value"); echo "1</label>
+                  <input type=\"text\" class=\"cbi-input-text\" name=\"header_value1_$num\" id=\"header_value1_$num\" />
+                </div>
+
+                <div class=\"cbi-value\">
+                  <label class=\"cbi-value-title\">"; echo _("Header Name"); echo "2</label>
+                  <input type=\"text\" class=\"cbi-input-text\" name=\"header_name2_$num\" id=\"header_name2_$num\" />
+                </div>
+
+                <div class=\"cbi-value\">
+                  <label class=\"cbi-value-title\">"; echo _("Header Value"); echo "2</label>
+                  <input type=\"text\" class=\"cbi-input-text\" name=\"header_value2_$num\" id=\"header_value2_$num\" />
+                </div>
+
+                <div class=\"cbi-value\">
+                  <label class=\"cbi-value-title\">"; echo _("Header Name"); echo "3</label>
+                  <input type=\"text\" class=\"cbi-input-text\" name=\"header_name3_$num\" id=\"header_name3_$num\" />
+                </div>
+
+                <div class=\"cbi-value\">
+                  <label class=\"cbi-value-title\">"; echo _("Header Value"); echo "3</label>
+                  <input type=\"text\" class=\"cbi-input-text\" name=\"header_value3_$num\" id=\"header_value3_$num\" />
+                </div>
+              </div><!-- /.page_header1 -->
+            </div>
+
             <div name=\"page_json$num\" id=\"page_json$num\">
               <div class=\"cbi-value\">
                 <label class=\"cbi-value-title\">"; echo _("Enable Self Defined Variable"); echo "</label>
@@ -854,18 +892,23 @@ function page_progressbar($title, $content) {
 function dct_rules_common_add_fields_behind($arrOri) {
   $common = array(
     array("name"=>"Reporting Center",     "style"=>"", "descr"=>"Multiple Servers Are Separated By Minus", "ctl"=>"input"),
-    array("name"=>"Operator",             "style"=>"display:none", "descr"=>"0 + - * /", "ctl"=>"select"),
-    array("name"=>"Operation Expression", "style"=>"display:none", "descr"=>"", "ctl"=>"input"),
-    array("name"=>"Operand",              "style"=>"display:none", "descr"=>"", "ctl"=>"input"),
-    array("name"=>"Accuracy",             "style"=>"display:none", "descr"=>"0~6", "ctl"=>"select"),
-    array("name"=>"SMS&Email Reporting",  "style"=>"display:none", "descr"=>"", "ctl"=>""),
-    array("name"=>"Event Reporting Center","style"=>"display:none", "descr"=>"", "ctl"=>""),
-    array("name"=>"Report Type",          "style"=>"display:none", "descr"=>"", "ctl"=>""),
-    array("name"=>"Alarm Up Limit",       "style"=>"display:none", "descr"=>"", "ctl"=>""),
-    array("name"=>"Alarm Down Limit",     "style"=>"display:none", "descr"=>"", "ctl"=>""),
-    array("name"=>"Phone Number",         "style"=>"display:none", "descr"=>"", "ctl"=>""),
-    array("name"=>"Email",                "style"=>"display:none", "descr"=>"", "ctl"=>""),
-    array("name"=>"Contents",             "style"=>"display:none", "descr"=>"", "ctl"=>""),
+    // array("name"=>"Operator",             "style"=>"display:none", "descr"=>"0 + - * /", "ctl"=>"select"),
+    // array("name"=>"Operation Expression", "style"=>"display:none", "descr"=>"", "ctl"=>"input"),
+    // array("name"=>"Operand",              "style"=>"display:none", "descr"=>"", "ctl"=>"input"),
+    // array("name"=>"Accuracy",             "style"=>"display:none", "descr"=>"0~6", "ctl"=>"select"),
+    // array("name"=>"SMS&Email Reporting",  "style"=>"display:none", "descr"=>"", "ctl"=>""),
+    // array("name"=>"Event Reporting Center","style"=>"display:none", "descr"=>"", "ctl"=>""),
+    // array("name"=>"Report Type",          "style"=>"display:none", "descr"=>"", "ctl"=>""),
+    // array("name"=>"Alarm Up Limit",       "style"=>"display:none", "descr"=>"", "ctl"=>""),
+    // array("name"=>"Alarm Down Limit",     "style"=>"display:none", "descr"=>"", "ctl"=>""),
+    // array("name"=>"Phone Number",         "style"=>"display:none", "descr"=>"", "ctl"=>""),
+    // array("name"=>"Email",                "style"=>"display:none", "descr"=>"", "ctl"=>""),
+    // array("name"=>"Interpreter",          "style"=>"display:none", "descr"=>"", "ctl"=>""),
+    // array("name"=>"Contents",             "style"=>"display:none", "descr"=>"", "ctl"=>""),
+    // array("name"=>"Event Reporting Center", "style"=>"display:none", "descr"=>"", "ctl"=>""),
+    // array("name"=>"Timeout Count",              "style"=>"display:none", "descr"=>"", "ctl"=>""),
+    // array("name"=>"Retry Interval",       "style"=>"display:none", "descr"=>"", "ctl"=>""),
+    // array("name"=>"Again Interval",       "style"=>"display:none", "descr"=>"", "ctl"=>""),
     array("name"=>"Enable",               "style"=>"", "descr"=>"", "ctl"=>"check"),
   );
 
@@ -922,6 +965,8 @@ function dct_rules_common($table_name) {
   InputControlCustom(_('Contents'), $table_name.'.contents', $table_name.'.contents');
 
   InputControlCustom(_('Event Reporting Center'), $table_name.'.event_server_center', $table_name.'.event_server_center', _('Multiple Servers Are Separated By Minus'));
+
+  InputControlCustom(_('Max Timeout Count'), $table_name.'.timeout_count', $table_name.'.timeout_count', _('The count of collect period'));
 
   InputControlCustom(_('Retry Interval'), $table_name.'.retry_interval', $table_name.'.retry_interval', _('Minutes, it must be a multiple of collect period'));
 
