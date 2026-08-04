@@ -321,19 +321,20 @@ function updateDHCPConfigNetwork($iface0, $head, $status)
 
     // $cfg[] = $_POST[$head.'DefaultRoute'] == '1' ? 'gateway' : 'nogateway';
     if (strlen($head) == 0) {
+        $model = getModel();
         exec("sudo /usr/local/bin/uci get wifi.wifi_client.enabled", $tmp);
         $enablewificlient = $tmp[0];
         if ($_POST['wan-multi'] == '1') {
             if ($enablewificlient == '1') {
-                $new_deny = 'denyinterfaces eth1 eth0';
+                $new_deny = ($model == 'EG410') ? 'denyinterfaces eth0' : 'denyinterfaces eth1 eth0';
             } else {
-                $new_deny = 'denyinterfaces eth1 wlan0 eth0';
+                $new_deny = ($model == 'EG410') ? 'denyinterfaces eth0 wlan0' : 'denyinterfaces eth1 eth0 wlan0';
             }
         } else {
             if ($enablewificlient == '1') {
-                $new_deny = 'denyinterfaces eth1';
+                $new_deny = ($model == 'EG410') ? 'denyinterfaces ' : 'denyinterfaces eth1';
             } else {
-                $new_deny = 'denyinterfaces eth1 wlan0';
+                $new_deny = ($model == 'EG410') ? 'denyinterfaces wlan0' : 'denyinterfaces eth1 wlan0';
             }
         }
 
@@ -382,19 +383,20 @@ function updateDHCPConfigMetric($iface0, $head, $status)
 
     // $cfg[] = $_POST['DefaultRoute'] == '1' ? 'gateway' : 'nogateway';
     if (strlen($head) == 0) {
+        $model = getModel();
         exec("sudo /usr/local/bin/uci get wifi.wifi_client.enabled", $tmp);
         $enablewificlient = $tmp[0];
         if ($_POST['wan-multi'] == '1') {
             if ($enablewificlient == '1') {
-                $new_deny = 'denyinterfaces eth1 eth0';
+                $new_deny = ($model == 'EG410') ? 'denyinterfaces eth0' : 'denyinterfaces eth1 eth0';
             } else {
-                $new_deny = 'denyinterfaces eth1 wlan0 eth0';
+                $new_deny = ($model == 'EG410') ? 'denyinterfaces eth0 wlan0' : 'denyinterfaces eth1 eth0 wlan0';
             }
         } else {
             if ($enablewificlient == '1') {
-                $new_deny = 'denyinterfaces eth1';
+                $new_deny = ($model == 'EG410') ? 'denyinterfaces ' : 'denyinterfaces eth1';
             } else {
-                $new_deny = 'denyinterfaces eth1 wlan0';
+                $new_deny = ($model == 'EG410') ? 'denyinterfaces wlan0' : 'denyinterfaces eth1 wlan0';
             }
         }
 

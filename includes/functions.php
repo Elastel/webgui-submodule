@@ -72,6 +72,7 @@ function cidr2mask($cidr)
  */
 function removeDHCPConfig($iface,$status)
 {
+    $model = getModel();
     $orgin_str = file_get_contents(RASPI_DHCPCD_CONFIG);
     if ($iface == "eth0") {
         exec("sudo /usr/local/bin/uci get wifi.wifi_client.enabled", $tmp);
@@ -79,15 +80,15 @@ function removeDHCPConfig($iface,$status)
 
         if ($_POST['wan-multi'] == '1') {
             if ($enablewificlient == '1') {
-                $new_deny = 'denyinterfaces eth1 eth0';
+                $new_deny = ($model == 'EG410') ? 'denyinterfaces eth0' : 'denyinterfaces eth1 eth0';
             } else {
-                $new_deny = 'denyinterfaces eth1 wlan0 eth0';
+                $new_deny = ($model == 'EG410') ? 'denyinterfaces eth0 wlan0' : 'denyinterfaces eth1 eth0 wlan0';
             }
         } else {
             if ($enablewificlient == '1') {
-                $new_deny = 'denyinterfaces eth1';
+                $new_deny = ($model == 'EG410') ? 'denyinterfaces ' : 'denyinterfaces eth1';
             } else {
-                $new_deny = 'denyinterfaces eth1 wlan0';
+                $new_deny = ($model == 'EG410') ? 'denyinterfaces wlan0' : 'denyinterfaces eth1 wlan0';
             }
         }
 
@@ -788,6 +789,9 @@ function setLoginLogo($target, $hostname)
     } else if ($target != null && file_exists('/var/www/html/app/img/'.$hostname.'.php')) {
         $name = $hostname . ".png";
         echo '<img src="app/img/'.$name.'" class="navbar-logo" alt="logo" class="img-fluid" style="width: 20rem;">';
+    } else if ($target != null && file_exists('/var/www/html/app/img/'.$target.'.php')) {
+        $name = $target . ".png";
+        echo '<img src="app/img/'.$name.'" class="navbar-logo" alt="logo" class="img-fluid" style="width: 20rem;">';
     } else if ($target != null && (strpos($target, "EMT") !== false)) {
         $name = "emt.png";
         echo '<img src="app/img/'.$name.'" class="navbar-logo" alt="logo" class="img-fluid" style="width: 20rem;">';
@@ -805,7 +809,7 @@ function setLoginGuide($target, $hostname)
     $url='';
     if ($target != null && (strpos($target, "IQEG") !== false || strpos($target, "IQEC") !== false)) {
         $url = "https://docs.iqflow.io/";
-    } else if (($target != null && (strpos($target, "EMT") !== false)) || strpos($target, "&OEM") !== false) {
+    } else if (($target != null && (strpos($target, "EMT") !== false)) || strpos($target, "&OEM") !== false || strpos($target, "4logit") !== false ) {
         return;
     } else {
         $url = "https://docs.elastel.com/";
@@ -825,6 +829,10 @@ function setSidbarLogo($target, $hostname)
         return;
     } else if ($target != null && file_exists('/var/www/html/app/img/'.$hostname.'.php')) {
         $name = $hostname . ".php";
+    } else if ($target != null && file_exists('/var/www/html/app/img/'.$target.'.php')) {
+        $name = $target . ".php";
+        echo '<img src="app/img/'. $name .'" class="navbar-logo" width="200" height="70">';
+        return;
     } else if (strpos($target, "&OEM") !== false) {
         return;
     } else if ($target != null && (strpos($target, "EMT") !== false)) {

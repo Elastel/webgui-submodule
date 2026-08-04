@@ -173,7 +173,7 @@ reset_configuration() {
 
         if [[ $model == "EC212" || $model == "EG410" ]]; then
                 # set lan
-                cp $path/config/dhcpcd-eth0.conf /etc/dhcpcd.conf
+                cp $path/config/dhcpcd-eth0-no-eth1.conf /etc/dhcpcd.conf
                 uci set network.wan.wan_multi='1'
                 uci commit network
                 if [[ $model == "EG410" ]]; then
