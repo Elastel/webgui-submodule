@@ -23,7 +23,7 @@
               <td style="text-align:left;width:30%;font-weight:bold; padding:0.5rem; font-size:0.8rem"><?php echo _("Hostname"); ?></td>
               <td style="text-align:left; padding:0.5rem; font-size:0.8rem"><?php echo htmlspecialchars($cur_hostname, ENT_QUOTES); ?></td>
             </tr>
-            <?php if (strpos(getTarget(), "&OEM") == false) { ?>
+            <?php if (strpos(getTarget(), "&OEM") === false && strpos(getTarget(), "4logit") === false) { ?>
             <tr class="tr cbi-section-table-titles">
               <td style="text-align:left;width:30%;font-weight:bold; padding:0.5rem; font-size:0.8rem"><?php echo _("Model"); ?></td>
               <td style="text-align:left; padding:0.5rem; font-size:0.8rem"><?php echo htmlspecialchars((getTarget() != null) ? getTarget() : getModel(), ENT_QUOTES); ?></td>

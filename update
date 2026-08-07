@@ -185,6 +185,13 @@ reset_configuration() {
         sed -i "s/ssid.*/ssid=$ssid/" /etc/hostapd/hostapd.conf
         /etc/raspap/lighttpd/configport.sh 80 '' /etc/lighttpd/lighttpd.conf
         sync
+
+        sed -i '/^admin/d'  /etc/raspap/system.auth
+        sed -i '/^superadmin/d'  /etc/raspap/system.auth
+        cat $path/config/system.auth >> /tmp/system.auth
+        cat /etc/raspap/system.auth >> /tmp/system.auth
+        cp /tmp/system.auth /etc/raspap/system.auth
+        chown -R www-data:www-data /etc/raspap/system.auth
 }
 
 set_immutable_if_needed() {

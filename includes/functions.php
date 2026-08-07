@@ -1085,6 +1085,17 @@ function isIoExistts()
     }
 }
 
+function isLteEnabled()
+{
+    $lte_enabled = false;
+    exec("sudo uci get system.system.lte_enabled", $lte_enabled);
+    if ($lte_enabled[0] == '1') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function get_serial_device_list()
 {
     $comlist = array();
@@ -1439,6 +1450,87 @@ function handlePageActions($extraFooterScripts, $page)
         default:
             DisplayDashboard($extraFooterScripts);
     }
+}
+
+function getPurview()
+{
+    $auth = new \ElastPro\Auth\HTTPAuth;
+    $user = $_SESSION['user_id'] ?? "admin";
+    $purview = 'ffffffff';
+    $config = $auth->getAuthConfig();
+
+    foreach ($config as $key => $value) {
+        if (is_array($value)) {
+            if ($value['admin_user'] == $user) {
+                $purview = $value['purview'];
+                break;
+            }
+        }
+    }
+
+    return trim($purview);
+}
+
+function getMenuIndex($herf)
+{
+    $index = -1;
+    $model = getModel();
+    $menuList = array('basic_conf', 'interfaces_conf', 'modbus_conf', 'ascii_conf', 's7_conf', 'fx_conf', 
+    'mc_conf', 'iec104_conf', 'dnp3cli_conf', 'opcuacli_conf', 'baccli_conf', 'ethernetip_conf', 'mbuscli_conf', 
+    'snmpcli_conf', 'iec1107_conf', 'dlms_conf', 'iec61850cli_conf', 'io_conf', 'system_param_conf', 'server_conf',
+    'modbus_slave', 'opcua', 'bacnet', 'dnp3', 'datadisplay', 'bacnet_router', 'modbus_router', 'nodered', 'docker', 'terminal', 
+    'gps', 'scheduled');
+
+    foreach ($menuList as $key => $value) {
+        if ($value == $herf) {
+            $index = $key;
+            break;
+        }
+    }
+
+    return $index;
+}
+
+function getHexBit($hex, $bitIndex) {
+    $hex = ltrim($hex, '0x');
+    $hex = strtolower($hex);
+    
+    if (empty($hex) || $bitIndex < 0) {
+        return 0;
+    }
+    
+    if (strlen($hex) % 2 != 0) {
+        $hex = '0' . $hex;
+    }
+    
+    $binary = pack('H*', $hex);
+    
+    $bytePos = floor($bitIndex / 8);
+    $bitPos = $bitIndex % 8;
+    
+    $totalBytes = strlen($binary);
+    if ($bytePos >= $totalBytes) {
+        return 0;
+    }
+    
+    $byteIndex = $totalBytes - 1 - $bytePos;
+    $byte = ord($binary[$byteIndex]);
+    
+    return ($byte >> $bitPos) & 1;
+}
+
+function menuPurviewMatch($purview, $name, $id, $herf, $title)
+{
+    $index = getMenuIndex($herf);
+    if ($index == -1) {
+        $status = 1;
+    } else {
+        // $status = (intval($purview, 16) >> $index) & 1;
+        $status = getHexBit(trim($purview), $index);
+    }
+
+    if ($status == 1)
+        echo '<li class="nav-item" name="'. $name .'" id="'. $id .'" ><a class="nav-link" href="'. $herf .'">'. $title .'</a></li>';
 }
 
 function InputControlCustom($title, $name, $id = null, $descr = null, $defaultValue = null, $event = null)

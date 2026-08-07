@@ -24,7 +24,7 @@
                     <div class="collapse navbar-collapse" id="navbar-collapse-wan">
                         <ul class="nav navbar-nav navbar-right">
                             <li class="nav-item" name="wired" id="network_wan_wired"><a class="nav-link" href="wired_conf"><?php echo _("Wired"); ?></a></li>
-                            <?php if (file_exists('/dev/ttyUSB1')) : ?>
+                            <?php if (file_exists('/dev/ttyUSB1') && isLteEnabled()) : ?>
                             <li class="nav-item" name="lte" id="network_wan_lte"><a class="nav-link" href="lte_conf"><?php echo _("LTE"); ?></a></li>
                             <?php endif; ?>
                             <?php if (isRunning('wpa_supplicant')) : ?>
@@ -34,8 +34,10 @@
                     </div>
                 </li>
                 <li class="nav-item" name="lan" id="network_lan" ><a class="nav-link" href="dhcpd_conf"><?php echo _("LAN"); ?></a></li>
+                <?php if(file_exists('/sys/class/net/wlan0')) :?>
                 <li class="nav-item" name="wifi" id="network_wifi" ><a class="nav-link" href="hostapd_conf"><?php echo _("WiFi AP"); ?></a></li>
                 <li class="nav-item" name="wifi_client" id="network_wifi_client" ><a class="nav-link" href="wpa_conf"><?php echo _("WiFi Client"); ?></a></li>
+                <?php endif; ?>
                 <?php if (isBinExists("failoverd")) : ?>
                 <li class="nav-item" name="online_detection" id="network_online_detection" ><a class="nav-link" href="detection_conf"><?php echo _("Online Detection"); ?></a></li>
                 <?php endif; ?>
@@ -56,35 +58,35 @@
             </a>
             <div class="collapse navbar-collapse" id="navbar-collapse-dct">
             <ul class="nav navbar-nav navbar-right">
-                <li class="nav-item" name="dct_basic" id="dct_basic" ><a class="nav-link" href="basic_conf"><?php echo _("Basic"); ?></a></li>
-                <li class="nav-item" name="interfaces" id="dct_interfaces"><a class="nav-link" href="interfaces_conf"><?php echo _("Interfaces"); ?></a></li>
+                <?php
+                    menuPurviewMatch($purview, 'dct_basic', 'dct_basic', 'basic_conf', _('Basic'));
+                    menuPurviewMatch($purview, 'dct_interfaces', 'dct_interfaces', 'interfaces_conf', _('Interfaces'));
+                ?>
                 <li class="nav-item" id="page_south">
                     <a class="nav-link navbar-toggle collapsed" id="south" href="#" data-toggle="collapse" data-target="#navbar-collapse-south">
                         <?php echo _("South Devices"); ?>
                     </a>
                     <div class="collapse navbar-collapse" id="navbar-collapse-south">
                         <ul class="nav navbar-nav navbar-right">
-                            <li class="nav-item" name="modbus" id="dct_south_modbus"><a class="nav-link" href="modbus_conf"><?php echo "Modbus "._("Rules"); ?></a></li>
-                            <li class="nav-item" name="ascii" id="dct_south_ascii"><a class="nav-link" href="ascii_conf"><?php echo "ASCII "._("Rules"); ?></a></li>
-                            <li class="nav-item" name="s7" id="dct_south_s7"><a class="nav-link" href="s7_conf"><?php echo "S7 "._("Rules"); ?></a></li>
-                                <li class="nav-item" name="fx" id="dct_south_fx"><a class="nav-link" href="fx_conf"><?php echo "FX "._("Rules"); ?></a></li>
-                            <li class="nav-item" name="mc" id="dct_south_mc"><a class="nav-link" href="mc_conf"><?php echo "MC "._("Rules"); ?></a></li>
-                            <li class="nav-item" name="iec104" id="dct_south_iec104"><a class="nav-link" href="iec104_conf"><?php echo "IEC104 "._("Rules"); ?></a></li>
-                            <li class="nav-item" name="dnp3_client" id="dct_south_dnp3_client"><a class="nav-link" href="dnp3cli_conf"><?php echo "DNP3 "._("Rules"); ?></a></li>
-                            <li class="nav-item" name="opcua_client" id="dct_south_opcua_client"><a class="nav-link" href="opcuacli_conf"><?php echo "OPCUA "._("Rules"); ?></a></li>
-                            <?php if (isBinExists("baccli")) : ?>
-                            <li class="nav-item" name="bacnet_client" id="dct_south_bacnet_client"><a class="nav-link" href="baccli_conf"><?php echo "BACnet "._("Rules"); ?></a></li>
-                            <?php endif; ?>
-                            <li class="nav-item" name="ethernetip" id="dct_south_ethernetip"><a class="nav-link" href="ethernetip_conf"><?php echo "EtherNet/IP "._("Rules"); ?></a></li>
-                            <li class="nav-item" name="mbus_client" id="dct_south_mbus_client"><a class="nav-link" href="mbuscli_conf"><?php echo "Mbus "._("Rules"); ?></a></li>
-                            <li class="nav-item" name="snmp_client" id="dct_south_snmp_client"><a class="nav-link" href="snmpcli_conf"><?php echo "SNMP "._("Rules"); ?></a></li>
-                            <li class="nav-item" name="iec1107" id="dct_south_iec1107"><a class="nav-link" href="iec1107_conf"><?php echo "IEC62056-21 "._("Rules"); ?></a></li>
-                            <li class="nav-item" name="dlms" id="dct_south_dlms"><a class="nav-link" href="dlms_conf"><?php echo "DLMS "._("Rules"); ?></a></li>
-                            <li class="nav-item" name="iec61850_client" id="dct_south_iec61850_client"><a class="nav-link" href="iec61850cli_conf"><?php echo "IEC61850 "._("Rules"); ?></a></li>
-                            <?php if (isIoExistts()) : ?>
-                            <li class="nav-item" name="io" id="dct_south_io"><a class="nav-link" href="io_conf"><?php echo _("IO"); ?></a></li>
-                            <?php endif; ?>
-                            <li class="nav-item" name="io" id="dct_south_system_param"><a class="nav-link" href="system_param_conf"><?php echo _("System Parameters"); ?></a></li>
+                            <?php
+                                $array_south = array('modbus', 'ascii', 's7', 'fx', 'mc', 'iec104', 
+                                        'dnp3cli', 'opcuacli', 'baccli', 'ethernetip', 'mbuscli', 'snmpcli', 'iec1107', 'dlms', 
+                                        'iec61850cli');
+                                $array_title = array('Modbus', 'ASCII', 'S7', 'FX', 'MC', 'IEC104', 'DNP3', 'OPCUA', 'BACnet', 
+                                        'EtherNet/IP','Mbus','SNMP','IEC62056-21','DLMS','IEC61850');
+                                
+                                for ($i = 0; $i < count($array_south); $i++) {
+                                    $item = $array_south[$i];
+                                    $title = $array_title[$i];
+                                    menuPurviewMatch($purview, $item, 'dct_south_' . $item, $item . '_conf', $title . " " . _('Rules'));
+                                }
+
+                                if (isIoExistts()) {
+                                    menuPurviewMatch($purview, 'io', 'dct_south_io', 'io_conf', _('IO'));
+                                }
+
+                                menuPurviewMatch($purview, 'system_param', 'dct_south_system_param', 'system_param_conf', _('System Parameters'));
+                            ?>
                         </ul>
                     </div>
                 </li>
@@ -94,17 +96,19 @@
                     </a>
                     <div class="collapse navbar-collapse" id="navbar-collapse-north">
                         <ul class="nav navbar-nav navbar-right">
-                            <li class="nav-item" name="server" id="dct_north_server"><a class="nav-link" href="server_conf"><?php echo _("Reporting Center"); ?></a></li>
-                            <li class="nav-item" name="modbus_slave" id="dct_north_modbus_slave"><a class="nav-link" href="modbus_slave"><?php echo "Modbus "._("Slave"); ?></a></li>
-                            <li class="nav-item" name="opcua" id="dct_north_opcua"><a class="nav-link" href="opcua"><?php echo "OPCUA "._("Server"); ?></a></li>
-                            <?php if(isBinExists("bacserv")) : ?>
-                            <li class="nav-item" name="bacnet" id="dct_north_bacnet"><a class="nav-link" href="bacnet"><?php echo "BACnet "._("Server"); ?></a></li>
-                            <?php endif; ?>
-                            <li class="nav-item" name="dnp3" id="dct_north_dnp3"><a class="nav-link" href="dnp3"><?php echo "DNP3 "._("Server"); ?></a></li>
+                            <?php
+                                menuPurviewMatch($purview, 'server', 'dct_north_server', 'server_conf', _('Reporting Center'));
+                                menuPurviewMatch($purview, 'modbus_slave', 'dct_north_modbus_slave', 'modbus_slave', "Modbus "._('Slave'));
+                                menuPurviewMatch($purview, 'opcua', 'dct_north_opcua', 'opcua', "OPCUA "._('Server'));
+                                if(isBinExists("bacserv")) {
+                                    menuPurviewMatch($purview, 'bacnet', 'dct_north_bacnet', 'bacnet', "BACnet "._('Server'));
+                                }
+                                menuPurviewMatch($purview, 'dnp3', 'dct_north_dnp3', 'dnp3', "DNP3 "._('Server'));
+                            ?>
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item" name="datadisplay" id="dct_datadisplay"><a class="nav-link" href="datadisplay"><?php echo _("Data Monitoring"); ?></a></li>
+                <?php menuPurviewMatch($purview, 'datadisplay', 'dct_datadisplay', 'datadisplay', _('Data Monitoring')); ?>
             </ul>
             </div>
         </li>
@@ -117,12 +121,15 @@
             </a>
             <div class="collapse navbar-collapse" id="navbar-collapse-convert">
             <ul class="nav navbar-nav navbar-right">
-                <?php if(isBinExists("router-mstp")) : ?>
-                    <li class="nav-item" name="bacnet_router" id="convert_bacnet_router"> <a class="nav-link" href="bacnet_router"><?php echo "BACnet "._("Router"); ?></a></li>
-                <?php endif; ?>
-                <?php if(isBinExists("router-modbus")) : ?>
-                    <li class="nav-item" name="modbus_router" id="convert_modbus_router"> <a class="nav-link" href="modbus_router"><?php echo "Modbus "._("Router"); ?></a></li>
-                <?php endif; ?>
+                <?php 
+                    if(isBinExists("router-mstp")) {
+                        menuPurviewMatch($purview, 'bacnet_router', 'convert_bacnet_router', 'bacnet_router', "BACnet "._('Router'));
+                    }
+
+                    if(isBinExists("router-modbus")) {
+                        menuPurviewMatch($purview, 'modbus_router', 'convert_modbus_router', 'modbus_router', "Modbus "._('Router'));
+                    }
+                ?>
             </ul>
             </div>
         </li>
@@ -170,12 +177,15 @@
                 </a>
                 <div class="collapse navbar-collapse" id="navbar-collapse-services">
                 <ul class="nav navbar-nav navbar-right">
-                    <?php if(isBinExists("node-red")) : ?>
-                    <li class="nav-item" name="nodered" id="services_nodered"> <a class="nav-link" href="nodered"><?php echo _("Node Red"); ?></a></li>
-                    <?php endif; ?>
-                    <?php if(isBinExists("dockerd")) : ?>
-                    <li class="nav-item" name="docker" id="services_docker"> <a class="nav-link" href="docker"><?php echo _("Docker"); ?></a></li>
-                    <?php endif; ?>
+                    <?php 
+                        if(isBinExists("node-red")) {
+                            menupurviewMatch($purview, 'nodered', 'services_nodered', 'nodered', _('Node Red'));
+                        }
+
+                        if(isBinExists("dockerd")) {
+                            menupurviewMatch($purview, 'docker', 'services_docker', 'docker', _('Docker'));
+                        }
+                    ?>
                     <?php if(isBinExists("chirpstack")) : ?>
                     <li class="nav-item" name="chirpstack" id="services_chirpstack"> <a class="nav-link" href="chirpstack"><?php echo _("ChirpStack"); ?></a></li>
                     <?php endif; ?>
@@ -197,17 +207,21 @@
             <div class="collapse navbar-collapse" id="navbar-collapse-system">
             <ul class="nav navbar-nav navbar-right">
                 <li class="nav-item" name="system_info" id="system_system_info"> <a class="nav-link" href="system_info"><?php echo _("System"); ?></a></li>
-                <?php if(isBinExists("gpsd")) : ?>
-                <li class="nav-item" name="gps" id="system_gps"> <a class="nav-link" href="gps"><?php echo _("GPS Location"); ?></a></li>
-                <?php endif; ?>
-                <?php if(isBinExists("ttyd") || file_exists("/usr/local/bin/ttyd")) : ?>
-                <li class="nav-item" name="terminal" id="system_terminal"> <a class="nav-link" href="terminal"><?php echo _("Terminal"); ?></a></li>
-                <?php endif; ?>
+                <?php 
+                    if(isBinExists("gpsd")) {
+                        menuPurviewMatch($purview, 'gps', 'system_gps', 'gps', _('GPS Location'));
+                    }
+
+                    if(isBinExists("ttyd") || file_exists("/usr/local/bin/ttyd")) {
+                        menuPurviewMatch($purview, 'terminal', 'system_terminal', 'terminal', _('Terminal'));
+                    }
+
+                    if(isBinExists("scheduled")) {
+                        menuPurviewMatch($purview, 'scheduled', 'system_scheduled', 'scheduled', _('Scheduled Tasks'));
+                    }
+                ?>
                 <?php if(isBinExists("chromium-browser") && strpos($target, 'EH607') !== false) : ?>
                 <li class="nav-item" name="hmi" id="system_hmi"> <a class="nav-link" href="hmi"><?php echo _("HMI"); ?></a></li>
-                <?php endif; ?>
-                <?php if(isBinExists("scheduled")) : ?>
-                <li class="nav-item" name="scheduled" id="system_scheduled"> <a class="nav-link" href="scheduled"><?php echo _("Scheduled Tasks"); ?></a></li>
                 <?php endif; ?>
                 <li class="nav-item" name="auth_conf" id="system_auth_conf"> <a class="nav-link" href="auth_conf"><?php echo _("Authentication"); ?></a></li>
                 <li class="nav-item" name="backup_restore" id="system_backup_restore"> <a class="nav-link" href="backup_restore"><?php echo _("Backup/Restore"); ?></a></li>
@@ -219,6 +233,10 @@
         <li class="nav-item">
             <a class="nav-link" href="about"><i class="fas fa-info-circle fa-fw mr-2"></i><span class="nav-label"><?php echo _("About Elastel"); ?></a>
         </li>
+        <?php elseif ($target == '4logit') : ?>
+        <li class="nav-item">
+            <a class="nav-link" href="about"><i class="fas fa-info-circle fa-fw mr-2"></i><span class="nav-label"><?php echo _("About 4Logit"); ?></a>
+        </li>   
         <?php endif; ?>
         <li class="nav-item">
             <a class="nav-link" href="logout"><i class="fas fa-sign-out-alt mr-2"></i><span class="nav-label"><?php echo _("Logout"); ?></a>

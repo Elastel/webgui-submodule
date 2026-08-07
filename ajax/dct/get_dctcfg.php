@@ -8,7 +8,8 @@ $type = $_GET['type'];
 
 $type_arr = array(
     'dnp3' => array('option' => 'dnp3_server', 'option_list' => 'dnp3'),
-    'modbus_slave' => array('option' => 'modbus_slave', 'option_list' => 'modbus_slave_point')
+    'modbus_slave' => array('option' => 'modbus_slave', 'option_list' => 'modbus_slave_point'),
+    'opcua' => array('option' => 'opcua', 'option_list' => 'opcuaserv')
 );
 
 if ($type == 'datadisplay') {
@@ -300,7 +301,7 @@ if ($type == 'datadisplay') {
         $dctdata[$type] = $data[0];
 
         echo json_encode($dctdata);
-    } else if ($type == 'dnp3' || $type == 'modbus_slave') {
+    } else if ($type == 'dnp3' || $type == 'modbus_slave' || $type == 'opcua') {
         $option_name = $type_arr[$type]['option'];
         $option_list_name = $type_arr[$type]['option_list'];
 
@@ -319,6 +320,13 @@ if ($type == 'datadisplay') {
             $dctdata[$option_list_name] = $tmp2[0];
         
         echo json_encode($dctdata);
+    } else if ($type == 'opcua_nodes') {
+        exec('cat /tmp/opcua_nodes', $dctdata);
+        if ($dctdata[0] != NULL){
+            echo $dctdata[0];
+        }  else {
+            echo "{}";
+        }
     } else {
         exec("/usr/sbin/get_config dct name $type 1", $data);
         $dctdata = json_decode($data[0]);

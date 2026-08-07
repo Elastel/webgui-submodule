@@ -850,7 +850,7 @@ msgstr "心跳包"
 msgid "Heartbeat Interval"
 msgstr "心跳间隔"
 
-msgid "MQTT Public Topic"
+msgid "MQTT Publish Topic"
 msgstr "MQTT发布主题"
 
 msgid "MQTT Subscribe Topic"

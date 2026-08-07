@@ -407,12 +407,12 @@ canvas#divDBChartBandwidthhourly {
 #traffic_popLayer {
   display: none;
   background-color: #B3B3B3;
-  position: absolute;
+  position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 10;
+  z-index: 9999;
   -moz-opacity: 0.8;
   opacity:.80;
   filter: alpha(opacity=80);
@@ -424,7 +424,7 @@ canvas#divDBChartBandwidthhourly {
 #traffic_popBox {
   display: none;
   background-color: #FFFFFF;
-  z-index: 11;
+  z-index: 10000;
   width: 85%;
   height: 85%;
   position:fixed;
@@ -434,6 +434,7 @@ canvas#divDBChartBandwidthhourly {
   bottom:0;
   padding: 1em;
   margin: 3em auto;
+  overflow-y: auto;
 }
 
 #confBox {

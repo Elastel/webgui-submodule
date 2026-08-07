@@ -80,6 +80,7 @@ $page = $_SERVER['PATH_INFO'];
 
 $theme_url = getThemeOpt();
 $toggleState = getSidebarState();
+$purview = getPurview();
 //$bridgedEnabled = getBridgedState();
 
 ?>

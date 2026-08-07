@@ -7,12 +7,12 @@ function DisplayOpcua()
     $status = new \ElastPro\Messages\StatusMessage;
 
     if (!RASPI_MONITOR_ENABLED) {
-        if (isset($_POST['savesettings']) || isset($_POST['applysettings'])) {
+        if (isset($_POST['saveopcuasettings']) || isset($_POST['applyopcuasettings'])) {
             $ret = saveOpcuaConfig($status);
             if ($ret == false) {
                 $status->addMessage('Error data', 'danger');
             } else {
-                if (isset($_POST['applysettings'])) {
+                if (isset($_POST['applyopcuasettings'])) {
                     exec('sudo /etc/init.d/dct restart >/dev/null');
                     $status->addMessage('Configuration applied.', 'success');
                 }
@@ -74,8 +74,8 @@ function saveFileUpload($status, $file)
 
 function saveOpcuaConfig($status)
 {
-    exec("sudo /usr/local/bin/uci set dct.opcua.enabled=" . $_POST['enabled']);
-    if ($_POST['enabled'] == "1") {
+    exec("sudo /usr/local/bin/uci set dct.opcua.enabled=" . $_POST['opcua_enabled']);
+    if ($_POST['opcua_enabled'] == "1") {
         exec("sudo /usr/local/bin/uci set dct.opcua.port=" .$_POST['port']);
         exec("sudo /usr/local/bin/uci set dct.opcua.anonymous=" .$_POST['anonymous']);
         if ($_POST['anonymous'] != "1") {
@@ -135,8 +135,15 @@ function saveOpcuaConfig($status)
                 exec("sudo /usr/local/bin/uci set dct.opcua.trust_crt='$trustName'");
             }
         }
+
+        if(getTarget() == '4logit') {
+            $data = $_POST['table_data'];
+            file_put_contents(ELASTEL_DCT_CONFIG_JSON, $data);
+            exec('sudo /usr/sbin/set_config ' . ELASTEL_DCT_CONFIG_JSON . ' dct opcuaserv');
+        }
+        
     }
-    exec("sudo /usr/local/bin/uci commit dct");
+    exec("sudo uci commit dct");
 
     if ($_POST['enabled'] == "1") {
         if ($_POST['port'] == NULL || (int)($_POST['port']) > 65535 || (int)($_POST['device_id']) > 65535) {

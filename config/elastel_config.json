@@ -684,7 +684,7 @@
 		"event_server_center",
 		"interpreter",
 		"contents",
-		"timeout count",
+		"timeout_count",
 		"retry_interval",
 		"again_interval",
 		"enabled"
@@ -1088,6 +1088,12 @@
 		"param",
 		"command",
 		"server_center",
+		"enabled"
+	],
+	"opcuaserv_option" : [
+		"order",
+		"factor_name",
+		"opcuaserv_data_type",
 		"enabled"
 	]
 }

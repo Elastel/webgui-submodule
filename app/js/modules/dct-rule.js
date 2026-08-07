@@ -228,7 +228,7 @@ export function insertColumn(tableId, name, headerName, newHeaderName) {
         return;
 
     if ((tableId == 'table_adc' || tableId == 'table_di' || tableId == 'table_modbus_slave_point' || 
-        tableId == 'table_dnp3') && name == 'write_value') {
+        tableId == 'table_dnp3' || tableId == 'table_opcuaserv') && name == 'write_value') {
         return;
     }
 
@@ -372,8 +372,12 @@ export function addSectionTable(table_name, jsonData, option_list) {
     data_type_value = get_data_type_value(table_name);
     
     var len = Number(jsonData.length);
+    var table = document.getElementById("table_" + table_name);
+    if (table == null) {
+        return;
+    }
+    
     for (var i = 0; i < len; i++) {
-        var table = document.getElementById("table_" + table_name);
         var contents = '';
         contents += '<tr  class="tr cbi-section-table-descr">\n';
         
@@ -813,7 +817,7 @@ export function saveData(table_name) {
         } else if (option == 'index') {
             option_value[option] = document.getElementById(table_name + '.'  + option + '.' + io_type).value;
         } else {
-            console.log(option);
+            // console.log(option);
             if (option != null)
                 option_value[option] = (mode == 1 && option == 'debounce_interval') ? '-' : document.getElementById(table_name + '.'  + option).value;
         }
@@ -1154,9 +1158,10 @@ export function getRealtimeData() {
         const trList = document.querySelectorAll('table tr');
         var dnp3 = document.getElementById('option_list_dnp3');
         var modbus_slave = document.getElementById('option_list_modbus_slave_point');
+        var opcua = document.getElementById('option_list_opcuaserv');
         trList.forEach((tr) => {
             var cur_value = '';
-            if (dnp3 || modbus_slave) {
+            if (dnp3 || modbus_slave || opcua) {
                 if (tr.querySelector('td[name="source_object"]')) {
                     var factor = tr.querySelector('td[name="source_object"]').innerHTML;
                     factor = factor.substring(factor.indexOf('-') + 1)

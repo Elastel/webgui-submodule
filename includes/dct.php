@@ -543,7 +543,7 @@ echo "<div class=\"tab-pane $active\" id=\"server$num\">
 
               <div name=\"page_topic$num\" id=\"page_topic$num\">
                 <div class=\"cbi-value\">
-                  <label class=\"cbi-value-title\">"; echo _("MQTT Public Topic"); echo "</label>
+                  <label class=\"cbi-value-title\">"; echo _("MQTT Publish Topic"); echo "</label>
                   <input type=\"text\" class=\"cbi-input-text\" name=\"mqtt_pub_topic$num\" id=\"mqtt_pub_topic$num\" />
                 </div>
 

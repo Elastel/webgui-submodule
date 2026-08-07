@@ -16,7 +16,7 @@ config interface 'swan'
 	option pdptype 'ipv4'
 	option ifname 'wwan0'
 	option auth 'none'
-	option metric '300'
+	option metric '205'
 
 config interface 'wifi'
 	option device 'wlan0'

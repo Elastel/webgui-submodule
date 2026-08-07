@@ -17,9 +17,11 @@ class HTTPAuth
      * @var array $auth_default
      */
     private $auth_default = array(
+        '0' => array(
         'admin_user' => 'admin',
-        'admin_pass' => '$2y$10$.I8ji57GDlWHu6aWklGWZuTe57g980zelhV9VlYFyQfZ.eLd4b2/2'
-    );
+        'admin_pass' => '$2y$10$.I8ji57GDlWHu6aWklGWZuTe57g980zelhV9VlYFyQfZ.eLd4b2/2',
+        'purview' => 'ffffffff'
+        ));
 
     // Constructor
     public function __construct()
@@ -88,13 +90,28 @@ class HTTPAuth
     {
         $config = $this->auth_default;
 
-        if (file_exists(RASPI_CONFIG . '/raspap.auth')) {
-            if ($auth_details = fopen(RASPI_CONFIG . '/raspap.auth', 'r')) {
-                $config['admin_user'] = trim(fgets($auth_details));
-                $config['admin_pass'] = trim(fgets($auth_details));
+        if (file_exists(RASPI_ADMIN_DETAILS)) {
+            if ($auth_details = fopen(RASPI_ADMIN_DETAILS, 'r')) {
+                $i = 0;
+                while (($line = fgets($auth_details)) !== false) {
+                    // echo $i.':'.$line.PHP_EOL;
+                    $result = explode(':', $line);
+                    if (count($result) == 3) {
+                        $config[$i]['admin_user'] = $result[0];
+                        $config[$i]['admin_pass'] = $result[1];
+                        $config[$i]['purview'] = $result[2];
+                    }
+                    
+                    $i++;
+                    unset($line);
+                    unset($result);
+                }
+                // $config['admin_user'] = trim(fgets($auth_details));
+                // $config['admin_pass'] = trim(fgets($auth_details));
                 fclose($auth_details);
             }
         }
+
         return $config;
     }
 
@@ -106,7 +123,19 @@ class HTTPAuth
      */
     protected function isValidCredentials(string $user, string $pass)
     {
-        return $this->validateUser($user) && $this->validatePassword($pass);
+        // return $this->validateUser($user) && $this->validatePassword($pass);
+        $config = $this->getAuthConfig();
+        foreach ($config as $key => $value) {
+            if (is_array($value)) {
+                if ($value['admin_user'] == $user) {
+                    $validated = ($user == $value['admin_user']) && password_verify($pass, $value['admin_pass']);
+                }  
+            } else {
+                $validated = ($user == $config['admin_user']) && password_verify($pass, $config['admin_pass']);
+            }
+        }
+
+        return $validated;
     }
 
     /**

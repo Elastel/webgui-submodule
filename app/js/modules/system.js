@@ -191,3 +191,133 @@ $('.download_backup').click(function(){
     }
     req.send();
 })
+
+function getTableDataAuth() {
+    var tr = $("#table_auth tr");
+    var result = [];
+    for (var i = 2; i < tr.length; i++) {
+        var tds = $(tr[i]).find("td");
+        if (tds.length > 0) {
+            var j = 0;
+            result.push({
+                'username':$(tds[j++]).html(), 
+                'password':$(tds[j++]).html(),
+                'purview':$(tds[j++]).html(),
+            });
+        }
+    }
+
+    return result;    
+}
+
+function editDataAuth(object) {
+    var row = $(object).parent().parent().parent().prevAll().length + 1;
+    console.log(row);
+    document.getElementById("page_type").value = row;
+    var num = 0;
+    var value = $(object).parent().parent().find("td");
+    var username = value.eq(num++).text();
+    var password = value.eq(num++).text();
+    var purview = value.eq(num++).text();
+    var decimal = parseInt(purview, 16);
+    var array_name = ['basic', 'interfaces', 'modbus', 'ascii', 's7', 'fx', 'mc', 'iec104', 
+        'dnp3cli', 'opcuacli', 'baccli', 'ethernetip', 'mbuscli', 'snmpcli', 'iec1107', 'dlms', 
+        'iec61850cli', 'io', 'system_param', 'server', 'modbus_slave', 'opcua', 'bacnet', 
+        'dnp3', 'datadisplay', 'bacnet_router', 'modbus_router', 'nodered', 'docker', 'terminal', 
+        'gps', 'scheduled'];
+    var i = 0;
+
+    document.getElementById("auth.username").value = username;
+    document.getElementById("auth.username").disabled = true; 
+    document.getElementById("auth.password").value = password;
+    array_name.forEach(function(info){
+        if (document.getElementById('auth.' + info)) {
+            var status = (parseInt(decimal) >> i) & 1;
+            document.getElementById('auth.' + info).checked = (status == 1) ? true : false;
+            i++;
+        }
+    })
+
+    openBox();
+}
+
+globalThis.editDataAuth = editDataAuth;
+
+function delDataAuth(object) {
+    var table = object.parentNode.parentNode.parentNode;
+    var tr = object.parentNode.parentNode;
+    table.removeChild(tr);
+
+    var result = getTableDataAuth();
+    var json_data = JSON.stringify(result);
+    $('#hidTD').val(json_data);
+}
+
+globalThis.delDataAuth = delDataAuth;
+
+function saveDataAuth() {
+    var result = [];
+    var array_name = ['basic', 'interfaces', 'modbus', 'ascii', 's7', 'fx', 'mc', 'iec104', 
+        'dnp3cli', 'opcuacli', 'baccli', 'ethernetip', 'mbuscli', 'snmpcli', 'iec1107', 'dlms', 
+        'iec61850cli', 'io', 'system_param', 'server', 'modbus_slave', 'opcua', 'bacnet', 
+        'dnp3', 'datadisplay', 'bacnet_router', 'modbus_router', 'nodered', 'docker', 'terminal', 
+        'gps', 'scheduled'];
+    var username = document.getElementById("auth.username").value;
+    var password = document.getElementById("auth.password").value;
+    var page_type = document.getElementById("page_type").value;
+    var purview = 0;
+    var int_purview = 0;
+    var i = 0;
+
+    array_name.forEach(function(info) {
+        var checkbox = document.getElementById('auth.' + info);
+        if (checkbox) {
+                // 使用三元运算符确保得到 0 或 1
+                var status = checkbox.checked ? 1 : 0;
+                // 使用 >>> 0 确保无符号位移
+                int_purview = int_purview | (status << i);
+                i++;
+            }
+    });
+
+    purview = (int_purview >>> 0).toString(16).toUpperCase();
+
+    if (page_type == "0") {
+        var usernameList = document.getElementById("username_list").value;
+        var json_usernameList = JSON.parse(usernameList);
+        var found = false;
+        json_usernameList.forEach(function(info) {
+            if (info == username) {
+                alert("The username already exists, please re-enter it");
+                found = true;
+                return;
+            }
+        });
+
+        if (found) {
+            return;
+        }
+
+        var table = document.getElementsByTagName("table")[0];
+        table.innerHTML += "<tr  class=\"tr cbi-section-table-descr\">\n" +
+            "        <td style='text-align:center' name='username'>"+ (username.length > 0 ? username : "-") + "</td>\n" +
+            "        <td style='display:none'  name='password'>"+ (password.length > 0 ? password : "-") +"</td>\n" +
+            "        <td style='text-align:center' name='purview'>"+ String(purview) +"</td>\n" +
+            "        <td style='width:10rem'><a href=\"javascript:void(0);\" onclick=\"editDataAuth(this);\" >Edit</a></td>\n" +
+            "        <td style='width:10rem'><a href=\"javascript:void(0);\" onclick=\"delDataAuth(this);\" >Del</a></td>\n" +
+            "    </tr>";
+    } else {
+        var table = document.getElementById("table_auth");
+        var num = 0;
+        table.rows[Number(page_type)].cells[num++].innerHTML = (username.length > 0 ? username : "-");
+        table.rows[Number(page_type)].cells[num++].innerHTML = (password.length > 0 ? password : "-");
+        table.rows[Number(page_type)].cells[num++].innerHTML = String(purview);
+    }
+
+    result = getTableDataAuth();
+    var json_data = JSON.stringify(result);
+    $('#hidTD').val(json_data);
+    closeBox();
+}
+
+globalThis.saveDataAuth = saveDataAuth;
