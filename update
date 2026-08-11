@@ -257,7 +257,7 @@ if [[ $model != "EG324L" && $model != "EC212" ]]; then
         install_package_if_needed "dos2unix" "dos2unix"
         install_package_if_needed "wireless-tools" "iwconfig"
         install_package_if_needed "bridge-utils" "brctl"
-        install_package_if_needed "blogrotate" "logrotate"
+        install_package_if_needed "logrotate" "logrotate"
         install_lib_if_needed "libsnmp.so" "libsnmp-dev"
 
         set_resolvconf
