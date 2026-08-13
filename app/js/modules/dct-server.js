@@ -108,6 +108,8 @@ export function jsonChange(num) {
         icon.setAttribute('title', '{"ts":1747208633000,"params":{"temperature":27}}');
     } else if (value === "2") {
         icon.setAttribute('title', '{"ts":1747208633000,"params":[{"name":"temperature", "value":27}]}');
+    } else if (value === "3") {
+        icon.setAttribute('title', '{"ts":1747208633000,"params":[{"device_id":"meter1", "data":{"temperature":27}}]}');
     }
 
     if ($(icon).data('bs.tooltip')) {

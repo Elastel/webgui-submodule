@@ -28,11 +28,20 @@
               <table class="table cbi-section-table" name="table_modbus" id="table_modbus">
                 <tr class="tr cbi-section-table-titles">
                 <?php
-                    $arr= array(
-                      array("name"=>"Tag Name",             "style"=>"background-color:#f0f0f0;"),
-                      array("name"=>"Value",                "style"=>"background-color:#f0f0f0;"),
-                      array("name"=>"Write",                "style"=>"background-color:#f0f0f0;"),
-                    );
+                    if (getModel() == "EG324") {
+                      $arr= array(
+                        array("name"=>"Device Name.Tag Name",     "style"=>"background-color:#f0f0f0;"),
+                        array("name"=>"Value",                    "style"=>"background-color:#f0f0f0;"),
+                        array("name"=>"Write",                    "style"=>"background-color:#f0f0f0;"),
+                      );
+                    } else {
+                      $arr= array(
+                        array("name"=>"Tag Name",                 "style"=>"background-color:#f0f0f0;"),
+                        array("name"=>"Value",                    "style"=>"background-color:#f0f0f0;"),
+                        array("name"=>"Write",                    "style"=>"background-color:#f0f0f0;"),
+                      );
+                    }
+
                     $name_buf = '';
                     for ($i = 0; $i < count($arr); $i++) {
                       $name = _($arr[$i]['name']);

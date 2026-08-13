@@ -1174,15 +1174,17 @@ export function getRealtimeData() {
                 if (tr.querySelector('td[name="factor_name"]')) {
                     //console.log(tr.querySelector('td[name="factor_name"]').innerHTML);
                     var factor = tr.querySelector('td[name="factor_name"]').innerHTML;
-                    var serverCenter = tr.querySelector('td[name="server_center"]').innerHTML;
+                    var deviceName = tr.querySelector('td[name="device_name"]').innerHTML;
                     var factorList = factor.split(';');
+                    var serverCenter = tr.querySelector('td[name="server_center"]').innerHTML;
                     var flag = getReportingCenterFlag(serverCenter);
                     factorList.forEach((key) => {
                         // console.log(flag);
                         var jsonValue = '';
+                        var matchNmae = deviceName + '.' + key;
                         jsonResult.forEach(item => {
                             const [name, index, value] = item;
-                            if (name == key && (flag == parseInt(index) || index == 0)) {
+                            if ((name == key || name == matchNmae) && (flag == parseInt(index) || index == 0)) {
                                 jsonValue = value;
                                 return;
                             }
