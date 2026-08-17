@@ -22,63 +22,103 @@
       <div class="card-body">
           <?php $status->showMessages(); ?>
           <form method="POST" action="dnp3" role="form">
-          <?php echo \ElastPro\Tokens\CSRF::hiddenField();
-            echo '<div class="cbi-section cbi-tblsection">';
-            RadioControlCustom('DNP3 '._('Server'), 'dnp3_enabled', 'dnp3_server', 'enableDnp3');
+            <?php echo \ElastPro\Tokens\CSRF::hiddenField();
+            function page_channel($num) {
+              if ($num == 1)
+                $active = "active";
+              else
+                $active = "fade";
+              //echo '<div class="cbi-section cbi-tblsection">';
+              // RadioControlCustom('Channel '.$num, 'dnp3_enabled'.$num, 'dnp3_server'.$num, "enableDnp3");
+              echo "
+              <div class=\"tab-pane $active\" id=\"channel$num\">
+                <div class=\"row\">
+                  <div class=\"cbi-value\">
+                    <label class=\"cbi-value-title\">"; echo _("Enabled"); echo "</label>
+                    <input class=\"cbi-input-radio\" id=\"dnp3_server_enable$num\" name=\"dnp3_enabled$num\" value=\"1\" type=\"radio\" checked onchange=\"enableDnp3(true, $num)\">
+                    <label >"; echo _("Enable"); echo "</label>
 
-            echo '<div id="page_dnp3" name="page_dnp3">';
+                    <input class=\"cbi-input-radio\" id=\"dnp3_server_disable$num\" name=\"dnp3_enabled$num\" value=\"0\" type=\"radio\" onchange=\"enableDnp3(false, $num)\">
+                    <label >"; echo _("Disable"); echo "</label>
+                  </div>
+              ";
 
-            $proto = array('RTU'=>'RTU', 'TCP'=>'TCP');
-            SelectControlCustom(_('Protocol'), 'proto', $proto, $proto['TCP'], 'proto', null, "dnp3ProtocolChange()");
+              echo '<div id="page_dnp3'.$num.'" name="page_dnp3'.$num.'">';
 
-            echo '<div id="page_proto_ip" name="page_proto_ip">';
-            InputControlCustom(_('Port'), 'port', 'port', _('1~65535'), 20000);
-            echo '</div>';
+              $proto = array('RTU'=>'RTU', 'TCP'=>'TCP');
+              SelectControlCustom(_('Protocol'), 'proto'.$num, $proto, $proto['TCP'], 'proto'.$num, null, "dnp3ProtocolChange($num)");
 
-            echo '<div id="page_proto_rtu" name="page_proto_rtu">';
-            
-            if (model_category('four_com')) {
-              $comlist = array('COM1'=>'COM1', 'COM2'=>'COM2', 'COM3'=>'COM3', 'COM4'=>'COM4');
-            } else {
-              $comlist = array('COM1'=>'COM1', 'COM2'=>'COM2');
-            }
-            SelectControlCustom(_('Interface'), 'interface', $comlist, $comlist['COM1'], 'interface');
+              echo '<div id="page_proto_ip'.$num.'" name="page_proto_ip'.$num.'">';
+              InputControlCustom(_('Port'), 'port'.$num, 'port'.$num, _('1~65535'), 20000);
+              echo '</div>';
 
-            $baudrate_list = array('1200'=>'1200', '2400'=>'2400', '4800'=>'4800', '9600'=>'9600', '19200'=>'19200', '38400'=>'38400',
-            '57600'=>'57600', '115200'=>'115200', '230400'=>'230400');
-            SelectControlCustom(_('Baudrate'), 'baudrate', $baudrate_list, $baudrate_list['9600'], 'baudrate');
-            $databit_list = array('7'=>'7', '8'=>'8');
-            SelectControlCustom(_('Databit'), 'databit', $databit_list, $databit_list['8'], 'databit');
-            $stopbit_list = array('1'=>'1', '2'=>'2');
-            SelectControlCustom(_('Stopbit'), 'stopbit', $stopbit_list, $stopbit_list['1'], 'stopbit');
-            $parity_list = array('0'=>'None', '1'=>'Odd', '2'=>'Even');
-            SelectControlCustom(_('Parity'), 'parity', $parity_list, $parity_list['0'], 'parity');
-            echo '</div>';
-            InputControlCustom(_('Slave Address'), 'slave_address', 'slave_address', "0~65519");
-            InputControlCustom(_('Master Address'), 'master_address', 'master_address', "0~65519");
-            ?>
-                <input type="hidden" name="table_data" value="" id="hidTD_dnp3">
-                <input type="hidden" name="option_list_dnp3" value="" id="option_list_dnp3">
-                <div class="cbi-section cbi-tblsection" id="page_dnp3" name="page_dnp3">
-                  <?php
-                  $arr= array(
-                    array("name"=>"Source Object",        "data-field" => "factor_name", "style"=>"", "descr"=>"", "ctl"=>"select"),
-                    array("name"=>"Group ID",             "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
-                    array("name"=>"Index Number",         "data-field" => "", "style"=>"", "descr"=>"0~100", "ctl"=>"input"),
-                    array("name"=>"Ivent Class",          "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
-                    array("name"=>"Event Variation",      "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
-                    array("name"=>"Static Variation",     "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
-                    array("name"=>"Enable",               "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"check"),
-                  );
-                  page_table_title('dnp3', $arr);
-                  ?>
-                  <div class="cbi-section-create">
-                    <input type="button" class="cbi-button-add" name="popBox" value="<?=_('Add')?>" onclick="addData('dnp3')">
+              echo '<div id="page_proto_rtu'.$num.'" name="page_proto_rtu'.$num.'">';
+              
+              if (model_category('four_com')) {
+                $comlist = array('COM1'=>'COM1', 'COM2'=>'COM2', 'COM3'=>'COM3', 'COM4'=>'COM4');
+              } else {
+                $comlist = array('COM1'=>'COM1', 'COM2'=>'COM2');
+              }
+              SelectControlCustom(_('Interface'), 'interface'.$num, $comlist, $comlist['COM1'], 'interface'.$num);
+
+              $baudrate_list = array('1200'=>'1200', '2400'=>'2400', '4800'=>'4800', '9600'=>'9600', '19200'=>'19200', '38400'=>'38400',
+              '57600'=>'57600', '115200'=>'115200', '230400'=>'230400');
+              SelectControlCustom(_('Baudrate'), 'baudrate'.$num, $baudrate_list, $baudrate_list['9600'], 'baudrate'.$num);
+              $databit_list = array('7'=>'7', '8'=>'8');
+              SelectControlCustom(_('Databit'), 'databit'.$num, $databit_list, $databit_list['8'], 'databit'.$num);
+              $stopbit_list = array('1'=>'1', '2'=>'2');
+              SelectControlCustom(_('Stopbit'), 'stopbit'.$num, $stopbit_list, $stopbit_list['1'], 'stopbit'.$num);
+              $parity_list = array('0'=>'None', '1'=>'Odd', '2'=>'Even');
+              SelectControlCustom(_('Parity'), 'parity'.$num, $parity_list, $parity_list['0'], 'parity'.$num);
+              echo '</div>';
+              InputControlCustom(_('Slave Address'), 'slave_address'.$num, 'slave_address'.$num, "0~65519");
+              InputControlCustom(_('Master Address'), 'master_address'.$num, 'master_address'.$num, "0~65519");
+              echo '
                   </div>
                 </div>
+              </div>
+              ';
+            }
+            ?>
+            <div class="cbi-section cbi-tblsection">
+              <h4><?php echo _("DNP3").' '._('Server').' '._("Channel"); ?></h4>
+              <ul class="nav nav-tabs">
+                <li role="presentation" class="nav-item"><a class="nav-link active" href="#channel1" aria-controls="channel1" role="tab" data-toggle="tab"><?php echo _("Channel")."1 "._("Setting"); ?></a></li>
+                <li role="presentation" class="nav-item"><a class="nav-link" href="#channel2" aria-controls="channel2" role="tab" data-toggle="tab"><?php echo _("Channel")."2 "._("Setting"); ?></a></li>
+                <li role="presentation" class="nav-item"><a class="nav-link" href="#channel3" aria-controls="channel3" role="tab" data-toggle="tab"><?php echo _("Channel")."3 "._("Setting"); ?></a></li>
+                <li role="presentation" class="nav-item"><a class="nav-link" href="#channel4" aria-controls="channel4" role="tab" data-toggle="tab"><?php echo _("Channel")."4 "._("Setting"); ?></a></li>
+              </ul>
+              <!-- Tab panes -->
+              <div class="tab-content">
+                  <?php page_channel(1); ?>
+                  <?php page_channel(2); ?>
+                  <?php page_channel(3); ?>
+                  <?php page_channel(4); ?>
+              </div><!-- /.tab-content -->
+            </div>
+            <input type="hidden" name="table_data" value="" id="hidTD_dnp3">
+            <input type="hidden" name="option_list_dnp3" value="" id="option_list_dnp3">
+            <div class="cbi-section cbi-tblsection" id="page_dnp3" name="page_dnp3">
+              <h4><?php echo _("Mappings"); ?></h4>
+              <?php
+              $arr= array(
+                array("name"=>"Source Object",        "data-field" => "factor_name", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                array("name"=>"Destination Channel",  "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                array("name"=>"Group ID",             "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                array("name"=>"Index Number",         "data-field" => "", "style"=>"", "descr"=>"0~100", "ctl"=>"input"),
+                array("name"=>"Ivent Class",          "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                array("name"=>"Event Variation",      "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                array("name"=>"Static Variation",     "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"select"),
+                array("name"=>"Enable",               "data-field" => "", "style"=>"", "descr"=>"", "ctl"=>"check"),
+              );
+              page_table_title('dnp3', $arr);
+              ?>
+              <div class="cbi-section-create">
+                <input type="button" class="cbi-button-add" name="popBox" value="<?=_('Add')?>" onclick="addData('dnp3')">
+              </div>
+            </div>
           <?php
-            echo '</div>';
-            echo '</div>';
+            // echo '</div>';
             echo $buttons; 
           ?>
           </form>
@@ -96,6 +136,11 @@
       $table_name = 'dnp3';
       
       SelectControlCustom(_('Source Object'), $table_name.'.source_object', NULL, NULL, $table_name.'.source_object');
+
+      
+
+      $dest_channel = ['channel1' => 'channel1', 'channel2' => 'channel2', 'channel3' => 'channel3', 'channel4' => 'channel4'];
+      SelectControlCustom(_('Destination Channel'), $table_name.'.dest_channel', $dest_channel, $dest_channel['channel1'], $table_name.'.dest_channel');
 
       $group_id_list = ['BINARY_INPUT' => 'BINARY_INPUT', 'DOUBLE_INPUT' => 'DOUBLE_INPUT', 
                       'BINARY_OUTPUT' => 'BINARY_OUTPUT', 'COUNTER_INPUT' => 'COUNTER_INPUT', 

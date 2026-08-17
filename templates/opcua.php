@@ -21,7 +21,7 @@
       </div><!-- ./card-header -->
       <div class="card-body">
           <?php $status->showMessages(); ?>
-          <form method="POST" action="opcua" role="form">
+          <form role="form" action="opcua" enctype="multipart/form-data" method="POST">
           <?php echo \ElastPro\Tokens\CSRF::hiddenField();
             echo '<div class="cbi-section cbi-tblsection">';
 

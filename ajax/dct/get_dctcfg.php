@@ -305,7 +305,12 @@ if ($type == 'datadisplay') {
         $option_name = $type_arr[$type]['option'];
         $option_list_name = $type_arr[$type]['option_list'];
 
-        exec("/usr/sbin/get_config dct name " . $option_name . " 1", $tmp1);
+        if ($type == 'dnp3') {
+            exec("/usr/sbin/get_config dct name " . $option_name . " 4", $tmp1);
+        } else {
+            exec("/usr/sbin/get_config dct name " . $option_name . " 1", $tmp1);
+        }
+        
         exec("/usr/sbin/get_config dct type " . $option_list_name . " 1", $tmp2);
     
         $dctdata['option'] = $config[$option_name .'_option'];

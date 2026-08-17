@@ -1,25 +1,25 @@
 
 /* DNP3 Server*/
-export function enableDnp3(state) {
+export function enableDnp3(state, num) {
     if (state) {
-      $('#page_dnp3').show();
+      $('#page_dnp3' + num).show();
     } else {
-      $('#page_dnp3').hide();
+      $('#page_dnp3' + num).hide();
     }
-    dnp3ProtocolChange();
+    dnp3ProtocolChange(num);
 }
 
 globalThis.enableDnp3 = enableDnp3;
 
-export function dnp3ProtocolChange() {
-    var proto = document.getElementById('proto').value;
+export function dnp3ProtocolChange(num) {
+    var proto = document.getElementById('proto' + num).value;
 
     if (proto == 'RTU') {
-        $('#page_proto_rtu').show();
-        $('#page_proto_ip').hide();
+        $('#page_proto_rtu' + num).show();
+        $('#page_proto_ip' + num).hide();
     } else {
-        $('#page_proto_rtu').hide();
-        $('#page_proto_ip').show();
+        $('#page_proto_rtu' + num).hide();
+        $('#page_proto_ip' + num).show();
     }
 }
 
@@ -84,24 +84,26 @@ export function initDctDnp3Server() {
             var arr = jsonData.option;
             if (jsonData.hasOwnProperty("dnp3_server")) {
                 var dnp3_server = JSON.parse(jsonData.dnp3_server);
+                for (var i = 1; i <= 4; i++) {
+                    $('#enabled' + i).val(dnp3_server['enabled' + i]);
+                    if (dnp3_server['enabled' + i] == '1') {
+                        $('#page_dnp3' + i).show();
+                        $('#dnp3_server_enable' + i).prop('checked', true);
 
-                $('#enabled').val(dnp3_server.enabled);
-                if (dnp3_server.enabled == '1') {
-                    $('#page_dnp3').show();
-                    $('#dnp3_server_enable').prop('checked', true);
+                        arr.forEach(function (info) {
+                            if (info == null) {
+                                return true;    // continue: return true; break: return false
+                            }
 
-                    arr.forEach(function (info) {
-                        if (info == null) {
-                            return true;    // continue: return true; break: return false
-                        }
+                            $('#' + info + i).val(dnp3_server[info + i]);
+                        })
+                    } else {
+                        $('#page_dnp3' + i).hide();
+                        $('#dnp3_server_disable' + i).prop('checked', true);
+                    }
 
-                        $('#' + info).val(dnp3_server[info]);
-                    })
-                } else {
-                    $('#page_dnp3').hide();
-                    $('#dnp3_server_disable').prop('checked', true);
+                    dnp3ProtocolChange(i);
                 }
-                dnp3ProtocolChange();
             }
             
 

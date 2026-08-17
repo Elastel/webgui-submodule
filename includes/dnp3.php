@@ -25,20 +25,22 @@ function DisplayDnp3()
 
 function saveDnp3Config($status)
 {
-    exec("sudo /usr/local/bin/uci set dct.dnp3_server.enabled=" . $_POST['dnp3_enabled']);
-    exec("sudo /usr/local/bin/uci set dct.dnp3_server.proto=" . $_POST['proto']);
-    if ($_POST['proto'] == 'RTU') {
-        exec("sudo /usr/local/bin/uci set dct.dnp3_server.interface=" .$_POST['interface']);
-        exec("sudo /usr/local/bin/uci set dct.dnp3_server.baudrate=" .$_POST['baudrate']);
-        exec("sudo /usr/local/bin/uci set dct.dnp3_server.databit=" .$_POST['databit']);
-        exec("sudo /usr/local/bin/uci set dct.dnp3_server.stopbit=" .$_POST['stopbit']);
-        exec("sudo /usr/local/bin/uci set dct.dnp3_server.parity=" .$_POST['parity']);
-    } else {
-        exec("sudo /usr/local/bin/uci set dct.dnp3_server.port=" .$_POST['port']);
-    }
+    for ($i = 1; $i <= 4; $i++) {
+        exec("sudo /usr/local/bin/uci set dct.dnp3_server.enabled$i=" . $_POST['dnp3_enabled'.$i]);
+        exec("sudo /usr/local/bin/uci set dct.dnp3_server.proto$i=" . $_POST['proto'.$i]);
+        if ($_POST['proto'.$i] == 'RTU') {
+            exec("sudo /usr/local/bin/uci set dct.dnp3_server.interface$i=" .$_POST['interface'.$i]);
+            exec("sudo /usr/local/bin/uci set dct.dnp3_server.baudrate$i=" .$_POST['baudrate'.$i]);
+            exec("sudo /usr/local/bin/uci set dct.dnp3_server.databit$i=" .$_POST['databit'.$i]);
+            exec("sudo /usr/local/bin/uci set dct.dnp3_server.stopbit$i=" .$_POST['stopbit'.$i]);
+            exec("sudo /usr/local/bin/uci set dct.dnp3_server.parity$i=" .$_POST['parity'.$i]);
+        } else {
+            exec("sudo /usr/local/bin/uci set dct.dnp3_server.port$i=" .$_POST['port'.$i]);
+        }
 
-    exec("sudo /usr/local/bin/uci set dct.dnp3_server.slave_address=" .$_POST['slave_address']);
-    exec("sudo /usr/local/bin/uci set dct.dnp3_server.master_address=" .$_POST['master_address']);
+        exec("sudo /usr/local/bin/uci set dct.dnp3_server.slave_address$i=" .$_POST['slave_address'.$i]);
+        exec("sudo /usr/local/bin/uci set dct.dnp3_server.master_address$i=" .$_POST['master_address'.$i]);
+    }
 
     $data = $_POST['table_data'];
     file_put_contents(ELASTEL_DCT_CONFIG_JSON, $data);

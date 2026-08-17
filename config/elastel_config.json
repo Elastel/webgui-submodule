@@ -1056,6 +1056,7 @@
 	],
 	"dnp3_option": [
 		"source_object",
+		"dest_channel",
 		"group_id",
 		"point_number",
 		"event_class",

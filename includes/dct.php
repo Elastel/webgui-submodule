@@ -464,14 +464,7 @@ echo "<div class=\"tab-pane $active\" id=\"server$num\">
                   <option value=\"0\">base-format</option>
                   <option value=\"1\" selected=\"\">elastpro-format</option>
                   <option value=\"2\">array-format</option>
-                  ";
-                if ($model == "EG324") {
-                  echo
-                  "
                   <option value=\"3\">multi-device-format</option>
-                  ";
-                }
-                echo "
                 </select>
                 <i class=\"fas fa-question-circle\"
                   style=\"color:#17a2b8;cursor:pointer;margin-left:0.5rem;\"
