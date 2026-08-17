@@ -440,7 +440,7 @@ canvas#divDBChartBandwidthhourly {
 #confBox {
   display: none;
   background-color: #FFFFFF;
-  z-index: 11;
+  z-index: 10000;
   width: 50%;
   height: 50%;
   position:fixed;
