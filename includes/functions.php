@@ -880,6 +880,7 @@ function getSystemTime()
 function model_category($option)
 {
     $model = getModel();
+    $target = getTarget();
     if ($option == 'HT' && ($model == 'EG324' || $model == 'EG324L' || $model == 'EC212' || $model == "EG324Pro")) {
         return true;
     } else if ($option == 'buildroot' && ($model == 'EG324L' || $model == 'EC212')) {
@@ -895,6 +896,10 @@ function model_category($option)
     } else if ($option == 'two_com' && ($model == 'EG500' || $model == 'EG410' || $model == 'EG510' || $model == 'EC212')) {
         return true;
     } else if ($option == 'four_com' && ($model == 'EG324' || $model == 'EG324Pro' || $model == 'EG324L')) {
+        return true;
+    } else if ($option == 'four_com' && $model == 'EG600' && $target == 'EG600-MG') {
+        return true;
+    } else if ($option == 'ten_com' && $model == 'EG600' && $target == 'EG600-MU') {
         return true;
     }
 
@@ -1018,13 +1023,10 @@ function isRunning($name)
     return !empty($output);
 }
 
-function isIoExistts()
+function getInterfaceCount(&$adc_index_count, &$di_index_count, &$do_index_count, &$com_count)
 {
     $model = getModel();
-    $adc_index_count = 0;
-    $di_index_count = 0;
-    $do_index_count = 0;
-    $com_count = 4;
+    $target = getTarget();
 
     switch ($model) {
         case "EG500":
@@ -1043,7 +1045,41 @@ function isIoExistts()
             $do_index_count += 6;
             $com_count = 2;
             break;
+        case "EG600":
+        {
+            switch ($target) {
+            case "EG600-MG":
+                $adc_index_count += 4;
+                $di_index_count += 20;
+                $do_index_count += 20;
+                $com_count = 4;
+                break;
+            case "EG600-MU":
+                $di_index_count += 8;
+                $do_index_count += 8;
+                $com_count = 10;
+                break;
+            default:
+                $adc_index_count += 4;
+                $di_index_count += 20;
+                $do_index_count += 20;
+                $com_count = 4;
+                break;
+            }
+
+            break;
+        }
     }
+}
+
+function isIoExistts()
+{
+    $adc_index_count = 0;
+    $di_index_count = 0;
+    $do_index_count = 0;
+    $com_count = 4;
+
+    getInterfaceCount($adc_index_count, $di_index_count, $do_index_count, $com_count);
 
     for ($i = 1; $i <= $com_count; $i++) {
         unset($enabled);
@@ -1100,6 +1136,7 @@ function get_serial_device_list()
 {
     $comlist = array();
     $model = getModel();
+    $target = getTarget();
 
     if ($model == "EG324") {
         $comlist = array('/dev/ttyAMA0'=>'COM1', '/dev/ttyAMA1'=>'COM2', '/dev/ttyAMA2'=>'COM3', '/dev/ttyAMA3'=>'COM4');
@@ -1109,6 +1146,10 @@ function get_serial_device_list()
         $comlist = array('/dev/ttyS1'=>'COM1', '/dev/ttyS2'=>'COM2');
     } else if ($model == "EG510") {
         $comlist = array('/dev/ttyCH9344USB0'=>'COM1', '/dev/ttyCH9344USB1'=>'COM2');
+    } else if ($model == "EG600" && $target == "EG600-MG") {
+        $comlist = array('/dev/ttyS1'=>'COM1', '/dev/ttyS2'=>'COM2', '/dev/ttyS8'=>'COM3', '/dev/ttyS9'=>'COM4');
+    } else if ($model == "EG600" && $target == "EG600-MU") {
+        $comlist = array('/dev/ttyS1'=>'COM1', '/dev/ttyS2'=>'COM2', '/dev/ttyS8'=>'COM3', '/dev/ttyS9'=>'COM4', '/dev/ttyWCH0_0'=>'COM5', '/dev/ttyWCH0_1'=>'COM6', '/dev/ttyWCH0_2'=>'COM7', '/dev/ttyWCH0_3'=>'COM8', '/dev/ttyWCH1_0'=>'COM9', '/dev/ttyWCH1_1'=>'COM10');
     } else {
         $comlist = array('/dev/ttyACM0'=>'COM1', '/dev/ttyACM1'=>'COM2');
     }

@@ -28,6 +28,8 @@ function saveComConfig($status, $model)
 {
     if (model_category('two_com')) {
         $count = 2;
+    } else if (model_category('ten_com')) {
+        $count = 10;
     } else {
         $count = 4;
     }

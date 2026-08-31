@@ -37,24 +37,7 @@ function DisplayIO()
     $do_index_count = 0;
     $com_count = 4;
 
-    switch ($model) {
-        case "EG500":
-            $adc_index_count += 3;
-            $di_index_count += 6;
-            $do_index_count += 6;
-            $com_count = 2;
-            break;
-        case "EG410":
-            $di_index_count += 2;
-            $do_index_count += 2;
-            $com_count = 2;
-            break;
-        case "EG510":
-            $di_index_count += 6;
-            $do_index_count += 6;
-            $com_count = 2;
-            break;
-    }
+    getInterfaceCount($adc_index_count, $di_index_count, $do_index_count, $com_count);
 
     for ($i = 1; $i <= $com_count; $i++) {
         unset($enabled);

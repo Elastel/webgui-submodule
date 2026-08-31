@@ -24,6 +24,30 @@ else
 		fi
 	elif [ $model == "EG510" ]; then
 		iface="/dev/ttyCH9344USB0"
+	elif [ $model == "EG600" ]; then
+		if [ $2 == "COM1" ]; then
+			iface="/dev/ttyS1"
+		elif [ $2 == "COM2" ]; then
+			iface="/dev/ttyS2"
+		elif [ $2 == "COM3" ]; then
+			iface="/dev/ttyS8"
+		elif [ $2 == "COM4" ]; then
+			iface="/dev/ttyS9"
+		elif [ $2 == "COM5" ]; then
+			iface="/dev/ttyWCH0_0"
+		elif [ $2 == "COM6" ]; then
+			iface="/dev/ttyWCH0_1"
+		elif [ $2 == "COM7" ]; then
+			iface="/dev/ttyWCH0_2"
+		elif [ $2 == "COM8" ]; then
+			iface="/dev/ttyWCH0_3"
+		elif [ $2 == "COM9" ]; then
+			iface="/dev/ttyWCH1_0"
+		elif [ $2 == "COM10" ]; then
+			iface="/dev/ttyWCH1_1"
+		else
+			iface="/dev/ttyS2"
+		fi
 	else
 		iface="/dev/ttyACM0"
 	fi

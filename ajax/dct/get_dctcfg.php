@@ -284,7 +284,7 @@ if ($type == 'datadisplay') {
         $fileContentFactor = file_get_contents('/tmp/factor_list');
 
     if ($type == 'interface') {
-        exec("/usr/sbin/get_config dct name $type 5", $data);
+        exec("/usr/sbin/get_config dct name $type 10", $data);
         $dctdata[$type] = $data[0];
         $dctdata['com_option'] = $config['com_key'];
         $dctdata['tcp_server_option'] = $config['tcp_server_key'];

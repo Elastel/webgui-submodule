@@ -28,25 +28,84 @@
           <div class="cbi-section">
             <h4><?php echo _("Serial Port Setting"); ?></h4>
             <ul class="nav nav-tabs">
-              <?php if ($model == "EG500" || $model == "EG410" || $model == "EG510") { ?>
-                <li role="presentation" class="nav-item"><a class="nav-link active" href="#com1" aria-controls="com1" role="tab" data-toggle="tab"><?php echo _("COM1/RS485"); ?></a></li>
-                <li role="presentation" class="nav-item"><a class="nav-link" href="#com2" aria-controls="com2" role="tab" data-toggle="tab"><?php echo _("COM2/RS232"); ?></a></li>
-              <?php } else if ($model == "EC212") { ?>
-                <li role="presentation" class="nav-item"><a class="nav-link active" href="#com1" aria-controls="com1" role="tab" data-toggle="tab"><?php echo _("COM1/RS485/RS232"); ?></a></li>
-                <li role="presentation" class="nav-item"><a class="nav-link" href="#com2" aria-controls="com2" role="tab" data-toggle="tab"><?php echo _("COM2/RS485/RS232"); ?></a></li>
-              <?php } else { ?>
-                <li role="presentation" class="nav-item"><a class="nav-link active" href="#com1" aria-controls="com1" role="tab" data-toggle="tab"><?php echo _("COM1/RS485"); ?></a></li>
-                <li role="presentation" class="nav-item"><a class="nav-link" href="#com2" aria-controls="com2" role="tab" data-toggle="tab"><?php echo _("COM2/RS485"); ?></a></li>
-                <li role="presentation" class="nav-item"><a class="nav-link" href="#com3" aria-controls="com3" role="tab" data-toggle="tab"><?php echo _("COM3/RS485/RS232"); ?></a></li>
-                <li role="presentation" class="nav-item"><a class="nav-link" href="#com4" aria-controls="com4" role="tab" data-toggle="tab"><?php echo _("COM4/RS485/RS232"); ?></a></li>
-              <?php } ?>
+              <?php
+              $com_count = 4;
+              $com_list = array(
+                  1 => _("RS485"),
+                  2 => _("RS485"),
+                  3 => _("RS485/RS232"),
+                  4 => _("RS485/RS232")
+              );
+              switch ($model) {
+                case "EG500":
+                case "EG410":
+                case "EG510":
+                    $com_count = 2;
+                    $com_list = array(
+                        1 => _("RS485"),
+                        2 => _("RS232")
+                    );
+                    break;
+                case "EC212":
+                    $com_count = 2;
+                    $com_list = array(
+                        1 => _("RS485/RS232"),
+                        2 => _("RS485/RS232")
+                    );
+                    break;
+                case "EG600":
+                  {
+                    switch ($target) {
+                        case "EG600-MG":
+                            $com_count = 4;
+                            $com_list = array(
+                                1 => _("RS485"),
+                                2 => _("RS485"),
+                                3 => _("RS485"),
+                                4 => _("RS232")
+                            );
+                            break;
+                        case "EG600-MU":
+                            $com_count = 10;
+                            $com_list = array(
+                                1 => _("RS485"),
+                                2 => _("RS485"),
+                                3 => _("RS485"),
+                                4 => _("RS485"),
+                                5 => _("RS485"),
+                                6 => _("RS485"),
+                                7 => _("RS485"),
+                                8 => _("RS485"),
+                                9 => _("RS232"),
+                                10 => _("RS232")
+                            );
+                            break;
+                        default:
+                            $com_count = 4;
+                            $com_list = array(
+                                1 => _("RS485"),
+                                2 => _("RS485"),
+                                3 => _("RS485"),
+                                4 => _("RS232")
+                            );
+                            break;
+                    }
+
+                    break;
+                  }
+              }
+              for ($i = 1; $i <= $com_count; $i++) {
+                  echo '<li role="presentation" class="nav-item"><a class="nav-link '. ($i == 1 ? "active" : "") .'" href="#com' . $i . '" aria-controls="com' . $i . '" role="tab" data-toggle="tab">' . _("COM") . $i . '/' .$com_list[$i] .'</a></li>';
+              }
+              ?>
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
-                <?php page_interface_com(1);?>
-                <?php page_interface_com(2);?>
-                <?php page_interface_com(3);?>
-                <?php page_interface_com(4);?>
+                <?php
+                for ($i = 1; $i <= $com_count; $i++) {
+                    page_interface_com($i);
+                }
+                ?>
             </div><!-- /.tab-content -->
           </div>
           <?php } ?>

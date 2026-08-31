@@ -101,11 +101,12 @@ export function writeValueByTag(object) {
     var tds = $(object).parent().parent().find("td");
     var tagName = tds.filter('[name="factor_name"]').text();
     var serverCenter = tds.filter('[name="server_center"]').text();
+
     if (serverCenter == '' || serverCenter == '-') {
         serverCenter = '-1';
     }
 
-    var flag = getReportingCenterFlag(serverCenter);
+    var flag = serverCenter == -1 ? serverCenter : getReportingCenterFlag(serverCenter);
 
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';

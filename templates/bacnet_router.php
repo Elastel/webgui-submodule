@@ -43,6 +43,7 @@
             echo '<h5>BACnet/MSTP '._("Setting").'</h5>';
 
             $model = getModel();
+            $target = getTarget();
             
             if ($model == "EG324") {
               $comlist = array('/dev/ttyAMA0'=>'COM1', '/dev/ttyAMA1'=>'COM2');
@@ -50,6 +51,12 @@
               $comlist = array('/dev/ttyS1'=>'COM1', '/dev/ttyS2'=>'COM2');
             } else if ($model == "EG510") {
               $comlist = array('/dev/ttyCH9344USB0'=>'COM1');
+            } else if ($model == "EG600" && $target == "EG600-MG") {
+                $comlist = array('/dev/ttyS1'=>'COM1', '/dev/ttyS2'=>'COM2', '/dev/ttyS8'=>'COM3');
+            } else if ($model == "EG600" && $target == "EG600-MU") {
+                $comlist = array('/dev/ttyS1'=>'COM1', '/dev/ttyS2'=>'COM2', '/dev/ttyS8'=>'COM3', '/dev/ttyS9'=>'COM4', '/dev/ttyWCH0_0'=>'COM5', '/dev/ttyWCH0_1'=>'COM6', '/dev//ttyWCH0_2'=>'COM7', '/dev/ttyWCH0_3'=>'COM8');
+            } else if ($model == "EG600") {
+                $comlist = array('/dev/ttyS1'=>'COM1', '/dev/ttyS2'=>'COM2', '/dev/ttyS8'=>'COM3');
             } else {
               $comlist = array('/dev/ttyACM0'=>'COM1');
             }

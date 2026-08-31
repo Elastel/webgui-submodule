@@ -3,6 +3,9 @@
 export function comProtocolChange(num) {
     var numStr = num.toString();
     var selectElement = document.getElementById('com_proto' + numStr);
+    if (!selectElement) {
+        return;
+    }
     var selectedOption = selectElement.options[selectElement.selectedIndex];
     var selectedText = selectedOption.text;
 
@@ -365,7 +368,7 @@ export function initDctInterface() {
             var jsonData = JSON.parse(interface_data.interface);
 
             if (arrCom.length > 0) {
-                for (var i = 1; i <= 4; i++) {
+                for (var i = 1; i <= 10; i++) {
                     $('#com_enabled' + i).val(jsonData['com_enabled' + i]);
                     if (jsonData['com_enabled' + i] == '1') {
                         $('#page_com' + i).show();

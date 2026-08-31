@@ -116,7 +116,9 @@
       echo '<div name="pageIndexADC" id="pageIndexADC">';
       $adc_index = [];
       for ($i = 0; $i < $adc_index_count; $i++) {
-        $adc_index["ADC$i"] = "ADC$i";
+        $adc_buf = ($model == "EG600") ? "ADC".($i + 1) : "ADC$i";
+        $adc_index[$adc_buf] = $adc_buf;
+        unset($adc_buf);
       }
 
       SelectControlCustom(_('ADC Channel'), $table_name.'.index.adc', $adc_index, $adc_index[0], $table_name.'.index.adc');
@@ -125,7 +127,9 @@
       echo '<div name="pageIndexDI" id="pageIndexDI">';
       $di_index = [];
       for ($i = 0; $i < $di_index_count; $i++) {
-        $di_index["DI$i"] = "DI$i";
+        $di_buf = ($model == "EG600") ? "DI".($i + 1) : "DI$i";
+        $di_index[$di_buf] = $di_buf;
+        unset($di_buf);
       }
 
       SelectControlCustom(_('DI Channel'), $table_name.'.index.di', $di_index, $di_index[0], $table_name.'.index.di');
@@ -134,7 +138,9 @@
       echo '<div name="pageIndexDO" id="pageIndexDO">';
       $do_index = [];
       for ($i = 0; $i < $do_index_count; $i++) {
-        $do_index["DO$i"] = "DO$i";
+        $do_buf = ($model == "EG600") ? "DO".($i + 1) : "DO$i";
+        $do_index[$do_buf] = $do_buf;
+        unset($do_buf);
       }
 
       SelectControlCustom(_('DO Channel'), $table_name.'.index.do', $do_index, $do_index[0], $table_name.'.index.do');
