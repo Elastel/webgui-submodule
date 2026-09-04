@@ -321,11 +321,36 @@ function initMenu() {
     });
 }
 
+function hideEmptyMenus() {
+    // Hide top-level / second-level menu items that contain no visible child
+    // items (the child items are rendered server-side according to purview).
+    var changed = true;
+    while (changed) {
+        changed = false;
+        $('.sidebar li.nav-item').each(function () {
+            var $li = $(this);
+            if ($li.data('emptyHidden')) return;
+            var $collapse = $li.children('.collapse');
+            if ($collapse.length === 0) return;
+            var hasChild = $collapse.children('ul').first()
+                .children('li.nav-item')
+                .filter(function () { return !$(this).data('emptyHidden'); })
+                .length > 0;
+            if (!hasChild) {
+                $li.hide();
+                $li.data('emptyHidden', true);
+                changed = true;
+            }
+        });
+    }
+}
+
 function initApp() {
     initSession();
     initFormValidation();
     bindEvents();
     initMenu();
+    hideEmptyMenus();
     contentLoaded();
 
     $(document).ajaxSend(setCSRFTokenHeader);

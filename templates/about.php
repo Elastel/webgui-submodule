@@ -21,7 +21,7 @@
           <div class="row">
             <?php if (trim($target) === '4logit') { ?>
             <div class="col-md-8">
-              <div class="mt-3"><img src="app/img/<?php echo trim($target); ?>.png"></div>
+              <div class="mt-3"><img class="about-logo" src="app/img/<?php echo trim($target); ?>.png"></div>
               <div class="mt-3" style="text-indent : 1rem; font-weight: bold;">UAx300 and CEMx300 are products of 4Logit.
               </div>
               <div class="mt-3" style="text-indent : 1rem; font-weight: bold;">4Logit is a brand of "Tesla Olcu Kontrol Sistemleri ve Cevre Tek. Ltd. Sti. Turkiye - Turkey"  <a href="https://www.teslakontrol.com">www.teslakontrol.com</a>

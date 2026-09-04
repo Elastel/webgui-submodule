@@ -210,34 +210,57 @@ function getTableDataAuth() {
     return result;    
 }
 
+function getPurviewMenuList() {
+    return (typeof window.PURVIEW_MENU_LIST !== 'undefined' && window.PURVIEW_MENU_LIST.length > 0)
+        ? window.PURVIEW_MENU_LIST
+        : [];
+}
+
 function editDataAuth(object) {
     var row = $(object).parent().parent().parent().prevAll().length + 1;
-    console.log(row);
     document.getElementById("page_type").value = row;
     var num = 0;
     var value = $(object).parent().parent().find("td");
     var username = value.eq(num++).text();
     var password = value.eq(num++).text();
-    var purview = value.eq(num++).text();
-    var decimal = parseInt(purview, 16);
-    var array_name = ['basic', 'interfaces', 'modbus', 'ascii', 's7', 'fx', 'mc', 'iec104', 
-        'dnp3cli', 'opcuacli', 'baccli', 'ethernetip', 'mbuscli', 'snmpcli', 'iec1107', 'dlms', 
-        'iec61850cli', 'io', 'system_param', 'server', 'modbus_slave', 'opcua', 'bacnet', 
-        'dnp3', 'datadisplay', 'bacnet_router', 'modbus_router', 'nodered', 'docker', 'terminal', 
-        'gps', 'scheduled'];
-    var i = 0;
-
+    var purview = String(value.eq(num++).text()).trim();
+    var menuList = getPurviewMenuList();
     document.getElementById("auth.username").value = username;
-    document.getElementById("auth.username").disabled = true; 
+    document.getElementById("auth.username").disabled = true;
     document.getElementById("auth.password").value = password;
-    array_name.forEach(function(info){
-        if (document.getElementById('auth.' + info)) {
-            var status = (parseInt(decimal) >> i) & 1;
-            document.getElementById('auth.' + info).checked = (status == 1) ? true : false;
-            i++;
-        }
-    })
 
+    // Dash means full authority — every checkbox checked
+    if (purview === '-') {
+        menuList.forEach(function(item) {
+            var cb = document.getElementById('auth.' + item.name);
+            if (cb) cb.checked = true;
+        });
+    } else {
+        var hex = purview.replace(/^0x/i, '');
+        if (hex.length % 2 != 0) {
+            hex = '0' + hex;
+        }
+        var bitLength = hex.length * 4;
+        var big = BigInt('0x' + (hex || '0'));
+        // If the entire purview is zero, the user explicitly set no permissions —
+        // do NOT apply the legacy fallback for out-of-range bits.
+        var isZero = (big === 0n);
+        menuList.forEach(function(item) {
+            var cb = document.getElementById('auth.' + item.name);
+            if (cb) {
+                var status;
+                if (item.bit >= bitLength) {
+                    // Out of range: legacy fallback (1) unless explicitly zero
+                    status = isZero ? 0 : 1;
+                } else {
+                    status = Number((big >> BigInt(item.bit)) & 1n);
+                }
+                cb.checked = (status == 1) ? true : false;
+            }
+        });
+    }
+
+    updateAllGroupCounts();
     openBox();
 }
 
@@ -255,32 +278,50 @@ function delDataAuth(object) {
 
 globalThis.delDataAuth = delDataAuth;
 
+function addDataAuth() {
+    openBox();
+    document.getElementById("auth.username").value = "";
+    document.getElementById("auth.username").disabled = false;
+    document.getElementById("auth.password").value = "";
+    document.getElementById("page_type").value = "0";
+
+    getPurviewMenuList().forEach(function(item) {
+        var cb = document.getElementById('auth.' + item.name);
+        if (cb) cb.checked = false;
+    });
+}
+globalThis.addDataAuth = addDataAuth;
+
 function saveDataAuth() {
     var result = [];
-    var array_name = ['basic', 'interfaces', 'modbus', 'ascii', 's7', 'fx', 'mc', 'iec104', 
-        'dnp3cli', 'opcuacli', 'baccli', 'ethernetip', 'mbuscli', 'snmpcli', 'iec1107', 'dlms', 
-        'iec61850cli', 'io', 'system_param', 'server', 'modbus_slave', 'opcua', 'bacnet', 
-        'dnp3', 'datadisplay', 'bacnet_router', 'modbus_router', 'nodered', 'docker', 'terminal', 
-        'gps', 'scheduled'];
+    var menuList = getPurviewMenuList();
     var username = document.getElementById("auth.username").value;
     var password = document.getElementById("auth.password").value;
     var page_type = document.getElementById("page_type").value;
-    var purview = 0;
-    var int_purview = 0;
-    var i = 0;
 
-    array_name.forEach(function(info) {
-        var checkbox = document.getElementById('auth.' + info);
-        if (checkbox) {
-                // 使用三元运算符确保得到 0 或 1
-                var status = checkbox.checked ? 1 : 0;
-                // 使用 >>> 0 确保无符号位移
-                int_purview = int_purview | (status << i);
-                i++;
-            }
+    var visibleCbs = [];
+    menuList.forEach(function(item) {
+        var cb = document.getElementById('auth.' + item.name);
+        if (cb) visibleCbs.push({ item: item, cb: cb });
     });
 
-    purview = (int_purview >>> 0).toString(16).toUpperCase();
+    var purview;
+    // Only default users (admin, superadmin) use '-' for full authority.
+    // New/edited users always get explicit hex, so their permissions are unambiguous.
+    var int_purview = 0n;
+    var maxBit = 0;
+    visibleCbs.forEach(function(entry) {
+        if (entry.item.bit > maxBit) maxBit = entry.item.bit;
+        var status = entry.cb.checked ? 1n : 0n;
+        int_purview = int_purview | (status << BigInt(entry.item.bit));
+    });
+    purview = int_purview.toString(16).toUpperCase();
+    // Pad to full byte coverage so high bits are explicitly 0,
+    // not relying on legacy fallback behavior.
+    var neededLen = Math.ceil((maxBit + 1) / 4);
+    while (purview.length < neededLen) {
+        purview = '0' + purview;
+    }
 
     if (page_type == "0") {
         var usernameList = document.getElementById("username_list").value;
@@ -321,3 +362,51 @@ function saveDataAuth() {
 }
 
 globalThis.saveDataAuth = saveDataAuth;
+
+function updateGroupCountByGroup(group) {
+    if (!group || group.length === 0) return;
+    var count = group.find('.purview-group-body input[type="checkbox"]:checked').length;
+    var total = group.find('.purview-group-body input[type="checkbox"]').length;
+    group.find('.purview-group-count').text(count + '/' + total);
+}
+
+function updateGroupCount(checkbox) {
+    updateGroupCountByGroup($(checkbox).closest('.purview-group'));
+}
+
+globalThis.updateGroupCount = updateGroupCount;
+
+function updateAllGroupCounts() {
+    $('.purview-group').each(function () {
+        updateGroupCountByGroup($(this));
+    });
+}
+
+globalThis.updateAllGroupCounts = updateAllGroupCounts;
+
+function groupSelectAll(btn, checked) {
+    var group = $(btn).closest('.purview-group');
+    group.find('.purview-group-body input[type="checkbox"]').prop('checked', checked);
+    updateGroupCountByGroup(group);
+}
+
+globalThis.groupSelectAll = groupSelectAll;
+
+function togglePurviewGroup(header) {
+    var group = $(header).closest('.purview-group');
+    var body = group.find('.purview-group-body');
+    body.toggle();
+    group.find('.purview-group-toggle').html(body.is(':visible') ? '&#9660;' : '&#9654;');
+}
+
+globalThis.togglePurviewGroup = togglePurviewGroup;
+
+function toggleAllGroups(expand) {
+    $('.purview-group').each(function () {
+        var body = $(this).find('.purview-group-body');
+        body.toggle(expand);
+        $(this).find('.purview-group-toggle').html(expand ? '&#9660;' : '&#9654;');
+    });
+}
+
+globalThis.toggleAllGroups = toggleAllGroups;

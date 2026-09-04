@@ -39,9 +39,62 @@ body {
   margin: 20px 0 20px;
 }
 
+.sidebar-logo-wrap {
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.5rem;
+  overflow: hidden;
+}
+.sidebar-brand-icon {
+  overflow: hidden;
+  text-align: center;
+  max-width: 100%;
+}
+
 .navbar-logo {
-  margin-top: 0.5em;
-  margin-left: 0.5em;
+  max-width: 100%;
+  height: auto;
+  max-height: 3rem;
+  display: block;
+  margin: 0 auto;
+}
+.navbar-logo.navbar-logo-tall {
+  max-height: 3.5rem;
+}
+
+/* About page logo — responsive, never overflows card body */
+.about-logo {
+  max-width: 100%;
+  height: auto;
+  max-height: 8rem;
+  display: block;
+}
+
+/* When sidebar is toggled (collapsed to ~80px), shrink everything */
+.sidebar.toggled .sidebar-logo-wrap {
+  height: 3rem;
+  padding: 0 0.25rem;
+}
+.sidebar.toggled .navbar-logo {
+  max-height: 2rem;
+}
+.sidebar.toggled .navbar-logo.navbar-logo-tall {
+  max-height: 2.5rem;
+}
+
+/* On very narrow screens */
+@media (max-width: 576px) {
+  .sidebar-logo-wrap {
+    height: 3rem;
+  }
+  .navbar-logo {
+    max-height: 2rem;
+  }
+  .navbar-logo.navbar-logo-tall {
+    max-height: 2.5rem;
+  }
 }
 
 /* Small devices (portrait phones, up to 576px) */

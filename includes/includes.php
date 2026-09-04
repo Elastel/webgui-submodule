@@ -19,6 +19,7 @@ require_once 'includes/hostapd.php';
 // require_once 'includes/adblock.php';
 // require_once 'includes/data_usage.php';
 require_once 'includes/system.php';
+require_once 'includes/time_setting.php';
 require_once 'includes/sysstats.php';
 require_once 'includes/configure_client.php';
 require_once 'includes/networking.php';

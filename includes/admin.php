@@ -82,51 +82,55 @@ function saveAuthConfig($status, $config)
 {
     $data = $_POST['table_data'];
     $arr = json_decode($data, true);
-    
-    $content = file_get_contents(RASPI_ADMIN_DETAILS);
-    if (strlen($content) > 10) {
-        $lines = explode("\n", $content);
-        $new_content = '';
-        foreach ($lines as $key => $value) {
-            if (strstr($value, 'admin:') != NULL || strstr($value, 'admin:') != NULL ) {
-                $new_content .= $value . "\n";
+
+    // Read existing file and keep admin + superadmin rows intact
+    $reserved_users = array('admin', 'superadmin');
+    $new_content = '';
+
+    if (file_exists(RASPI_ADMIN_DETAILS)) {
+        $lines = file(RASPI_ADMIN_DETAILS, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($lines as $line) {
+            $parts = explode(':', $line, 3);
+            if (count($parts) == 3 && in_array($parts[0], $reserved_users)) {
+                $new_content .= $line . "\n";
             }
         }
-
-        foreach ($arr as $list=>$things) {
-            $user = '';
-            $pass = '';
-            if (is_array($things)) {
-                $i = 0;
-                foreach ($things as $key=>$val) {
-                    if ($i == 0) {
-                        $str .= $val . ':';
-                        $user = $val;
-                    } else if ($i == 1) {
-                        if (checkPassword($config, $user, $val) == false) {
-                            $str .= password_hash($val, PASSWORD_BCRYPT) . ':';
-                        } else {
-                            $str .= $val . ':';
-                        }
-                    } else if ($i == 2)
-                        $str .= $val;
-                    $i++;
-                }
-                $new_content .= trim($str) . "\n";
-                unset($str);
-            }
-        }
-
-        if (file_put_contents(RASPI_ADMIN_DETAILS, trim($new_content))) {
-            $status->addMessage('Authentication settings updated');
-        } else {
-            $status->addMessage('Failed to update authentication settings', 'danger');
-        }
-
-        header("Refresh:0");
-    } else {
-        $status->addMessage('authentication configuration error ', 'danger');
     }
 
+    // Append table_data users (non-admin/superadmin)
+    if (!empty($arr) && is_array($arr)) {
+        foreach ($arr as $list => $things) {
+            if (!is_array($things)) continue;
+            $i = 0;
+            $str = '';
+            foreach ($things as $key => $val) {
+                if ($i == 0) {
+                    $str = $val . ':';
+                } else if ($i == 1) {
+                    // Already hashed (contains $2y$) → keep as-is
+                    // Plaintext → hash it
+                    if (strpos($val, '$2y$') === 0) {
+                        $str .= $val . ':';
+                    } else {
+                        $str .= password_hash($val, PASSWORD_BCRYPT) . ':';
+                    }
+                } else if ($i == 2) {
+                    $str .= trim($val);
+                }
+                $i++;
+            }
+            if (!empty($str)) {
+                $new_content .= trim($str) . "\n";
+            }
+        }
+    }
+
+    if (file_put_contents(RASPI_ADMIN_DETAILS, trim($new_content) . "\n")) {
+        $status->addMessage('Authentication settings updated');
+    } else {
+        $status->addMessage('Failed to update authentication settings', 'danger');
+    }
+
+    header("Refresh:0");
     return true;
 }

@@ -20,7 +20,7 @@ class HTTPAuth
         '0' => array(
         'admin_user' => 'admin',
         'admin_pass' => '$2y$10$.I8ji57GDlWHu6aWklGWZuTe57g980zelhV9VlYFyQfZ.eLd4b2/2',
-        'purview' => 'ffffffff'
+        'purview' => RASPI_PURVIEW_ALL
         ));
 
     // Constructor
@@ -30,12 +30,49 @@ class HTTPAuth
     }
 
     /*
-     * Determines if user is logged in
+     * Determines if user is logged in AND still exists in auth config.
+     * If the user was deleted (e.g. via Authentication page), their session
+     * is destroyed so they are immediately logged out.
      * return boolean
      */
     public function isLogged()
     {
-        return isset($_SESSION['user_id']);
+        if (!isset($_SESSION['user_id'])) {
+            return false;
+        }
+
+        // Verify the user still exists in the auth file.
+        // A deleted user's session must be invalidated immediately.
+        if (!$this->userExists($_SESSION['user_id'])) {
+            $this->logoutSession();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if a username still exists in the auth config file.
+     */
+    public function userExists(string $user): bool
+    {
+        $config = $this->getAuthConfig();
+        foreach ($config as $entry) {
+            if (is_array($entry) && isset($entry['admin_user']) && $entry['admin_user'] === $user) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Destroy the current session without redirect (used internally).
+     */
+    private function logoutSession(): void
+    {
+        session_regenerate_id(true);
+        session_unset();
+        session_destroy();
     }
 
     /*

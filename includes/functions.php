@@ -825,13 +825,13 @@ function setSidbarLogo($target, $hostname)
     $name='';
     if ($target != null && (strpos($target, "IQEG") !== false || strpos($target, "IQEC") !== false)) {
         $name = "Iqflow.php";
-        echo '<img src="app/img/'. $name .'" class="navbar-logo" width="200" height="70">';
+        echo '<img src="app/img/'. $name .'" class="navbar-logo navbar-logo-tall">';
         return;
     } else if ($target != null && file_exists('/var/www/html/app/img/'.$hostname.'.php')) {
         $name = $hostname . ".php";
     } else if ($target != null && file_exists('/var/www/html/app/img/'.$target.'.php')) {
         $name = $target . ".php";
-        echo '<img src="app/img/'. $name .'" class="navbar-logo" width="200" height="70">';
+        echo '<img src="app/img/'. $name .'" class="navbar-logo navbar-logo-tall">';
         return;
     } else if (strpos($target, "&OEM") !== false) {
         return;
@@ -841,7 +841,7 @@ function setSidbarLogo($target, $hostname)
         $name = "elastel.php";
     }
 
-    echo '<img src="app/img/'. $name .'" class="navbar-logo" width="200" height="50">';
+    echo '<img src="app/img/'. $name .'" class="navbar-logo">';
 }
 
 function getSn()
@@ -1349,6 +1349,9 @@ function handlePageActions($extraFooterScripts, $page)
         case "/system_info":
             DisplaySystem();
             break;
+        case "/time_setting":
+            DisplayTimeSetting();
+            break;
         case "/about":
             DisplayAbout();
             break;
@@ -1497,7 +1500,7 @@ function getPurview()
 {
     $auth = new \ElastPro\Auth\HTTPAuth;
     $user = $_SESSION['user_id'] ?? "admin";
-    $purview = 'ffffffff';
+    $purview = RASPI_PURVIEW_ALL;
     $config = $auth->getAuthConfig();
 
     foreach ($config as $key => $value) {
@@ -1512,46 +1515,189 @@ function getPurview()
     return trim($purview);
 }
 
-function getMenuIndex($herf)
+/**
+ * Single source of truth for purview-manageable menu items.
+ * Each item: [bit, href, name, group, subgroup, title, condition]
+ *   bit       → fixed bit index in purview hex. STABLE — never reuse or renumber!
+ *   href      → URL path (without leading /) used by getMenuIndex / menuPurviewMatch
+ *   name      → unique short name used for checkbox ID (auth.<name>)
+ *   group     → display group label (Network / Data Collect / ...) — level-1 parent
+ *   subgroup  → sub-group label (WAN / South Devices / VPN / ...) — level-2 container.
+ *               Empty string = item sits directly under group (no sub-group).
+ *   title     → display label (translatable via _())
+ *   condition → PHP expression string that evaluates to true when hardware/feature exists
+ *               If empty, item is always visible.
+ *
+ * RULES:
+ *   - bit numbers are permanent. When adding a new menu, assign the next unused bit.
+ *   - array order controls UI display only; bits live independent of order.
+ *   - To reorder UI, just move rows — existing purview values remain valid.
+ *   - Sub-groups are auto-created from non-empty subgroup values; empty subgroup = direct child.
+ *
+ * getMenuIndex(), templates/admin.php, and system.js all derive from this list.
+ */
+function getMenuPurviewList()
 {
-    $index = -1;
-    $model = getModel();
-    $menuList = array('basic_conf', 'interfaces_conf', 'modbus_conf', 'ascii_conf', 's7_conf', 'fx_conf', 
-    'mc_conf', 'iec104_conf', 'dnp3cli_conf', 'opcuacli_conf', 'baccli_conf', 'ethernetip_conf', 'mbuscli_conf', 
-    'snmpcli_conf', 'iec1107_conf', 'dlms_conf', 'iec61850cli_conf', 'io_conf', 'system_param_conf', 'server_conf',
-    'modbus_slave', 'opcua', 'bacnet', 'dnp3', 'datadisplay', 'bacnet_router', 'modbus_router', 'nodered', 'docker', 'terminal', 
-    'gps', 'scheduled');
+    static $items = null;
+    if ($items !== null) return $items;
 
-    foreach ($menuList as $key => $value) {
-        if ($value == $herf) {
-            $index = $key;
-            break;
+    $items = array();
+    $sg_wan = _('WAN');
+    $sg_south = _('South Devices');
+    $sg_north = _('North Apps');
+    $sg_vpn = _('VPN');
+
+    // --- Network (bits 0-8) ---
+    $net = _('Network');
+    $items[] = array(0,  'wired_conf',       'wired',           $net, $sg_wan,  _('Wired'),             '');
+    $items[] = array(1,  'lte_conf',         'lte',             $net, $sg_wan,  _('LTE'),               "file_exists('/dev/ttyUSB1') && isLteEnabled()");
+    $items[] = array(2,  'wlan0_conf',        'wlan0',           $net, $sg_wan,  _('WiFi Client'),        "isRunning('wpa_supplicant')");
+    $items[] = array(3,  'dhcpd_conf',       'lan',             $net, '',       _('LAN'),               '');
+    $items[] = array(4,  'hostapd_conf',     'wifi',            $net, '',       _('WiFi AP'),           "file_exists('/sys/class/net/wlan0')");
+    $items[] = array(5,  'wpa_conf',         'wifi_client',     $net, '',       _('WiFi Client'),       "file_exists('/sys/class/net/wlan0')");
+    $items[] = array(6,  'detection_conf',   'online_detection', $net, '',       _('Online Detection'),  "isBinExists('failoverd')");
+    $items[] = array(7,  'lorawan_conf',     'lorawan',         $net, '',       _('LoRaWAN'),           "isBinExists('lora_pkt_fwd')");
+    $items[] = array(8,  'firewall_conf',    'firewall',        $net, '',       _('Firewall'),          "isBinExists('efw')");
+
+    // --- Data Collect (bits 9-33) ---
+    $dc = _('Data Collect');
+    $items[] = array(9,  'basic_conf',          'basic',          $dc, '',       _('Basic'),             "isBinExists('dctd')");
+    $items[] = array(10, 'interfaces_conf',    'interfaces',     $dc, '',       _('Interfaces'),         "isBinExists('dctd')");
+    // South Devices
+    $items[] = array(11, 'modbus_conf',         'modbus',         $dc, $sg_south, _('Modbus Rules'),    "isBinExists('dctd')");
+    $items[] = array(12, 'ascii_conf',          'ascii',          $dc, $sg_south, _('ASCII Rules'),     "isBinExists('dctd')");
+    $items[] = array(13, 's7_conf',             's7',             $dc, $sg_south, _('S7 Rules'),        "isBinExists('dctd')");
+    $items[] = array(14, 'fx_conf',             'fx',             $dc, $sg_south, _('FX Rules'),        "isBinExists('dctd')");
+    $items[] = array(15, 'mc_conf',             'mc',             $dc, $sg_south, _('MC Rules'),        "isBinExists('dctd')");
+    $items[] = array(16, 'iec104_conf',         'iec104',         $dc, $sg_south, _('IEC104 Rules'),    "isBinExists('dctd')");
+    $items[] = array(17, 'dnp3cli_conf',        'dnp3cli',        $dc, $sg_south, _('DNP3 Rules'),      "isBinExists('dctd')");
+    $items[] = array(18, 'opcuacli_conf',       'opcuacli',       $dc, $sg_south, _('OPCUA Rules'),     "isBinExists('dctd')");
+    $items[] = array(19, 'baccli_conf',         'baccli',         $dc, $sg_south, _('BACnet Rules'),    "isBinExists('dctd')");
+    $items[] = array(20, 'ethernetip_conf',     'ethernetip',     $dc, $sg_south, _('EtherNet/IP Rules'), "isBinExists('dctd')");
+    $items[] = array(21, 'mbuscli_conf',        'mbuscli',        $dc, $sg_south, _('Mbus Rules'),      "isBinExists('dctd')");
+    $items[] = array(22, 'snmpcli_conf',        'snmpcli',        $dc, $sg_south, _('SNMP Rules'),      "isBinExists('dctd')");
+    $items[] = array(23, 'iec1107_conf',        'iec1107',        $dc, $sg_south, _('IEC62056-21 Rules'), "isBinExists('dctd')");
+    $items[] = array(24, 'dlms_conf',           'dlms',           $dc, $sg_south, _('DLMS Rules'),      "isBinExists('dctd')");
+    $items[] = array(25, 'iec61850cli_conf',    'iec61850cli',    $dc, $sg_south, _('IEC61850 Rules'),  "isBinExists('dctd')");
+    $items[] = array(26, 'io_conf',             'io',             $dc, $sg_south, _('IO'),             "isBinExists('dctd') && isIoExistts()");
+    $items[] = array(27, 'system_param_conf',   'system_param',   $dc, $sg_south, _('System Parameters'), "isBinExists('dctd')");
+    // North Apps
+    $items[] = array(28, 'server_conf',         'server',         $dc, $sg_north, _('Reporting Center'), "isBinExists('dctd')");
+    $items[] = array(29, 'modbus_slave',        'modbus_slave',   $dc, $sg_north, _('Modbus Slave'),    "isBinExists('dctd')");
+    $items[] = array(30, 'opcua',               'opcua',          $dc, $sg_north, _('OPCUA Server'),    "isBinExists('dctd')");
+    $items[] = array(31, 'bacnet',              'bacnet',         $dc, $sg_north, _('BACnet Server'),   "isBinExists('dctd') && isBinExists('bacserv')");
+    $items[] = array(32, 'dnp3',                'dnp3',           $dc, $sg_north, _('DNP3 Server'),     "isBinExists('dctd')");
+    $items[] = array(33, 'datadisplay',         'datadisplay',    $dc, '',       _('Data Monitoring'), "isBinExists('dctd')");
+
+    // --- Protocol Convert (bits 34-35) ---
+    $pc = _('Protocol Convert');
+    $items[] = array(34, 'bacnet_router', 'bacnet_router', $pc, '', _('BACnet Router'), "isBinExists('router-mstp')");
+    $items[] = array(35, 'modbus_router', 'modbus_router', $pc, '', _('Modbus Router'),  "isBinExists('router-modbus')");
+
+    // --- Remote Access (bits 36-39) ---
+    $ra = _('Remote Access');
+    $items[] = array(36, 'things_wing', 'things_wing', $ra, '', _('ThingsWing'),
+        "(strpos(getTarget(), 'IQEG') === false && strpos(getTarget(), 'IQEC') === false)");
+    $items[] = array(37, 'ddns',     'ddns',     $ra, '', _('DDNS'),     "isBinExists('noip2')");
+    $items[] = array(38, 'openvpn',  'openvpn',  $ra, $sg_vpn, _('OpenVPN'),  "isBinExists('openvpn')");
+    $items[] = array(39, 'wireguard','wireguard',$ra, $sg_vpn, _('WireGuard'),"isBinExists('wg') && isBinExists('wg-quick')");
+
+    // --- Services (bits 40-44) ---
+    $sv = _('Services');
+    $items[] = array(40, 'nodered',   'nodered',   $sv, '', _('Node Red'),       "isBinExists('node-red')");
+    $items[] = array(41, 'docker',    'docker',    $sv, '', _('Docker'),          "isBinExists('dockerd')");
+    $items[] = array(42, 'chirpstack','chirpstack',$sv, '', _('ChirpStack'),      "isBinExists('chirpstack')");
+    $items[] = array(43, 'iotedge',   'iotedge',   $sv, '', _('Azure IoT Edge'),  "isBinExists('iotedge')");
+    $items[] = array(44, 'restapi',   'restapi',   $sv, '', _('RestAPI'),
+        "isBinExists('pip3') || isBinExists('python3') && file_exists('/etc/raspap/api/')");
+
+    // --- System (bits 45-53) ---
+    $sys = _('System');
+    $items[] = array(45, 'system_info',    'system_info',    $sys, '', _('System'),          '');
+    $items[] = array(46, 'time_setting',   'time_setting',   $sys, '', _('Time Settings'),   '');
+    $items[] = array(47, 'gps',            'gps',            $sys, '', _('GPS Location'),    "isBinExists('gpsd')");
+    $items[] = array(48, 'terminal',       'terminal',       $sys, '', _('Terminal'),        "isBinExists('ttyd') || file_exists('/usr/local/bin/ttyd')");
+    $items[] = array(49, 'scheduled',      'scheduled',      $sys, '', _('Scheduled Tasks'), "isBinExists('scheduled')");
+    $items[] = array(50, 'hmi',            'hmi',            $sys, '', _('HMI'),
+        "isBinExists('chromium-browser') && strpos(getTarget(), 'EH607') !== false");
+    $items[] = array(51, 'auth_conf',      'auth_conf',      $sys, '', _('Authentication'),  '');
+    $items[] = array(52, 'backup_restore', 'backup_restore', $sys, '', _('Backup/Restore'),  '');
+    $items[] = array(53, 'backup_update',  'backup_update',  $sys, '', _('Update/Restore'),  '');
+
+    return $items;
+}
+
+/**
+ * Return the subset of getMenuPurviewList() items whose condition evaluates true.
+ * Used for rendering sidebar menus AND admin purview checkboxes.
+ */
+function getVisibleMenuList()
+{
+    static $cache = null;
+    if ($cache !== null) return $cache;
+
+    $cache = array();
+    foreach (getMenuPurviewList() as $item) {
+        // item: [bit, href, name, group, subgroup, title, condition]
+        $condition = $item[6];
+        if ($condition === '' || eval('return ' . $condition . ';')) {
+            $cache[] = array(
+                'bit'      => $item[0],
+                'href'     => $item[1],
+                'name'     => $item[2],
+                'group'    => $item[3],
+                'subgroup' => $item[4],
+                'title'    => $item[5],
+            );
         }
     }
+    return $cache;
+}
 
-    return $index;
+function getMenuIndex($herf)
+{
+    foreach (getMenuPurviewList() as $item) {
+        if ($item[1] == $herf) {
+            return $item[0];  // return the explicit bit number, NOT array position
+        }
+    }
+    return -1;
 }
 
 function getHexBit($hex, $bitIndex) {
-    $hex = ltrim($hex, '0x');
-    $hex = strtolower($hex);
-    
+    $hex = trim($hex);
+
+    // Single dash means full authority — every bit is 1
+    if ($hex === '-') {
+        return 1;
+    }
+
     if (empty($hex) || $bitIndex < 0) {
         return 0;
     }
-    
+
+    $hex = preg_replace('/^0x/i', '', $hex);
+    $hex = strtolower($hex);
+
     if (strlen($hex) % 2 != 0) {
         $hex = '0' . $hex;
     }
-    
+
+    // If the entire hex is zero, the user explicitly set no permissions —
+    // do NOT apply the legacy fallback for out-of-range bits.
+    $isZero = (trim($hex, '0') === '');
+
     $binary = pack('H*', $hex);
-    
-    $bytePos = floor($bitIndex / 8);
+
+    $bytePos = (int) floor($bitIndex / 8);
     $bitPos = $bitIndex % 8;
-    
+
     $totalBytes = strlen($binary);
     if ($bytePos >= $totalBytes) {
-        return 0;
+        // Legacy purview values do not cover the newly added pages;
+        // treat those bits as granted (1) so existing users keep seeing the same menus.
+        // But if the purview is explicitly all-zero, honor it.
+        return $isZero ? 0 : 1;
     }
     
     $byteIndex = $totalBytes - 1 - $bytePos;

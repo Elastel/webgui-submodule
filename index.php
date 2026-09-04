@@ -82,6 +82,57 @@ require_once 'includes/includes.php';
     <script src="dist/sb-admin-2/js/sb-admin-2.js"></script>
 
     <!-- Custom JS -->
+    <?php
+      // Emit an import map that fingerprints each JS module with a
+      // combined, aggregated filemtime of the whole app/js tree.
+      // Browsers cache ES modules (import ... from "...") by bare URL
+      // independent of the top-level script's query-string, so ANY change
+      // inside app/js (or index.php itself) must bump the URL fingerprint
+      // carried by every mapped specifier. Without this map, changes to
+      // files like dct-rule.js would be permanently shadowed by the
+      // previously cached (stale) module script in the browser.
+      //
+      // Strategy: assign every mapped import the SAME combined fingerprint.
+      // This is intentionally simple/robust (no mismatches between
+      // "latest fingerprint" and "per-file fingerprint" semantics), and
+      // all URLs shift together whenever any JS asset changes.
+
+      $_ts = max(
+          intval(@filemtime(__FILE__) ?: 0),
+          intval(@filemtime(__DIR__ . '/app/js/app.js') ?: 0)
+      );
+      foreach ((array)glob(__DIR__ . '/app/js/*.js') as $_f) {
+          $_ts = max($_ts, intval(@filemtime($_f) ?: 0));
+      }
+      foreach ((array)glob(__DIR__ . '/app/js/modules/*.js') as $_f) {
+          $_ts = max($_ts, intval(@filemtime($_f) ?: 0));
+      }
+      $_v = (string)($_ts > 0 ? $_ts : time());
+      $_importMap = ['imports' => []];
+
+      // 1) app/js root siblings imported from app.js via "./xxx.js".
+      foreach ((array)glob(__DIR__ . '/app/js/*.js') as $_sf) {
+          if (!is_file($_sf)) continue;
+          $_bn = basename($_sf);
+          // e.g. "./helpers.js" -> "/app/js/helpers.js?v=<bundleMtime>"
+          $_importMap['imports']['./' . $_bn] = '/app/js/' . $_bn . '?v=' . $_v;
+      }
+
+      // 2) Modules imported from app.js via "./modules/xxx.js".
+      foreach ((array)glob(__DIR__ . '/app/js/modules/*.js') as $_mf) {
+          if (!is_file($_mf)) continue;
+          $_bn = basename($_mf);
+          $_importMap['imports']['./modules/' . $_bn] = '/app/js/modules/' . $_bn . '?v=' . $_v;
+      }
+
+      // 3) Cross-import inside modules: import "... from "../helpers.js"
+      //    is resolved relative to the importing module's URL and results
+      //    in "/app/js/helpers.js". Map it to the fingerprinted variant.
+      $_importMap['imports']['../helpers.js'] = '/app/js/helpers.js?v=' . $_v;
+    ?>
+    <script type="importmap">
+      <?= json_encode($_importMap, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>
+    </script>
     <script type="module" src="app/js/app.js?v=<?= filemtime('app/js/app.js'); ?>"></script>
 
     <?php loadFooterScripts($extraFooterScripts); ?>

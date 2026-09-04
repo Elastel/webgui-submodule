@@ -98,7 +98,7 @@
               <input type="hidden" name="username_list" id="username_list" value='<?php echo $str; ?>' id="hidTD">
             </table>
             <div class="cbi-section-create">
-              <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addData()">
+              <input type="button" class="cbi-button-add" name="popBox" value="Add" onclick="addDataAuth(); updateAllGroupCounts();">
             </div>
           </div>
           <div class="cbi-page-actions">
@@ -113,10 +113,29 @@
 </div><!-- /.row -->
 
 <?php if ($username == 'superadmin') : ?>
+<style>
+  .purview-toolbar { display: flex; align-items: center; gap: 8px; margin: 24px 0 10px; }
+  .purview-toolbar span { font-weight: bold; margin-right: auto; }
+  .purview-group { border: 1px solid #ddd; border-radius: 4px; margin-bottom: 6px; }
+  .purview-group-header { display: flex; align-items: center; padding: 6px 10px; background: #f5f5f5; cursor: pointer; user-select: none; }
+  .purview-group-header:hover { background: #ececec; }
+  .purview-group-title { font-weight: bold; flex: 1; }
+  .purview-group-count { color: #666; font-size: 0.85rem; margin-right: 10px; }
+  .purview-group-actions button { margin-left: 4px; font-size: 0.8rem; padding: 2px 8px; }
+  .purview-group-toggle { margin-left: 8px; color: #666; }
+  .purview-group-body { display: none; padding: 4px 10px; }
+  .purview-subgroup { margin: 6px 0 2px 12px; border-left: 2px solid #ccc; padding-left: 8px; }
+  .purview-subgroup-title { font-weight: 600; color: #555; font-size: 0.9rem; margin-bottom: 2px; }
+</style>
 <div id="popLayer"></div>
 <div id="popBox" style="overflow:auto">
   <input hidden="hidden" name="page_type" id="page_type" value="0">
   <h4><?php echo _("Authentication Setting"); ?></h4>
+  <div class="purview-toolbar">
+    <span><?php echo _("Purview"); ?></span>
+    <button type="button" class="cbi-button" onclick="toggleAllGroups(true)"><?php echo _("Expand All"); ?></button>
+    <button type="button" class="cbi-button" onclick="toggleAllGroups(false)"><?php echo _("Collapse All"); ?></button>
+  </div>
   <div class="cbi-section">
     <div class="cbi-value">
       <label class="cbi-value-title" for="auth.username"><?php echo _("Username"); ?></label>
@@ -128,43 +147,75 @@
       <input id="auth.password" type="text" class="cbi-input-text">
     </div>
 
-    <?php 
-      $array_title = array('Basic', 'Interfaces', 'Modbus Rules', 'ASCII Rules', 'S7 Rules', 
-        'FX Rules', 'MC Rules', 'IEC104 Rules', 'DNP3 Rules', 'OPCUA Rules', 'BACnet Rules', 
-        'EtherNet/IP Rules','Mbus Rules','SNMP Rules','IEC62056-21 Rules','DLMS Rules','IEC61850 Rules',
-        'IO', 'System Parameters', 'Reporting Center', 'Modbus Slave', 'OPCUA Server', 'BACnet Server', 
-        'DNP3 Server', 'Data Monitoring', 'BACnet Router', 'Modbus Router', 'Node Red', 'Docker', 
-        'Terminal', 'GPS Location', 'Scheduled Tasks'
-        );
+    <?php
+      // Build purview groups from single source of truth (with subgroup nesting)
+      $tree = array();
+      foreach (getVisibleMenuList() as $item) {
+          $tree[$item['group']][$item['subgroup']][] = $item;
+      }
 
       $head_name = 'auth';
-      $array_name = array('basic', 'interfaces', 'modbus', 'ascii', 's7', 'fx', 'mc', 'iec104', 
-        'dnp3cli', 'opcuacli', 'baccli', 'ethernetip', 'mbuscli', 'snmpcli', 'iec1107', 'dlms', 
-        'iec61850cli', 'io', 'system_param', 'server', 'modbus_slave', 'opcua', 'bacnet', 
-        'dnp3', 'datadisplay', 'bacnet_router', 'modbus_router', 'nodered', 'docker', 'terminal', 
-        'gps', 'scheduled');
+      $gid = 0;
+      foreach ($tree as $group_title => $subgroups) {
+        // Flatten count for the group header
+        $group_count = 0;
+        foreach ($subgroups as $sg_items) { $group_count += count($sg_items); }
 
-      // $model = getModel();
-      // if ($model != 'EG500' && $model != 'EG410' && $model != 'EG510' && $model != 'EG600') {
-      //   $key = array_search("IO", $array_title);
-      //   array_splice($array_title, $key, 1); 
-      //   unset($key);
-      //   $key = array_search("io", $array_name);
-      //   array_splice($array_name, $key, 1);
-      //   unset($key);
-      //   $key = array_search("GPS Location", $array_title);
-      //   array_splice($array_title, $key, 1);
-      //   unset($key);
-      //   $key = array_search("gps", $array_name);
-      //   array_splice($array_name, $key, 1);
-      // }
+        echo '<div class="purview-group" id="purview-group-' . $gid . '">';
+        echo '<div class="purview-group-header" onclick="togglePurviewGroup(this)">';
+        echo '<span class="purview-group-title">' . htmlspecialchars($group_title) . '</span>';
+        echo '<span class="purview-group-count">0/' . $group_count . '</span>';
+        echo '<span class="purview-group-actions">';
+        echo '<button type="button" class="cbi-button" onclick="event.stopPropagation(); groupSelectAll(this, true);">' . _('Select All') . '</button>';
+        echo '<button type="button" class="cbi-button" onclick="event.stopPropagation(); groupSelectAll(this, false);">' . _('Clear All') . '</button>';
+        echo '</span>';
+        echo '<span class="purview-group-toggle">&#9654;</span>';
+        echo '</div>';
+        echo '<div class="purview-group-body">';
 
-      for ($i = 0; $i < count($array_title); $i++) {
-        echo '<div class="cbi-value">
-          <label class="cbi-value-title">' . _($array_title[$i]) . '</label>
-          <input type="checkbox" class="cbi-input-checkbox" name="'.$head_name.'.'.$array_name[$i].'" id="'.$head_name.'.'.$array_name[$i].'" value="1"/>
-        </div>';
-      } 
+        // Direct items (no subgroup)
+        if (!empty($subgroups[''])) {
+          foreach ($subgroups[''] as $item) {
+            echo '<div class="cbi-value">
+              <label class="cbi-value-title">' . htmlspecialchars($item['title']) . '</label>
+              <input type="checkbox" class="cbi-input-checkbox" name="' . $head_name . '.' . $item['name'] . '" id="' . $head_name . '.' . $item['name'] . '" value="1" onchange="updateGroupCount(this)"/>
+            </div>';
+          }
+        }
+        // Subgroup items
+        foreach ($subgroups as $sg_label => $items) {
+          if ($sg_label === '' || empty($items)) continue;
+          echo '<div class="purview-subgroup">';
+          echo '<div class="purview-subgroup-title">' . htmlspecialchars($sg_label) . '</div>';
+          foreach ($items as $item) {
+            echo '<div class="cbi-value">
+              <label class="cbi-value-title">' . htmlspecialchars($item['title']) . '</label>
+              <input type="checkbox" class="cbi-input-checkbox" name="' . $head_name . '.' . $item['name'] . '" id="' . $head_name . '.' . $item['name'] . '" value="1" onchange="updateGroupCount(this)"/>
+            </div>';
+          }
+          echo '</div>';
+        }
+
+        echo '</div>';
+        echo '</div>';
+        $gid++;
+      }
+
+      // Output JS constant so system.js shares the same list (bit indices, names, hrefs)
+      $all_items = getMenuPurviewList();
+      $js_list = array();
+      foreach ($all_items as $item) {
+          // item: [bit, href, name, group, subgroup, title, condition]
+          $js_list[] = array(
+              'bit'      => $item[0],
+              'href'     => $item[1],
+              'name'     => $item[2],
+              'group'    => $item[3],
+              'subgroup' => $item[4],
+              'title'    => $item[5],
+          );
+      }
+      echo '<script>window.PURVIEW_MENU_LIST = ' . json_encode($js_list) . ';</script>';
     ?>
   </div>
   <div class="right">

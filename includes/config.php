@@ -6,6 +6,10 @@ define('RASPI_CONFIG', '/etc/raspap');
 define('RASPI_CONFIG_NETWORK', RASPI_CONFIG.'/networking/defaults.json');
 define('RASPI_CONFIG_API', RASPI_CONFIG.'/api');
 define('RASPI_ADMIN_DETAILS', RASPI_CONFIG.'/system.auth');
+
+// Full-authority purview — a single dash means "all bits set".
+// Shorter and clearer than 'ffffffffffffffff'. Never change this literal.
+define('RASPI_PURVIEW_ALL', '-');
 define('RASPI_WIFI_AP_INTERFACE', 'wlan0');
 define('RASPI_CACHE_PATH', sys_get_temp_dir() . '/raspap');
 define('RASPI_SESSION_TIMEOUT', 1440);
