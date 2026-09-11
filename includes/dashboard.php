@@ -84,7 +84,7 @@ function getLteInfo($iface)
         }
     }
 
-    if (!file_exists("/dev/ttyUSB2")) {
+    if (!file_exists("/dev/ttyUSB2") && !file_exists("/dev/ttyUSB0")) {
         return $lteInfo;
     }
 
