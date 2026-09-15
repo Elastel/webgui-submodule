@@ -648,11 +648,26 @@ export function updateDeviceIdList() {
 globalThis.updateDeviceIdList = updateDeviceIdList;
 
 export function get_iec104_server_discover(callback) {
-    const scan_interface = document.getElementById('iec104.belonged_com').value;
-    // console.log(interface);
-    $.get('ajax/dct/get_dctcfg.php?type=iec104discover&interface=' + scan_interface, function(data) {
+    const getVal = (id, fallback = 1) => {
+        const val = document.getElementById(id)?.value.trim();
+        return val ? Number(val) : fallback;
+    };
+
+    const scan_interface = document.getElementById('iec104.belonged_com')?.value.trim() ?? '';
+
+    if (!scan_interface) {
+        return;
+    }
+
+    const common_address = getVal('iec104.common_addr', 1);
+
+    $.get('ajax/dct/get_dctcfg.php', {
+        type: 'iec104discover',
+        interface: scan_interface,
+        common_address: common_address
+    }, function (data) {
         callback(data);
-    })
+    });
 }
 
 globalThis.get_iec104_server_discover = get_iec104_server_discover;
@@ -1164,7 +1179,7 @@ export function getRealtimeData() {
             var cur_value = '';
             if (dnp3 || modbus_slave || opcua) {
                 if (tr.querySelector('td[name="source_object"]')) {
-                    var factor = tr.querySelector('td[name="source_object"]').innerHTML;
+                    var factor = tr.querySelector('td[name="source_object"]').textContent;
                     factor = factor.substring(factor.indexOf('-') + 1)
                     const jsonItem = jsonResult.find(([name]) => name === factor);
                     if (jsonItem) {
@@ -1173,11 +1188,11 @@ export function getRealtimeData() {
                 }
             } else {
                 if (tr.querySelector('td[name="factor_name"]')) {
-                    //console.log(tr.querySelector('td[name="factor_name"]').innerHTML);
-                    var factor = tr.querySelector('td[name="factor_name"]').innerHTML;
-                    var deviceName = tr.querySelector('td[name="device_name"]').innerHTML;
+                    //console.log(tr.querySelector('td[name="factor_name"]').textContent);
+                    var factor = tr.querySelector('td[name="factor_name"]').textContent;
+                    var deviceName = tr.querySelector('td[name="device_name"]').textContent;
                     var factorList = factor.split(';');
-                    var serverCenter = tr.querySelector('td[name="server_center"]').innerHTML;
+                    var serverCenter = tr.querySelector('td[name="server_center"]').textContent;
                     var flag = getReportingCenterFlag(serverCenter);
                     factorList.forEach((key) => {
                         // console.log(flag);

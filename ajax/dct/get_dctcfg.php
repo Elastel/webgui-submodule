@@ -85,6 +85,7 @@ if ($type == 'datadisplay') {
     }
 } else if (strstr($type, 'iec104discover')) {
     $interface = $_GET['interface'];
+    $common_address = $_GET['common_address'];
     if (strstr($interface, 'TCP') != null) {
         $num = filter_var($interface, FILTER_SANITIZE_NUMBER_INT);
         exec("uci get dct.tcp_server.server_addr$num", $tmp);
@@ -100,7 +101,7 @@ if ($type == 'datadisplay') {
             }
         }
         sleep(1);
-        exec("sudo /usr/sbin/iec104_client_scan $address $port");
+        exec("sudo /usr/sbin/iec104_client_scan $address $port $common_address");
         exec('cat /tmp/iec104discover', $data);
         if ($data[0] != null) {
             $arr = explode(';', $data[0]);

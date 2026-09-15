@@ -26,6 +26,7 @@
             <input type="hidden" name="option_list_iec104" value="" id="option_list_iec104">
             <?php echo \ElastPro\Tokens\CSRF::hiddenField();
             $arr= array(
+              array("name"=>"Common Address/ASDU",        "data-field" => "", "style"=>"", "descr"=>""),
               array("name"=>"Type ID - IOA",        "data-field" => "", "style"=>"", "descr"=>""),
             );
 
@@ -59,6 +60,7 @@
       InputControlCustom(_('Tag Name'), $table_name.'.factor_name', $table_name.'.factor_name', _('Multiple Tags Are Separated By Semicolon'));
       
       // SelectControlCustom(_('Type ID - IOA'), $table_name.'.type_id', $type_id_list, $type_id_list[0], $table_name.'.type_id');
+      InputControlCustom(_('Common Address/ASDU'), $table_name.'.common_addr', $table_name.'.common_addr');
     ?>
       <div class="cbi-value">
           <input type="hidden" name="iec104_discover_data" value="" id="iec104_discover_data">
@@ -69,9 +71,6 @@
       </div>
     <?php
       // InputControlCustom(_('Start IOA'), $table_name.'.start_addr', $table_name.'.start_addr', _('0~65535'));
-
-      // InputControlCustom(_('Common Address'), $table_name.'.common_addr', $table_name.'.common_addr');
-
       // SelectControlCustom(_('Data Type'), $table_name.'.data_type', $data_type_list, $data_type_list[0], $table_name.'.data_type');
 
       dct_rules_common($table_name);
