@@ -317,6 +317,7 @@ if [[ $model == "EG500" || $model == "EG410" || $model == "ElastBox400" || $mode
                 CONFIG_PATH="/boot/firmware/config.txt"
         else
                 CONFIG_PATH="/boot/config.txt"
+                cp $path/config/sources.list /etc/apt/sources.list
         fi
 
         if [ ! -n "$(grep 'pcf8563' $CONFIG_PATH)" ]; then
