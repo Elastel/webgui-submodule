@@ -13,6 +13,7 @@
             <th class="th cbi-section-table-cell"><?php echo _("Destination port"); ?></th>
             <th class="th cbi-section-table-cell"><?php echo _("Action"); ?></th>
             <th class="th cbi-section-table-cell"><?php echo _("Enable"); ?></th>
+            <th class="th cbi-section-table-cell cbi-drag-col"></th>
             <th class="th cbi-section-table-cell cbi-section-actions"></th>
             <th class="th cbi-section-table-cell cbi-section-actions"></th>
             </tr>
@@ -27,6 +28,7 @@
             <th class="th cbi-section-table-cell" ></th>
             <th class="th cbi-section-table-cell" ></th>
             <th class="th cbi-section-table-cell" ></th>
+            <th class="th cbi-section-table-cell cbi-drag-col"></th>
             <th class="th cbi-section-table-cell cbi-section-actions"></th>
             <th class="th cbi-section-table-cell cbi-section-actions"></th>
             </tr>

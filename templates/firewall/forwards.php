@@ -9,6 +9,7 @@
             <th class="th cbi-section-table-cell"><?php echo _("Internal IP"); ?></th>
             <th class="th cbi-section-table-cell"><?php echo _("Internal Port"); ?></th>
             <th class="th cbi-section-table-cell"><?php echo _("Enable"); ?></th>
+            <th class="th cbi-section-table-cell cbi-drag-col"></th>
             <th class="th cbi-section-table-cell cbi-section-actions"></th>
             <th class="th cbi-section-table-cell cbi-section-actions"></th>
             </tr>
@@ -19,6 +20,7 @@
             <th class="th cbi-section-table-cell" ><?php echo _("Leave blank to indicate any IP address"); ?></th>
             <th class="th cbi-section-table-cell" ></th>
             <th class="th cbi-section-table-cell" ></th>
+            <th class="th cbi-section-table-cell cbi-drag-col"></th>
             <th class="th cbi-section-table-cell cbi-section-actions"></th>
             <th class="th cbi-section-table-cell cbi-section-actions"></th>
             </tr>

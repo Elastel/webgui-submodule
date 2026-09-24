@@ -381,7 +381,7 @@ export function addSectionTable(table_name, jsonData, option_list) {
     for (var i = 0; i < len; i++) {
         var contents = '';
         contents += '<tr  class="tr cbi-section-table-descr">\n';
-        
+
         if (jsonData[i].hasOwnProperty('mode')) {
             mode = Number(jsonData[i]['mode']);
         }
@@ -394,9 +394,10 @@ export function addSectionTable(table_name, jsonData, option_list) {
                 key == 'again_interval' || key == 'command' || key == 'timeout_count') {
                     contents += '   <td style="display:none" name="'+key+'">-</td>\n';
                 } else if (key == 'enabled' || key == 'sms_reporting' || key == 'interpreter') {
-                    contents += '   <td style="' + ((key == 'enabled') ? 'text-align:center' : 'display:none') + '"><input type="checkbox" name="' +
-                             key + '" ' + (jsonData[i][key] == '1' ? 'checked' : ' ') + 
-                             ' onclick="updateData(\''+table_name+'\')"></td>\n';
+                    var cellStyle = (key == 'enabled') ? 'text-align:center;padding:0;cursor:pointer;' : 'display:none';
+                    contents += '   <td style="' + cellStyle + '"><label style="display:block;width:100%;padding:0.5rem 0;cursor:pointer;"><input type="checkbox" class="dct-big-checkbox" name="' +
+                             key + '" ' + (jsonData[i][key] == '1' ? 'checked' : ' ') +
+                             ' onclick="event.stopPropagation();updateData(\''+table_name+'\')"></label></td>\n';
                 } else {
                     contents += '   <td style="text-align:center" name="'+key+'">-</td>\n';
                 }
@@ -442,17 +443,21 @@ export function addSectionTable(table_name, jsonData, option_list) {
                 
                 contents += '   <td style="text-align:center" name="'+key+'">'+ cur_status +'</td>\n';
             } else if (key == 'enabled' || key == 'sms_reporting' || key == 'interpreter') {
-                contents += '   <td style="' + ((key == 'enabled') ? 'text-align:center' : 'display:none') + '"><input type="checkbox" name="' +
-                             key + '" ' + (jsonData[i][key] == '1' ? 'checked' : ' ') + 
-                             ' onclick="updateData(\''+table_name+'\')"></td>\n';
+                var cellStyle2 = (key == 'enabled') ? 'text-align:center;padding:0;cursor:pointer;' : 'display:none';
+                contents += '   <td style="' + cellStyle2 + '"><label style="display:block;width:100%;padding:0.5rem 0;cursor:pointer;"><input type="checkbox" class="dct-big-checkbox" name="' +
+                             key + '" ' + (jsonData[i][key] == '1' ? 'checked' : ' ') +
+                             ' onclick="event.stopPropagation();updateData(\''+table_name+'\')"></label></td>\n';
             } else if (key == 'belonged_com' && jsonData[i][key].includes('TCP')) {
                 contents += '   <td style="text-align:center" name="'+key+'">Network Node'+ jsonData[i][key][3] +'</td>\n';
+            } else if (key == 'order') {
+                contents += '   <td style="text-align:center" name="'+key+'">'+ ((mode == 1 && key == 'debounce_interval') ? '-' : jsonData[i][key]) +'</td>\n';
             } else {
                 contents += '   <td style="text-align:center" name="'+key+'">'+ ((mode == 1 && key == 'debounce_interval') ? '-' : jsonData[i][key]) +'</td>\n';
             }
 
         })
-        contents += '   <td><a href="javascript:void(0);" onclick="editData(this, \''+table_name+'\');" >Edit</a></td>\n' +
+        contents += '   <td class="cbi-drag-col" style="text-align:center;"><span class="dct-drag-handle" draggable="true" title="Drag to reorder">&#9776;</span></td>\n' +
+            '   <td><a href="javascript:void(0);" onclick="editData(this, \''+table_name+'\');" >Edit</a></td>\n' +
             '       <td><a href="javascript:void(0);" onclick="delData(this, \''+table_name+'\');" >Del</a></td>\n' +
             '   </tr>';
         table.innerHTML += contents;
@@ -466,9 +471,89 @@ export function addSectionTable(table_name, jsonData, option_list) {
     var result = get_table_data(table_name, option_list);
     var json_data = JSON.stringify(result);
     $('#hidTD_'+table_name).val(json_data);
+
+    initRowDrag(table_name);
 }
 
 globalThis.addSectionTable = addSectionTable;
+
+export function initRowDrag(table_name) {
+    var table = document.getElementById("table_" + table_name);
+    if (!table) return;
+
+    if (table.getAttribute('data-drag-init') === '1') return;
+    table.setAttribute('data-drag-init', '1');
+
+    var dragSrcRow = null;
+
+    table.addEventListener('dragstart', function(e) {
+        var handle = e.target.closest('.dct-drag-handle');
+        if (!handle) {
+            e.preventDefault();
+            return;
+        }
+        var row = handle.closest('tr.cbi-section-table-descr');
+        if (!row) {
+            e.preventDefault();
+            return;
+        }
+        dragSrcRow = row;
+        row.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', '');
+    });
+
+    table.addEventListener('dragend', function(e) {
+        if (dragSrcRow) dragSrcRow.classList.remove('dragging');
+        table.querySelectorAll('tr.drag-over').forEach(function(r) {
+            r.classList.remove('drag-over');
+        });
+        dragSrcRow = null;
+    });
+
+    table.addEventListener('dragover', function(e) {
+        var row = e.target.closest('tr.cbi-section-table-descr');
+        if (!row || row === dragSrcRow) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        row.classList.add('drag-over');
+    });
+
+    table.addEventListener('dragleave', function(e) {
+        var row = e.target.closest('tr.cbi-section-table-descr');
+        if (row && !row.contains(e.relatedTarget)) {
+            row.classList.remove('drag-over');
+        }
+    });
+
+    table.addEventListener('drop', function(e) {
+        var row = e.target.closest('tr.cbi-section-table-descr');
+        if (!row || !dragSrcRow || row === dragSrcRow) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        var rect = row.getBoundingClientRect();
+        var midY = rect.top + rect.height / 2;
+        if (e.clientY < midY) {
+            row.parentNode.insertBefore(dragSrcRow, row);
+        } else {
+            row.parentNode.insertBefore(dragSrcRow, row.nextSibling);
+        }
+        row.classList.remove('drag-over');
+
+        if (table_name === 'forwards') {
+            var fResult = globalThis.getTableDataForwards();
+            $('#hidForwards').val(JSON.stringify(fResult));
+        } else if (table_name === 'traffic') {
+            var tResult = globalThis.getTableDataTraffic();
+            $('#hidTraffic').val(JSON.stringify(tResult));
+        } else {
+            updateData(table_name);
+        }
+    });
+}
+
+globalThis.initRowDrag = initRowDrag;
 
 export function snmpScan() {
     $('#loading').show();
@@ -860,15 +945,19 @@ export function saveData(table_name) {
                 option == 'again_interval' || option == 'command' || option == 'timeout_count') {
                 contents += '   <td style="display:none" name="'+option+'">'+ (option_value[option].length > 0 ? option_value[option] : "-") +'</td>\n';
             } else if (option == 'enabled' || option == 'sms_reporting' || option == 'interpreter') {
-                contents += '   <td style="' + ((option == 'enabled') ? 'text-align:center' : 'display:none') + '"><input type="checkbox" name="' + option
-                +'" ' + (option_value[option] == '1' ? 'checked' : ' ') + ' onclick="updateData(\''+table_name+'\')"></td>\n';
+                var cellStyle3 = (option == 'enabled') ? 'text-align:center;padding:0;cursor:pointer;' : 'display:none';
+                contents += '   <td style="' + cellStyle3 + '"><label style="display:block;width:100%;padding:0.5rem 0;cursor:pointer;"><input type="checkbox" class="dct-big-checkbox" name="' + option
+                +'" ' + (option_value[option] == '1' ? 'checked' : ' ') + ' onclick="event.stopPropagation();updateData(\''+table_name+'\')"></label></td>\n';
             } else if (option == "belonged_com"  && option_value[option].includes('TCP')) {
                 contents += '   <td style="text-align:center" name="'+option+'">Network Node' + (option_value[option][3]) +'</td>\n';
+            } else if (option == 'order') {
+                contents += '   <td style="text-align:center" name="'+option+'">'+ (option_value[option] ? option_value[option] : "-") +'</td>\n';
             } else {
                 contents += '   <td style="text-align:center" name="'+option+'">'+ (option_value[option] ? option_value[option] : "-") +'</td>\n';
             }
         })
-        contents += '   <td><a href="javascript:void(0);" onclick="editData(this, \''+table_name+'\');" >Edit</a></td>\n' +
+        contents += '   <td class="cbi-drag-col" style="text-align:center;"><span class="dct-drag-handle" draggable="true" title="Drag to reorder">&#9776;</span></td>\n' +
+            '   <td><a href="javascript:void(0);" onclick="editData(this, \''+table_name+'\');" >Edit</a></td>\n' +
             '       <td><a href="javascript:void(0);" onclick="delData(this, \''+table_name+'\');" >Del</a></td>\n' +
             '   </tr>';
         table.innerHTML += contents;

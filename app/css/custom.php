@@ -377,6 +377,42 @@ canvas#divDBChartBandwidthhourly {
   text-align:left;
 }
 
+.dct-big-checkbox {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.dct-drag-handle {
+  display: inline-block;
+  cursor: move;
+  font-size: 1rem;
+  line-height: 1;
+  color: #6c757d;
+  user-select: none;
+  padding: 0 0.2rem;
+  vertical-align: middle;
+}
+
+.dct-drag-handle:hover {
+  color: #007bff;
+}
+
+.cbi-drag-col {
+  width: 2.5rem;
+  min-width: 2.5rem;
+}
+
+.cbi-section-table-descr tr.dragging {
+  opacity: 0.4;
+  background-color: #e3f2fd;
+}
+
+.cbi-section-table-descr tr.drag-over {
+  border-top: 3px solid #007bff;
+}
+
 .cbi-value-description {
     font-size: small;
     padding-top: 0.4rem;

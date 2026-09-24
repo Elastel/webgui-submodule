@@ -812,13 +812,20 @@ function conf_im_ex($conf_name)
 }
 
 function page_table_title($section, $option_list) {
+  $has_drag = false;
+  foreach ($option_list as $opt) {
+    if ($opt['name'] === 'Order') {
+      $has_drag = true;
+      break;
+    }
+  }
   echo '<input type="hidden" data-i18n="cur_value" value="'._("Current Value").'">';
   echo '<input type="hidden" data-i18n="write_value" value="'._("Write Value").'">';
   echo "<table class=\"table cbi-section-table\" name=\"table_$section\" id=\"table_$section\">
       <tr class=\"tr cbi-section-table-titles\">";
   $name_buf = '';
   $descr_buf = '';
-  
+
   for ($i = 0; $i < count($option_list); $i++) {
     $style = strlen($option_list[$i]['style']) > 0 ? "style=\"". $option_list[$i]['style'] ."\"" : '';
 
@@ -835,6 +842,12 @@ function page_table_title($section, $option_list) {
     unset($style);
     unset($descr);
   }
+
+  if ($has_drag) {
+    $name_buf .= "<th class=\"th cbi-section-table-cell cbi-drag-col\"></th>";
+    $descr_buf .= "<th class=\"th cbi-section-table-cell cbi-drag-col\"></th>";
+  }
+
   echo $name_buf;
   echo "<th class=\"th cbi-section-table-cell cbi-section-actions\"></th>
         <th class=\"th cbi-section-table-cell cbi-section-actions\"></th>

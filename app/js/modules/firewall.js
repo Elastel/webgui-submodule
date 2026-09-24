@@ -27,17 +27,20 @@ export function getTableDataForwards() {
     for (var i = 2; i < tr.length; i++) {
         var tds = $(tr[i]).find("td");
         if (tds.length > 0) {
+            var enabledCheckbox = $(tr[i]).find('input[name="enabled"]');
+            var enabledVal = enabledCheckbox.length > 0 ? (enabledCheckbox.is(':checked') ? 'true' : 'false') : $(tds[5]).text();
             result.push({
                 'name':$(tds[0]).html(), 
                 'proto':$(tds[1]).html(),
                 'src_port':$(tds[2]).html(),
                 'dest_ip':$(tds[3]).html(),
                 'dest_port':$(tds[4]).html(),
-                'enabled':$(tds[5]).html()
+                'enabled':enabledVal
             });
         }
     }
 
+    $('#hidForwards').val(JSON.stringify(result));
     return result;
 }
 
@@ -71,13 +74,15 @@ export function saveForwards() {
 
     if (page_type == "0") {
         var table = document.getElementsByTagName("table")[0];
+        var enabledChecked = enabled ? 'checked' : '';
         table.innerHTML += "<tr  class=\"tr cbi-section-table-descr\">\n" +
             "        <td style='text-align:center'>"+ (name.length > 0 ? name : "-") +"</td>\n" +
             "        <td style='text-align:center'>"+ (proto.length > 0 ? proto : "-") +"</td>\n" +
             "        <td style='text-align:center'>"+ (src_port.length > 0 ? src_port : "-") +"</td>\n" +
             "        <td style='text-align:center'>"+ (dest_ip.length > 0 ? dest_ip : "-") +"</td>\n" +
             "        <td style='text-align:center'>"+ (dest_port.length > 0 ? dest_port : "-") +"</td>\n" +
-            "        <td style='text-align:center'>"+ enabled +"</td>\n" +
+            "        <td style='text-align:center;padding:0;cursor:pointer;'><label style='display:block;width:100%;padding:0.5rem 0;cursor:pointer;'><input type='checkbox' class='dct-big-checkbox' name='enabled' " + enabledChecked + " onclick='getTableDataForwards();'></label></td>\n" +
+            "        <td class='cbi-drag-col' style='text-align:center;'><span class='dct-drag-handle' draggable='true' title='Drag to reorder'>&#9776;</span></td>\n" +
             "        <td><a href=\"javascript:void(0);\" onclick=\"editForwards(this);\" >Edit</a></td>\n" +
             "        <td><a href=\"javascript:void(0);\" onclick=\"delForwards(this);\" >Del</a></td>\n" +
             "    </tr>";
@@ -89,7 +94,8 @@ export function saveForwards() {
         table.rows[Number(page_type)].cells[num++].innerHTML = (src_port.length > 0 ? src_port : "-");
         table.rows[Number(page_type)].cells[num++].innerHTML = (dest_ip.length > 0 ? dest_ip : "-");
         table.rows[Number(page_type)].cells[num++].innerHTML = (dest_port.length > 0 ? dest_port : "-");
-        table.rows[Number(page_type)].cells[num++].innerHTML = enabled;
+        var enabledCheckedEdit = enabled ? 'checked' : '';
+        table.rows[Number(page_type)].cells[num++].innerHTML = "<label style='display:block;width:100%;padding:0.5rem 0;cursor:pointer;'><input type='checkbox' class='dct-big-checkbox' name='enabled' " + enabledCheckedEdit + " onclick='getTableDataForwards();'></label>";
     }
 
     var result = getTableDataForwards();
@@ -111,18 +117,16 @@ export function editForwards(object) {
     var src_port = value.eq(num++).text();
     var dest_ip = value.eq(num++).text();
     var dest_port = value.eq(num++).text();
-    var enabled = value.eq(num++).text();
+    var enabledCheckbox = $(object).parent().parent().find('input[name="enabled"]');
+    var enabled = enabledCheckbox.length > 0 ? enabledCheckbox.is(':checked') : (value.eq(num).text() == "true");
+    num++;
 
     document.getElementById("forwards.name").value = name;
     document.getElementById("forwards.proto").value = proto;
     document.getElementById("forwards.src_port").value = src_port;
     document.getElementById("forwards.dest_ip").value = dest_ip;
     document.getElementById("forwards.dest_port").value = dest_port;
-    if (enabled == "true") {
-        document.getElementById("forwards.enabled").checked = true;
-    } else {
-        document.getElementById("forwards.enabled").checked = false;
-    }
+    document.getElementById("forwards.enabled").checked = enabled;
 
     if (proto == 'tcp udp' || proto == 'tcp' || proto == 'udp' || proto == 'stcp') {
         $('#pageEport').show();
@@ -166,6 +170,8 @@ export function getTableDataTraffic() {
     for (var i = 2; i < tr.length; i++) {
         var tds = $(tr[i]).find("td");
         if (tds.length > 0) {
+            var enabledCheckbox = $(tr[i]).find('input[name="enabled"]');
+            var enabledVal = enabledCheckbox.length > 0 ? (enabledCheckbox.is(':checked') ? 'true' : 'false') : $(tds[9]).text();
             result.push({
                 'name':$(tds[0]).html(), 
                 'proto':$(tds[1]).html(),
@@ -176,11 +182,12 @@ export function getTableDataTraffic() {
                 'dest_ip':$(tds[6]).html(),
                 'dest_port':$(tds[7]).html(),
                 'action':$(tds[8]).html(),
-                'enabled':$(tds[9]).html()
+                'enabled':enabledVal
             });
         }
     }
 
+    $('#hidTraffic').val(JSON.stringify(result));
     return result;
 }
 
@@ -218,6 +225,7 @@ export function saveTraffic() {
 
     if (page_type == "0") {
         var table = document.getElementsByTagName("table")[1];
+        var enabledChecked = enabled ? 'checked' : '';
         table.innerHTML += "<tr  class=\"tr cbi-section-table-descr\">\n" +
             "        <td style='text-align:center'>"+ (name.length > 0 ? name : "-") +"</td>\n" +
             "        <td style='text-align:center'>"+ (proto.length > 0 ? proto : "-") +"</td>\n" +
@@ -228,7 +236,8 @@ export function saveTraffic() {
             "        <td style='text-align:center'>"+ (dest_ip.length > 0 ? dest_ip : "-") +"</td>\n" +
             "        <td style='text-align:center'>"+ (dest_port.length > 0 ? dest_port : "-") +"</td>\n" +
             "        <td style='text-align:center'>"+ (action.length > 0 ? action : "-") +"</td>\n" +
-            "        <td style='text-align:center'>"+ enabled +"</td>\n" +
+            "        <td style='text-align:center;padding:0;cursor:pointer;'><label style='display:block;width:100%;padding:0.5rem 0;cursor:pointer;'><input type='checkbox' class='dct-big-checkbox' name='enabled' " + enabledChecked + " onclick='getTableDataTraffic();'></label></td>\n" +
+            "        <td class='cbi-drag-col' style='text-align:center;'><span class='dct-drag-handle' draggable='true' title='Drag to reorder'>&#9776;</span></td>\n" +
             "        <td><a href=\"javascript:void(0);\" onclick=\"editTraffic(this);\" >Edit</a></td>\n" +
             "        <td><a href=\"javascript:void(0);\" onclick=\"delTraffic(this);\" >Del</a></td>\n" +
             "    </tr>";
@@ -244,7 +253,8 @@ export function saveTraffic() {
         table.rows[Number(page_type)].cells[num++].innerHTML = (dest_ip.length > 0 ? dest_ip : "-");
         table.rows[Number(page_type)].cells[num++].innerHTML = (dest_port.length > 0 ? dest_port : "-");
         table.rows[Number(page_type)].cells[num++].innerHTML = (action.length > 0 ? action : "-");
-        table.rows[Number(page_type)].cells[num++].innerHTML = enabled;
+        var enabledCheckedEdit = enabled ? 'checked' : '';
+        table.rows[Number(page_type)].cells[num++].innerHTML = "<label style='display:block;width:100%;padding:0.5rem 0;cursor:pointer;'><input type='checkbox' class='dct-big-checkbox' name='enabled' " + enabledCheckedEdit + " onclick='getTableDataTraffic();'></label>";
     }
 
     var result = getTableDataTraffic();
@@ -270,14 +280,13 @@ export function editTraffic(object) {
             return true;    // continue: return true; break: return false
         }
 
-        var tmp = value.eq(num++).text();
         if (info == 'enabled') {
-            if (tmp == 'true') {
-                document.getElementById('traffic.' + info).checked = true;
-            } else {
-                document.getElementById('traffic.' + info).checked = false;
-            }
+            var enabledCheckbox = $(object).parent().parent().find('input[name="enabled"]');
+            var enabled = enabledCheckbox.length > 0 ? enabledCheckbox.is(':checked') : (value.eq(num).text() == "true");
+            document.getElementById('traffic.' + info).checked = enabled;
+            num++;
         } else {
+            var tmp = value.eq(num++).text();
             document.getElementById('traffic.' + info).value = tmp;
         }
     })
@@ -330,9 +339,16 @@ export function initFirewall() {
                         return true;    // continue: return true; break: return false
                     }
 
-                    forwardsHtml += "        <td style='text-align:center'>" + (jsonData['forwards.' + info][i] != null ? jsonData['forwards.' + info][i] : "-") + "</td>\n";
+                    if (info == 'enabled') {
+                        var fEnabled = jsonData['forwards.' + info][i];
+                        var fChecked = (fEnabled == '1' || fEnabled == 'true') ? 'checked' : '';
+                        forwardsHtml += "        <td style='text-align:center;padding:0;cursor:pointer;'><label style='display:block;width:100%;padding:0.5rem 0;cursor:pointer;'><input type='checkbox' class='dct-big-checkbox' name='enabled' " + fChecked + " onclick='getTableDataForwards();'></label></td>\n";
+                    } else {
+                        forwardsHtml += "        <td style='text-align:center'>" + (jsonData['forwards.' + info][i] != null ? jsonData['forwards.' + info][i] : "-") + "</td>\n";
+                    }
                 })
-                forwardsHtml += "        <td><a href=\"javascript:void(0);\" onclick=\"editForwards(this);\" >Edit</a></td>\n" +
+                forwardsHtml += "        <td class='cbi-drag-col' style='text-align:center;'><span class='dct-drag-handle' draggable='true' title='Drag to reorder'>&#9776;</span></td>\n" +
+                                "        <td><a href=\"javascript:void(0);\" onclick=\"editForwards(this);\" >Edit</a></td>\n" +
                                 "        <td><a href=\"javascript:void(0);\" onclick=\"delForwards(this);\" >Del</a></td>\n" +
                                 "    </tr>";
 
@@ -355,9 +371,16 @@ export function initFirewall() {
                         return true;    // continue: return true; break: return false
                     }
 
-                    trafficHtml += "        <td style='text-align:center'>" + (jsonData['traffic.' + info][i] != null ? jsonData['traffic.' + info][i] : "-") + "</td>\n";
+                    if (info == 'enabled') {
+                        var tEnabled = jsonData['traffic.' + info][i];
+                        var tChecked = (tEnabled == '1' || tEnabled == 'true') ? 'checked' : '';
+                        trafficHtml += "        <td style='text-align:center;padding:0;cursor:pointer;'><label style='display:block;width:100%;padding:0.5rem 0;cursor:pointer;'><input type='checkbox' class='dct-big-checkbox' name='enabled' " + tChecked + " onclick='getTableDataTraffic();'></label></td>\n";
+                    } else {
+                        trafficHtml += "        <td style='text-align:center'>" + (jsonData['traffic.' + info][i] != null ? jsonData['traffic.' + info][i] : "-") + "</td>\n";
+                    }
                 })
-                trafficHtml += "        <td><a href=\"javascript:void(0);\" onclick=\"editTraffic(this);\" >Edit</a></td>\n" +
+                trafficHtml += "        <td class='cbi-drag-col' style='text-align:center;'><span class='dct-drag-handle' draggable='true' title='Drag to reorder'>&#9776;</span></td>\n" +
+                                "        <td><a href=\"javascript:void(0);\" onclick=\"editTraffic(this);\" >Edit</a></td>\n" +
                                 "        <td><a href=\"javascript:void(0);\" onclick=\"delTraffic(this);\" >Del</a></td>\n" +
                                 "    </tr>";
 
@@ -367,10 +390,25 @@ export function initFirewall() {
             var result = getTableDataTraffic();
             var dataTraffic = JSON.stringify(result);
             $('#hidTraffic').val(dataTraffic);
+
+            // Init drag-and-drop for both tables
+            if (globalThis.initRowDrag) {
+                globalThis.initRowDrag('forwards');
+                globalThis.initRowDrag('traffic');
+            }
+
             $('#loading').hide();
         })
     }
     
     globalThis.loadFirewall = loadFirewall;
     loadFirewall();
+
+    // Ensure hidden fields are up-to-date before form submission
+    $(document).ready(function() {
+        $('form[action="firewall_conf"]').on('submit', function() {
+            if ($('#table_forwards').length) getTableDataForwards();
+            if ($('#table_traffic').length) getTableDataTraffic();
+        });
+    });
 }
