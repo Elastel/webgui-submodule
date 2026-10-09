@@ -206,7 +206,7 @@ set_immutable_if_needed() {
     fi
 
     if ! lsattr "$FILE" 2>/dev/null | grep -q 'i'; then
-        sudo chattr +i "$FILE"
+        chattr +i "$FILE"
     fi
 }
 
@@ -247,6 +247,12 @@ fi
 
 set_immutable_if_needed "/etc/fw_model"
 set_immutable_if_needed "/etc/target_model"
+
+if [[ $model == "EG500" || $model == "EG410" || $model == "ElastBox400" ]]; then
+        cp $path/config/sources.list /etc/apt/sources.list
+fi
+
+sleep 1
 
 if [[ $model != "EG324L" && $model != "EC212" ]]; then
         install_package_if_needed "openvpn" "openvpn"
@@ -312,12 +318,13 @@ else
         fi
 fi
 
+find /var/www/html -type f -exec dos2unix {} +
+
 if [[ $model == "EG500" || $model == "EG410" || $model == "ElastBox400" || $model == "EG510" ]]; then
         if [[ $model == "EG510" ]]; then
                 CONFIG_PATH="/boot/firmware/config.txt"
         else
                 CONFIG_PATH="/boot/config.txt"
-                cp $path/config/sources.list /etc/apt/sources.list
         fi
 
         if [ ! -n "$(grep 'pcf8563' $CONFIG_PATH)" ]; then
@@ -378,9 +385,9 @@ if [[ $bit == "64" || $model == "EG324" || $model == "EG324L" || $model == "EC21
         cp -r $path/Elastel/$model/usr/* /usr/
         #Turn off automatic updates
         if [[ $model = "EG324" || $bit == "64" ]]; then
-                sudo systemctl disable --now apt-daily.service apt-daily.timer
-                sudo systemctl disable --now apt-daily-upgrade.service apt-daily-upgrade.timer
-                sudo systemctl disable --now unattended-upgrades.service
+                systemctl disable --now apt-daily.service apt-daily.timer
+                systemctl disable --now apt-daily-upgrade.service apt-daily-upgrade.timer
+                systemctl disable --now unattended-upgrades.service
         fi
         cp $path/Elastel/$model/sbin/* /sbin/
 elif [ $bit = "32" ]; then
