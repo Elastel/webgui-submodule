@@ -730,8 +730,8 @@ echo "<div class=\"tab-pane $active\" id=\"server$num\">
 
 function page_im_ex($conf_name) {
   $conf_name_lower = strtolower($conf_name);
-  echo "<div id=\"confLayer\"></div>
-  <div id=\"confBox\" style=\"overflow:auto\">
+  echo "<div id=\"confLayer\" style=\"display:none\"></div>
+  <div id=\"confBox\" style=\"display:none;overflow:auto\">
     <div style=\"margin-top: -1rem; margin-right: -1rem; text-align: right !important;\">
       <button class=\"conf-btn\" onclick=\"closeConfBox()\">";echo _("X");echo "</button>
     </div>
@@ -746,7 +746,7 @@ function page_im_ex($conf_name) {
         <input type=\"submit\" class=\"btn btn-success\" value=\""; echo _("Export"); echo "\" name=\"export\" onclick=\"downloadFile('$conf_name')\">
       </div>
       </br></br>
-      <form method=\"POST\" action=\"" . $conf_name_lower . "_conf\" enctype=\"multipart/form-data\" role=\"form\">";
+      <form method=\"POST\" action=\"" . $conf_name_lower . "_conf\" enctype=\"multipart/form-data\" role=\"form\" onsubmit=\"closeConfBox()\">";
       echo \ElastPro\Tokens\CSRF::hiddenField();
       echo "<div class=\"cbi-value\">
           <input hidden=\"hidden\" name=\"page_im_ex_name\" id=\"page_im_ex_name\" value=\"0\">
