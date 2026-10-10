@@ -27,6 +27,7 @@ import { initDctBacnetServer } from "./modules/dct-bacnetserver.js"
 import { initDctDnp3Server } from "./modules/dct-dnp3server.js"
 import { initDctDataDisplay } from "./modules/dct-datadisplay.js"
 import { initAdblock } from "./modules/adblock.js"
+import { initDiagnostics } from "./modules/diagnostics.js"
 import { initFirewall } from "./modules/firewall.js"
 import { initOpenVPN } from "./modules/openvpn.js"
 import { initWireGuard } from "./modules/wg.js"
@@ -36,6 +37,7 @@ import { initDDNS } from "./modules/ddns.js"
 import { initServiceIotedge } from "./modules/service-iotedge.js"
 import { initGps } from "./modules/gps.js"
 import { initPlugins } from "./modules/plugins.js"
+import { initSyslog } from "./modules/syslog.js"
 import { initRestApi } from "./modules/restapi.js"
 
 function initFormValidation() {
@@ -141,11 +143,17 @@ function contentLoaded() {
         case "modbus_router":
             initModbusRouter();
             break;
+        case "diagnostics_conf":
+            initDiagnostics();
+            break;
         case "firewall_conf":
             initFirewall();
             break;
         case "iotedge":
             initServiceIotedge();
+            break;
+        case "syslog":
+            initSyslog();
             break;
         case "restapi":
             initRestApi();

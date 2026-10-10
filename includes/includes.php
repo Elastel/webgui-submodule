@@ -45,6 +45,7 @@ require_once 'includes/lorawan.php';
 require_once 'includes/terminal.php';
 require_once 'includes/gps.php';
 require_once 'includes/mc.php';
+require_once 'includes/diagnostics.php';
 require_once 'includes/firewall.php';
 require_once 'includes/ascii.php';
 require_once 'includes/bacnet_client.php';
@@ -72,6 +73,7 @@ require_once 'includes/scheduled.php';
 require_once 'includes/dlms.php';
 require_once 'includes/iec61850_client.php';
 require_once 'includes/system_param.php';
+require_once 'includes/syslog.php';
 
 $model = getModel();
 $target = getTarget();

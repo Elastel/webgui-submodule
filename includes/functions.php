@@ -1421,6 +1421,9 @@ function handlePageActions($extraFooterScripts, $page)
         case "/gps":
             DisplayGps();
             break;
+        case "/diagnostics_conf":
+            DisplayDiagnostics();
+            break;
         case "/firewall_conf":
             DisplayFirewall();
             break;
@@ -1471,6 +1474,9 @@ function handlePageActions($extraFooterScripts, $page)
             break;
         case "/backup_update":
             DisplayBackupUpdate();
+            break;
+        case "/syslog":
+            DisplaySyslog();
             break;
         case "/iotedge":
             DisplayIotedge();
@@ -1547,7 +1553,10 @@ function getMenuPurviewList()
     $sg_north = _('North Apps');
     $sg_vpn = _('VPN');
 
-    // --- Network (bits 0-8) ---
+    // --- Network (bits 0-8, 54) ---
+    // NOTE: bit 54 (Diagnostics) was appended after bit 53 was already taken.
+    // Bits are permanent, so new entries must use the next unused bit (54+)
+    // even when their display position sits inside an earlier group.
     $net = _('Network');
     $items[] = array(0,  'wired_conf',       'wired',           $net, $sg_wan,  _('Wired'),             '');
     $items[] = array(1,  'lte_conf',         'lte',             $net, $sg_wan,  _('LTE'),               "file_exists('/dev/ttyUSB1') && isLteEnabled()");
@@ -1557,6 +1566,7 @@ function getMenuPurviewList()
     $items[] = array(5,  'wpa_conf',         'wifi_client',     $net, '',       _('WiFi Client'),       "file_exists('/sys/class/net/wlan0')");
     $items[] = array(6,  'detection_conf',   'online_detection', $net, '',       _('Online Detection'),  "isBinExists('failoverd')");
     $items[] = array(7,  'lorawan_conf',     'lorawan',         $net, '',       _('LoRaWAN'),           "isBinExists('lora_pkt_fwd')");
+    $items[] = array(54, 'diagnostics_conf', 'diagnostics',     $net, '',       _('Diagnostics'),       '');
     $items[] = array(8,  'firewall_conf',    'firewall',        $net, '',       _('Firewall'),          "isBinExists('efw')");
 
     // --- Data Collect (bits 9-33) ---
@@ -1611,7 +1621,8 @@ function getMenuPurviewList()
     $items[] = array(44, 'restapi',   'restapi',   $sv, '', _('RestAPI'),
         "isBinExists('pip3') || isBinExists('python3') && file_exists('/etc/raspap/api/')");
 
-    // --- System (bits 45-53) ---
+    // --- System (bits 45-53, 55) ---
+    // bit 55 (System Log) appended after 53 was taken; bits are permanent.
     $sys = _('System');
     $items[] = array(45, 'system_info',    'system_info',    $sys, '', _('System'),          '');
     $items[] = array(46, 'time_setting',   'time_setting',   $sys, '', _('Time Settings'),   '');
@@ -1623,6 +1634,7 @@ function getMenuPurviewList()
     $items[] = array(51, 'auth_conf',      'auth_conf',      $sys, '', _('Authentication'),  '');
     $items[] = array(52, 'backup_restore', 'backup_restore', $sys, '', _('Backup/Restore'),  '');
     $items[] = array(53, 'backup_update',  'backup_update',  $sys, '', _('Update/Restore'),  '');
+    $items[] = array(55, 'syslog',         'syslog',         $sys, '', _('System Log'),      '');
 
     return $items;
 }
