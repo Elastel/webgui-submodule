@@ -310,6 +310,7 @@ if [[ $model != "EG324L" && $model != "EC212" ]]; then
         cp $path/config/090_elastpro /etc/sudoers.d/
         chown -c root:www-data /etc/raspap/hostapd/*.sh
         chown -R www-data:www-data /var/www/html
+        find /var/www/html -type f -exec dos2unix {} +
 else
         chown -R root:root /var/www/html
         result=$(ls /etc/ssl/certs/ | wc -l)
@@ -317,8 +318,6 @@ else
                 tar xzvf $path/config/certs.tar.gz -C /etc/ssl/
         fi
 fi
-
-find /var/www/html -type f -exec dos2unix {} +
 
 if [[ $model == "EG500" || $model == "EG410" || $model == "ElastBox400" || $model == "EG510" ]]; then
         if [[ $model == "EG510" ]]; then
