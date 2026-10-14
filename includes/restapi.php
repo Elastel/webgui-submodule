@@ -11,12 +11,42 @@ function DisplayRestAPI()
     // initialize status object
     $status = new \ElastPro\Messages\StatusMessage;
 
-    // create instance of DotEnv
-    $dotenv = new \ElastPro\DotEnv\DotEnv;
-    $dotenv->load();
+    // The API application is only present on devices where it has been installed.
+    // Loading DotEnv without it throws (it cannot create /etc/raspap/api/.env), which
+    // used to fatal the whole page, so everything below is guarded by this flag.
+    $apiAvailable = function_exists('isRestApiAvailable') ? isRestApiAvailable() : true;
 
-    // set defaults
-    $apiKey = $_ENV['ElastPro_API_KEY'];
+    $dotenv = null;
+    $apiKey = '';
+    $serviceStatus = 'down';
+    $serviceLog = '';
+    $docMsg = '';
+
+    if ($apiAvailable) {
+        try {
+            // create instance of DotEnv
+            $dotenv = new \ElastPro\DotEnv\DotEnv;
+            $dotenv->load();
+
+            // set defaults
+            $apiKey = $_ENV['ElastPro_API_KEY'] ?? '';
+        } catch (\Exception $e) {
+            $apiAvailable = false;
+            $status->addMessage(_('RestAPI configuration is not available: ') . $e->getMessage(), 'danger');
+        }
+    }
+
+    if (!$apiAvailable) {
+        echo renderTemplate("restapi", compact(
+            "status",
+            "apiAvailable",
+            "apiKey",
+            "serviceStatus",
+            "serviceLog",
+            "docMsg"
+        ));
+        return;
+    }
 
     if (!RASPI_MONITOR_ENABLED) {
         if (isset($_POST['SaveAPIsettings'])) {
@@ -61,6 +91,7 @@ function DisplayRestAPI()
 
     echo renderTemplate("restapi", compact(
         "status",
+        "apiAvailable",
         "apiKey",
         "serviceStatus",
         "serviceLog",

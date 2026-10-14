@@ -1,5 +1,5 @@
 <!-- basic tab -->
-<div role="tabpanel" class="tab-pane active" id="basic">
+<div role="tabpanel" class="tab-pane active" id="system-basic">
   <div class="row">
     <div class="col-lg-6">
       <h4 class="mt-3"><?php echo _("System Information"); ?></h4>
@@ -41,14 +41,11 @@
         </div>
       </div>
 
-      <form action="system_info" method="POST">
-        <?php echo \ElastPro\Tokens\CSRF::hiddenField(); ?>
-        <?php if (!RASPI_MONITOR_ENABLED) : ?>
-            <input type="submit" class="btn btn-warning" name="system_reboot"   value="<?php echo _("Reboot"); ?>" />
-            <input type="submit" class="btn btn-warning" name="system_shutdown" value="<?php echo _("Shutdown"); ?>" />
-        <?php endif ?>
-        <button type="button" onClick="window.location.reload();" class="btn btn-outline btn-primary"><i class="fas fa-sync-alt"></i> <?php echo _("Refresh") ?></a>
-     </form>
+      <?php if (!RASPI_MONITOR_ENABLED) : ?>
+          <input type="submit" class="btn btn-warning" name="system_reboot"   value="<?php echo _("Reboot"); ?>" />
+          <input type="submit" class="btn btn-warning" name="system_shutdown" value="<?php echo _("Shutdown"); ?>" />
+      <?php endif ?>
+      <button type="button" onClick="window.location.reload();" class="btn btn-outline btn-primary"><i class="fas fa-sync-alt"></i> <?php echo _("Refresh") ?></button>
       </div>
     </div>
   </div>

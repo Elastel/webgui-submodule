@@ -44,6 +44,12 @@ class Sysinfo
         return floor(intval($used));
     }
 
+    public function usedStorage()
+    {
+        $used = shell_exec("df / | awk 'NR==2{ print $5 }'");
+        return intval($used);
+    }
+
     public function processorCount()
     {
         $procs = shell_exec("nproc --all");

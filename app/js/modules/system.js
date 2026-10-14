@@ -340,13 +340,13 @@ function saveDataAuth() {
         }
 
         var table = document.getElementsByTagName("table")[0];
-        table.innerHTML += "<tr  class=\"tr cbi-section-table-descr\">\n" +
+        table.insertAdjacentHTML('beforeend', "<tr  class=\"tr cbi-section-table-descr\">\n" +
             "        <td style='text-align:center' name='username'>"+ (username.length > 0 ? username : "-") + "</td>\n" +
             "        <td style='display:none'  name='password'>"+ (password.length > 0 ? password : "-") +"</td>\n" +
             "        <td style='text-align:center' name='purview'>"+ String(purview) +"</td>\n" +
             "        <td style='width:10rem'><a href=\"javascript:void(0);\" onclick=\"editDataAuth(this);\" >Edit</a></td>\n" +
             "        <td style='width:10rem'><a href=\"javascript:void(0);\" onclick=\"delDataAuth(this);\" >Del</a></td>\n" +
-            "    </tr>";
+            "    </tr>");
     } else {
         var table = document.getElementById("table_auth");
         var num = 0;
@@ -410,3 +410,20 @@ function toggleAllGroups(expand) {
 }
 
 globalThis.toggleAllGroups = toggleAllGroups;
+
+// System Properties: refresh the clock in place instead of reloading the page.
+function refreshSystemTime() {
+    const el = document.getElementById('current_time');
+    if (!el) return;
+
+    fetch('ajax/system/get_time.php', { cache: 'no-store' })
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.time) el.textContent = data.time;
+        })
+        .catch(error => console.error('Fail to refresh system time:', error));
+}
+
+globalThis.refreshSystemTime = refreshSystemTime;
+
+$(document).on('click', '#refresh_system_time', refreshSystemTime);

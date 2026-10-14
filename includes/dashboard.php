@@ -228,6 +228,17 @@ function DisplayDashboard(&$extraFooterScripts)
         $memused_led = "service-status-up";
     }
 
+    // storage used
+    $storageused = $system->usedStorage();
+    $storageused_status = "primary";
+    if ($storageused > 90) {
+        $storageused_status = "danger";
+    } elseif ($storageused > 75) {
+        $storageused_status = "warning";
+    } elseif ($storageused > 0) {
+        $storageused_status = "success";
+    }
+
     // cpu load
     $cpuload = $system->systemLoadPercentage();
     if ($cpuload > 90) {
@@ -275,6 +286,8 @@ function DisplayDashboard(&$extraFooterScripts)
             "memused",
             "memused_status",
             "memused_led",
+            "storageused",
+            "storageused_status",
             "cpuload",
             "cpuload_status",
             "cputemp",

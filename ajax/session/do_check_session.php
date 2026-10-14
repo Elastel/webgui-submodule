@@ -30,11 +30,11 @@ if ($status === 'active' && RASPI_AUTH_ENABLED && isset($_SESSION['user_id'])) {
 if ($status === 'session_expired') {
     session_unset(); // unset all session variables
     session_destroy(); // destroy the session
-} else {
-    // Sliding expiration: while the page is open (frontend polls every 5 seconds),
-    // keep refreshing the activity time so active users are never logged out.
-    $_SESSION['lastActivity'] = time();
 }
+// This poll must NOT refresh lastActivity: doing so turned the 5s heartbeat
+// into a keep-alive, so an idle page never expired. The activity time is
+// refreshed by real page loads (sidebar.php) and by the user-activity ping in
+// ajax/session/do_touch_session.php.
 
 // send response
 header('Content-Type: application/json');

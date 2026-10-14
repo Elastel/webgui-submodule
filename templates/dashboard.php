@@ -66,6 +66,18 @@
               </td>
             </tr>
             <tr class="tr cbi-section-table-titles">
+              <td style="text-align:left;width:30%;font-weight:bold; padding:0.5rem; font-size:0.8rem"><?php echo _("Storage Used"); ?></td>
+              
+              <td style="text-align:left"  name="storage" id="storage">
+                <div class="progress" style="height: 1rem;">
+                  <div class="progress-bar bg-<?php echo htmlspecialchars($storageused_status, ENT_QUOTES); ?>"
+                      role="progressbar" aria-valuenow="<?php echo htmlspecialchars($storageused, ENT_QUOTES); ?>" aria-valuemin="0" aria-valuemax="100"
+                      style="width: <?php echo htmlspecialchars($storageused, ENT_QUOTES); ?>%"><?php echo htmlspecialchars($storageused, ENT_QUOTES); ?>%
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr class="tr cbi-section-table-titles">
               <td style="text-align:left;width:30%;font-weight:bold; padding:0.5rem; font-size:0.8rem"><?php echo _("CPU Load"); ?></td>
               
               <td style="text-align:left"  name="cpu_load" id="cpu_load">

@@ -18,45 +18,41 @@
       </div><!-- /.card-header -->
       <div class="card-body">
         <?php $status->showMessages(); ?>
-        <h4><?php echo _("Authentication settings for $username") ;?></h4>
+        <h4 class="mt-3"><?php echo _("Authentication settings for $username") ;?></h4>
         <form role="form" action="auth_conf" method="POST">
           <?php echo \ElastPro\Tokens\CSRF::hiddenField(); ?>
-          <div class="row">
-            <div class="mb-3 col-md-6">
-              <div class="mb-2"><?php echo _("Old password"); ?></div>
-              <div class="input-group has-validation">
-                <input type="password" class="form-control" name="oldpass" />
-                <div class="input-group-text js-toggle-password" data-bs-target="[name=oldpass]" data-toggle-with="fas fa-eye-slash"><i class="fas fa-eye mx-2"></i></div>
-                <div class="invalid-feedback">
-                  <?php echo _("Please enter your old password."); ?>
-                </div>
+          <div class="cbi-section cbi-tblsection">
+          <div class="cbi-value">
+            <label class="cbi-value-title" for="oldpass"><?php echo _("Old password"); ?></label>
+            <div class="input-group" style="display:inline-flex; width:20rem; max-width:100%; vertical-align:middle;">
+              <input type="password" class="cbi-input-text" id="oldpass" name="oldpass" style="flex:1 1 0%; min-width:0; max-width:none; border-top-right-radius:0; border-bottom-right-radius:0;" />
+              <div class="input-group-text js-toggle-password" data-bs-target="[name=oldpass]" data-toggle-with="fas fa-eye-slash"><i class="fas fa-eye mx-2"></i></div>
+              <div class="invalid-feedback">
+                <?php echo _("Please enter your old password."); ?>
               </div>
             </div>
           </div>
-          <div class="row">
-            <div class="mb-3 col-md-6">
-              <div class="mb-2"><?php echo _("New password"); ?></div>
-              <div class="input-group has-validation">
-                <input type="password" class="form-control" name="newpass" />
-                <div class="input-group-text js-toggle-password" data-bs-target="[name=newpass]" data-toggle-with="fas fa-eye-slash"><i class="fas fa-eye mx-2"></i></div>
-                <div class="invalid-feedback">
-                  <?php echo _("Please enter a new password."); ?>
-                </div>
+          <div class="cbi-value">
+            <label class="cbi-value-title" for="newpass"><?php echo _("New password"); ?></label>
+            <div class="input-group" style="display:inline-flex; width:20rem; max-width:100%; vertical-align:middle;">
+              <input type="password" class="cbi-input-text" id="newpass" name="newpass" style="flex:1 1 0%; min-width:0; max-width:none; border-top-right-radius:0; border-bottom-right-radius:0;" />
+              <div class="input-group-text js-toggle-password" data-bs-target="[name=newpass]" data-toggle-with="fas fa-eye-slash"><i class="fas fa-eye mx-2"></i></div>
+              <div class="invalid-feedback">
+                <?php echo _("Please enter a new password."); ?>
               </div>
             </div>
           </div>
-          <div class="row">
-            <div class="mb-3 col-md-6">
-              <div class="mb-2"><?php echo _("Repeat new password"); ?></div>
-              <div class="input-group has-validation">
-                <input type="password" class="form-control" name="newpassagain" />
-                <div class="input-group-text js-toggle-password" data-bs-target="[name=newpassagain]" data-toggle-with="fas fa-eye-slash"><i class="fas fa-eye mx-2"></i></div>
-                <div class="invalid-feedback">
-                  <?php echo _("Please re-enter your new password."); ?>
-                </div>
+          <div class="cbi-value">
+            <label class="cbi-value-title" for="newpassagain"><?php echo _("Repeat new password"); ?></label>
+            <div class="input-group" style="display:inline-flex; width:20rem; max-width:100%; vertical-align:middle;">
+              <input type="password" class="cbi-input-text" id="newpassagain" name="newpassagain" style="flex:1 1 0%; min-width:0; max-width:none; border-top-right-radius:0; border-bottom-right-radius:0;" />
+              <div class="input-group-text js-toggle-password" data-bs-target="[name=newpassagain]" data-toggle-with="fas fa-eye-slash"><i class="fas fa-eye mx-2"></i></div>
+              <div class="invalid-feedback">
+                <?php echo _("Please re-enter your new password."); ?>
               </div>
             </div>
           </div>
+          </div><!-- /.cbi-section -->
           <?php echo $buttons ?>
           <?php if ($username == 'superadmin') : ?>
           <input type="hidden" name="table_data" value="" id="hidTD">

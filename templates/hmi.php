@@ -111,7 +111,6 @@
   slider.addEventListener("input", () => {
       valueDisplay.textContent = slider.value;
 
-      // 可选：调用后台 PHP 进行实际亮度设置
       fetch("ajax/system/set_brightness.php", {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },

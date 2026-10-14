@@ -331,8 +331,9 @@ export function initFirewall() {
             // forwards
             var arrForwards = ['name', 'proto', 'src_port', 'dest_ip', 'dest_port', 'enabled'];
             var forwardsCount = jsonData['forwards.count'];
+            var fwdTable = document.getElementsByTagName("table")[0];
+            var forwardsRows = [];
             for (var i = 0; i < Number(forwardsCount); i++) {
-                var table = document.getElementsByTagName("table")[0];
                 var forwardsHtml = "<tr  class=\"tr cbi-section-table-descr\">\n";
                 arrForwards.forEach(function (info) {
                     if (info == null) {
@@ -352,8 +353,9 @@ export function initFirewall() {
                                 "        <td><a href=\"javascript:void(0);\" onclick=\"delForwards(this);\" >Del</a></td>\n" +
                                 "    </tr>";
 
-                table.innerHTML += forwardsHtml;
+                forwardsRows.push(forwardsHtml);
             }
+            fwdTable.insertAdjacentHTML('beforeend', forwardsRows.join(''));
 
             var result = getTableDataForwards();
             var dataForwards = JSON.stringify(result);
@@ -363,8 +365,9 @@ export function initFirewall() {
             var arrTraffic = ['name', 'proto', 'rule', 'src_mac', 'src_ip', 'src_port',
                             'dest_ip', 'dest_port', 'action', 'enabled'];
             var trafficCount = jsonData['traffic.count'];
+            var traTable = document.getElementsByTagName("table")[1];
+            var trafficRows = [];
             for (var i = 0; i < Number(trafficCount); i++) {
-                var table = document.getElementsByTagName("table")[1];
                 var trafficHtml = "<tr  class=\"tr cbi-section-table-descr\">\n";
                 arrTraffic.forEach(function (info) {
                     if (info == null) {
@@ -384,8 +387,9 @@ export function initFirewall() {
                                 "        <td><a href=\"javascript:void(0);\" onclick=\"delTraffic(this);\" >Del</a></td>\n" +
                                 "    </tr>";
 
-                table.innerHTML += trafficHtml;
+                trafficRows.push(trafficHtml);
             }
+            traTable.insertAdjacentHTML('beforeend', trafficRows.join(''));
 
             var result = getTableDataTraffic();
             var dataTraffic = JSON.stringify(result);

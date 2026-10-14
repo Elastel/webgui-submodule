@@ -11,7 +11,7 @@ export function initDashboard() {
 
     function loadDashboard() {
         getDashboardData();
-        setInterval(getDashboardData, 1000);
+        setInterval(() => { if (!document.hidden) getDashboardData(); }, 1000);
     }
 
     loadDashboard();

@@ -437,6 +437,16 @@ canvas#divDBChartBandwidthhourly {
   transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
+/* Disabled cbi controls follow Bootstrap's .form-control:disabled look (grey
+   fill), so fields disabled by JS (e.g. DHCP range when the interface has DHCP
+   turned off) are still visually distinguishable as inactive. */
+.cbi-input-text:disabled,
+.cbi-input-select:disabled {
+  background-color: #e9ecef;
+  opacity: 1;
+  cursor: not-allowed;
+}
+
 .cbi-section-table .cbi-section-table-titles .cbi-section-table-cell {
 	width: auto !important;
 }
@@ -732,9 +742,37 @@ canvas#divDBChartBandwidthhourly {
 }
 
 #page_datadisplay {
-  max-height: 35rem;
+  /* Viewport-based so the container bottom (the last row and the scrollbar
+     track) always stays inside the window. A fixed 35rem exceeded the space
+     available on shorter windows, cutting off the last row. */
+  max-height: calc(100vh - 16rem);
   overflow-y: auto;
   height: auto;
+  /* .cbi-section pads every side by 1rem. Inside a scroll container that top
+     padding becomes a gap the pinned header cannot cover, so scrolling rows
+     show through above it. Drop it and let the sticky <th> sit flush. */
+  padding-top: 0;
+}
+
+/* Data Monitoring: the header lives in <thead>, so its <th> can be pinned to
+   the top of the scroll container. An opaque background keeps the scrolling
+   rows from showing through it. The bottom edge is a simple 1px line: a
+   box-shadow on cells of a border-collapse table renders inconsistently at the
+   last column, which showed up as an artefact under "Write". */
+#page_datadisplay table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background-color: #f0f0f0;
+  padding-top: 0.7rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid #d6d9e0;
+}
+
+/* Current value column: same emphasis as the DCT rule tables (bold blue). */
+#table_modbus td[name="value"] {
+  color: blue;
+  font-weight: bold;
 }
 
 .dropdown {
@@ -768,4 +806,137 @@ canvas#divDBChartBandwidthhourly {
 
 .show {
     display: block;
+}
+
+/* =========================================================================
+   Sub-menus (2nd / 3rd level) in the collapsed sidebar.
+   -------------------------------------------------------------------------
+   SB-Admin-2 renders the sidebar as a 104px (6.5rem) icon rail on narrow
+   viewports -- which is exactly what a zoomed-in browser produces -- and
+   keeps that rail when the sidebar is manually collapsed (.sidebar.toggled).
+   In both cases every ".collapse" sub-menu is turned into an absolutely
+   positioned fly-out beside the rail.
+   That fly-out ships without any panel styling, so the 2nd/3rd level entries
+   show up as bare, centred, 104px-wide text floating over the page content.
+   The rules below give the fly-out a real panel look with full-width rows,
+   visible level indentation and nested fly-outs that no longer overlap the
+   parent panel. The rail layout and its pop-out behaviour stay untouched.
+   ========================================================================= */
+
+/* --- 1. Manually collapsed rail (.sidebar.toggled) ---------------------- */
+.sidebar.toggled .nav-item .collapse,
+.sidebar.toggled .nav-item .collapsing {
+  background-color: #f8f9fc; /* matches the sidebar background */
+  border: 1px solid #e3e6f0;
+  border-radius: 0.35rem;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+  padding: 0.35rem 0;
+  min-width: 11rem;
+}
+
+.sidebar.toggled .nav-item .collapse .nav-link,
+.sidebar.toggled .nav-item .collapsing .nav-link {
+  display: block;
+  width: 100%;
+  min-width: 10.5rem;
+  text-align: left;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  color: #3a3b45;
+  border-radius: 0;
+}
+
+/* nested fly-out starts beside the parent panel instead of under it */
+.sidebar.toggled .nav-item .collapse .collapse,
+.sidebar.toggled .nav-item .collapse .collapsing {
+  left: calc(11rem + 0.5rem);
+}
+
+/* sub-group toggles (pure text rows) read as clickable headers */
+.sidebar.toggled .nav-item .collapse .nav-link.navbar-toggle {
+  font-weight: 600;
+}
+.sidebar.toggled .nav-item .collapse .nav-link.navbar-toggle::after {
+  float: right;
+  font-weight: 900;
+  content: "\f105";
+  font-family: "Font Awesome 5 Free";
+  color: #b7b9cc;
+}
+
+/* 3rd level: indent + dim to make the hierarchy visible */
+.sidebar.toggled .nav-item .collapse .collapse .nav-link {
+  padding-left: 1.75rem;
+  font-size: 0.8rem;
+  color: #6e707e;
+}
+
+/* whole-row hover / focus highlight */
+.sidebar.toggled .nav-item .collapse .nav-link:hover,
+.sidebar.toggled .nav-item .collapse .nav-link:focus {
+  background-color: #e3e6f0;
+  color: #2e59d9;
+  text-decoration: none;
+}
+
+/* --- 2. Narrow viewport (<768px): rail collapses on its own -------------
+   Browsers use exactly this breakpoint once the page is zoomed in, and the
+   rail has no ".toggled" class here, so it needs its own set of rules. ---- */
+@media (max-width: 767.98px) {
+  .sidebar .nav-item .collapse,
+  .sidebar .nav-item .collapsing {
+    background-color: #f8f9fc; /* matches the sidebar background */
+    border: 1px solid #e3e6f0;
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    padding: 0.35rem 0;
+    min-width: 11rem;
+  }
+
+  .sidebar .nav-item .collapse .nav-link,
+  .sidebar .nav-item .collapsing .nav-link {
+    display: block;
+    width: 100%;
+    min-width: 10.5rem;
+    text-align: left;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    color: #3a3b45;
+    border-radius: 0;
+  }
+
+  /* nested fly-out starts beside the parent panel instead of under it */
+  .sidebar .nav-item .collapse .collapse,
+  .sidebar .nav-item .collapse .collapsing {
+    left: calc(11rem + 0.5rem);
+  }
+
+  /* sub-group toggles (pure text rows) read as clickable headers */
+  .sidebar .nav-item .collapse .nav-link.navbar-toggle {
+    font-weight: 600;
+  }
+  .sidebar .nav-item .collapse .nav-link.navbar-toggle::after {
+    float: right;
+    font-weight: 900;
+    content: "\f105";
+    font-family: "Font Awesome 5 Free";
+    color: #b7b9cc;
+  }
+
+  /* 3rd level: indent + dim to make the hierarchy visible */
+  .sidebar .nav-item .collapse .collapse .nav-link {
+    padding-left: 1.75rem;
+    font-size: 0.8rem;
+    color: #6e707e;
+  }
+
+  /* whole-row hover / focus highlight */
+  .sidebar .nav-item .collapse .nav-link:hover,
+  .sidebar .nav-item .collapse .nav-link:focus {
+    background-color: #e3e6f0;
+    color: #2e59d9;
+    text-decoration: none;
+  }
 }

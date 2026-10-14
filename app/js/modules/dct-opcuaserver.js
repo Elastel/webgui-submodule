@@ -165,7 +165,7 @@ export function initDctOpcuaServer() {
         });
 
         getOpcuaDate();
-        setInterval(getOpcuaDate, 1000);
+        setInterval(() => { if (!document.hidden) getOpcuaDate(); }, 1000);
     }
 
     globalThis.loadOpcuaConfig = loadOpcuaConfig;

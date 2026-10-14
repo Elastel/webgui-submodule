@@ -25,8 +25,8 @@ require_once 'includes/includes.php';
     <!-- Custom Fonts -->
     <link href="dist/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
 
-    <!-- Custom CSS -->
-    <link href="<?php echo $theme_url; ?>" title="main" rel="stylesheet">
+    <!-- Custom CSS (the ?v= stamp busts the browser cache whenever the theme file changes) -->
+    <link href="<?php echo $theme_url; ?>?v=<?php echo (($t = @filemtime(__DIR__ . '/' . $theme_url)) !== false) ? $t : '0'; ?>" title="main" rel="stylesheet">
 
     <link rel="shortcut icon" type="image/png" href="<?php echo getFavicon($target, $hostname); ?>?ver=2.0">
     <link rel="apple-touch-icon" sizes="180x180" href="app/icons/apple-touch-icon.png">

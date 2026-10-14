@@ -14,8 +14,8 @@
       <?php
       if ($arrHostapdConf['LogEnable'] == 1) {
           exec('sudo /bin/chmod o+r /tmp/hostapd.log');
-          $log = file_get_contents('/tmp/hostapd.log');
-          echo '<textarea class="logoutput">'.htmlspecialchars($log, ENT_QUOTES).'</textarea>';
+          $log = shell_exec('sudo /bin/tail -n 500 ' . escapeshellarg('/tmp/hostapd.log'));
+          echo '<textarea class="logoutput">'.htmlspecialchars($log ?? '', ENT_QUOTES).'</textarea>';
       } else {
           echo '<textarea class="logoutput my-3"></textarea>';
       }

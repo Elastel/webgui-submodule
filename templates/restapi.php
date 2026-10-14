@@ -1,5 +1,5 @@
   <?php ob_start() ?>
-    <?php if (!RASPI_MONITOR_ENABLED) : ?>
+    <?php if (!empty($apiAvailable) && !RASPI_MONITOR_ENABLED) : ?>
     <input type="submit" class="btn btn-outline btn-primary" name="SaveAPIsettings" value="<?php echo _("Save settings"); ?>" />
         <?php if ($serviceStatus == 'down') : ?>
         <input type="submit" class="btn btn-success" name="StartRestAPIservice" value="<?php echo _("Start RestAPI service"); ?>" />
@@ -27,6 +27,11 @@
         </div><!-- /.card-header -->
         <div class="card-body">
         <?php $status->showMessages(); ?>
+        <?php if (empty($apiAvailable)) : ?>
+          <div class="alert alert-warning mb-0">
+            <?php echo _("RestAPI is not available on this device."); ?>
+          </div>
+        <?php else : ?>
           <form role="form" action="restapi" method="POST" class="needs-validation" novalidate>
             <?php echo \ElastPro\Tokens\CSRF::hiddenField(); ?>
             <!-- Nav tabs -->
@@ -43,6 +48,7 @@
 
             <?php echo $buttons ?>
           </form>
+        <?php endif ?>
         </div><!-- /.card-body -->
     </div><!-- /.card -->
   </div><!-- /.col-lg-12 -->

@@ -332,9 +332,9 @@ function isAssoc($arr)
  * @param string $event:    onChange event (optional)
  * @param string $disabled  (optional)
  */
-function SelectorOptions($name, $options, $selected = null, $id = null, $event = null, $disabled = null)
+function SelectorOptions($name, $options, $selected = null, $id = null, $event = null, $disabled = null, $class = 'form-control')
 {
-    echo '<select class="form-control" name="'.htmlspecialchars($name, ENT_QUOTES).'"';
+    echo '<select class="'.htmlspecialchars($class, ENT_QUOTES).'" name="'.htmlspecialchars($name, ENT_QUOTES).'"';
     if (isset($id)) {
         echo ' id="' . htmlspecialchars($id, ENT_QUOTES) .'"';
     }
@@ -418,11 +418,96 @@ function ParseConfig($arrConfig, $wg = false)
  * @param  string $interface
  * @return json $jsonData
  */
+/**
+ * Pure data builder for a network interface config. Shared by the AJAX
+ * endpoint and any in-process caller so we never issue an HTTP request back
+ * to ourself (which would deadlock / double the memory under the single
+ * php-cgi worker used on these devices).
+ */
+function getNetConfigData($interface)
+{
+    $dhcpdata = array();
+    exec("uci get network.swan.ifname", $tmp);
+    $lte_interfaces = isset($tmp[0]) ? $tmp[0] : '';
+    if ($interface == 'br0') {
+        exec('cat '. escapeshellarg(RASPI_DNSMASQ_PREFIX.$interface.'.conf'), $return);
+        $conf = ParseConfig($return);
+
+        $dhcpdata['DHCPEnabled'] = empty($conf) ? false : true;
+        if ($conf['dhcp-range'] != null) {
+            $arrRange = explode(",", $conf['dhcp-range']);
+            $dhcpdata['RangeStart'] = $arrRange[0];
+            $dhcpdata['RangeEnd'] = $arrRange[1];
+            $dhcpdata['RangeMask'] = $arrRange[2];
+            $dhcpdata['leaseTime'] = $arrRange[3];
+        }
+        if ($conf['dhcp-host'] != null) {
+            $dhcpHost = $conf['dhcp-host'];
+        }
+        $dhcpHost = empty($dhcpHost) ? [] : $dhcpHost;
+        $dhcpdata['dhcpHost'] = is_array($dhcpHost) ? $dhcpHost : [ $dhcpHost ];
+        $upstreamServers = is_array($conf['server']) ? $conf['server'] : [ $conf['server'] ];
+        $dhcpdata['upstreamServersEnabled'] = empty($conf['server']) ? false: true;
+        $dhcpdata['upstreamServers'] = array_filter($upstreamServers);
+
+        preg_match('/([0-9]*)([a-z])/i', $dhcpdata['leaseTime'], $arrRangeLeaseTime);
+        $dhcpdata['leaseTime'] = $arrRangeLeaseTime[1];
+        $dhcpdata['leaseTimeInterval'] = $arrRangeLeaseTime[2];
+        if (isset($conf['dhcp-option'])) {
+            $arrDns = explode(",", $conf['dhcp-option']);
+            if ($arrDns[0] == '6') {
+                if (count($arrDns) > 1) $dhcpdata['DNS1'] = $arrDns[1];
+                if (count($arrDns) > 2) $dhcpdata['DNS2'] = $arrDns[2];
+            }
+        }
+    } else if ($interface == 'eth0') {
+        exec("sudo /usr/local/bin/uci get network.wan.wan_multi", $wan_multi);
+        $dhcpdata['wan_multi'] = $wan_multi[0];
+    } else if ($interface == $lte_interfaces) {
+        exec("sudo /usr/local/bin/uci get network.swan.metric", $lte_metric);
+        exec("sudo /usr/local/bin/uci get network.swan.apn", $apn);
+        exec("sudo /usr/local/bin/uci get network.swan.pincode", $pin);
+        exec("sudo /usr/local/bin/uci get network.swan.auth", $auth_type);
+        exec("sudo /usr/local/bin/uci get network.swan.username", $apn_user);
+        exec("sudo /usr/local/bin/uci get network.swan.password", $apn_pass);
+        exec("sudo /usr/local/bin/uci get network.swan.data_saving_mode", $data_saving_mode);
+        $dhcpdata['lte_metric'] = $lte_metric[0] ?? get_default_route_metric($interface);
+        $dhcpdata['Apn'] = $apn[0];
+        $dhcpdata['Pin'] = $pin[0];
+        $dhcpdata['ApnUser'] = $apn_user[0];
+        $dhcpdata['ApnPass'] = $apn_pass[0];
+        $dhcpdata['AuthType'] = $auth_type[0];
+        $dhcpdata['data_saving_mode'] = $data_saving_mode[0];
+        if (!isset($dhcpdata['AuthType'])) $dhcpdata['AuthType'] = 'none';
+    }
+
+    $conf = file_get_contents(RASPI_DHCPCD_CONFIG);
+    preg_match('/^#\sRaspAP\s'.$interface.'\s.*?(?=\s*+$)/ms', $conf, $matched);
+    $data = getBetweenStrings($matched[0], "RaspAP");
+    preg_match('/metric\s+(\d+)/', $data, $metric);
+    preg_match('/static\sip_address=(.*)/',$data, $static_ip);
+    preg_match('/static\srouters=(.*)/',$data, $static_routers);
+    preg_match('/static\domain_name_server=(.*)/',$data, $static_dns);
+    preg_match('/fallback\sstatic_'.$interface.'/',$data, $fallback);
+    preg_match('/(?:no)?gateway/',$data, $gateway);
+    $dhcpdata['Metric'] = $metric[1] ?? get_default_route_metric($interface);
+    $dhcpdata['StaticIP'] = strpos($static_ip[1],'/') ? substr($static_ip[1], 0, strpos($static_ip[1],'/')) : $static_ip[1];
+    $dhcpdata['SubnetMask'] = cidr2mask($static_ip[1]);
+    $dhcpdata['StaticRouters'] = $static_routers[1];
+    $dhcpdata['StaticDNS'] = $static_dns[1];
+    if (isset($dhcpdata['StaticDNS'])) {
+        $arrStaticDns = explode(" ", $dhcpdata['StaticDNS']);
+        if (count($arrStaticDns) == 1) $dhcpdata['StaticDNS1'] = $arrStaticDns[0];
+        else if (count($arrStaticDns) >= 2) { $dhcpdata['StaticDNS1'] = $arrStaticDns[0]; $dhcpdata['StaticDNS2'] = $arrStaticDns[1]; }
+    }
+    $dhcpdata['FallbackEnabled'] = empty($fallback) ? false: true;
+    $dhcpdata['DefaultRoute'] = $gateway[0] == "gateway";
+    return $dhcpdata;
+}
+
 function getNetConfig($interface)
 {
-    $URI = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'] .'/ajax/networking/get_netcfg.php?iface='.$interface;
-    $jsonData = file_get_contents($URI);
-    return $jsonData;
+    return json_encode(getNetConfigData($interface));
 }
 
 /**
@@ -519,13 +604,17 @@ function readCache($key)
     return file_get_contents($cacheKey);
 }
 
+if (!defined('RASPI_CACHE_TTL')) {
+    define('RASPI_CACHE_TTL', 300);
+}
+
 function writeCache($key, $data)
 {
     if (!file_exists(RASPI_CACHE_PATH)) {
         mkdir(RASPI_CACHE_PATH, 0777, true);
-        $cacheKey = expandCacheKey($key);
-        file_put_contents($cacheKey, $data);
     }
+    $cacheKey = expandCacheKey($key);
+    file_put_contents($cacheKey, $data);
 }
 
 function deleteCache($key)
@@ -536,15 +625,18 @@ function deleteCache($key)
     }
 }
 
-function cache($key, $callback)
+function cache($key, $callback, $ttl = null)
 {
-    if (hasCache($key)) {
-        return readCache($key);
-    } else {
-        $data = $callback();
-        writeCache($key, $data);
-        return $data;
+    if ($ttl === null) {
+        $ttl = RASPI_CACHE_TTL;
     }
+    $cacheKey = expandCacheKey($key);
+    if (file_exists($cacheKey) && (time() - filemtime($cacheKey)) < $ttl) {
+        return file_get_contents($cacheKey);
+    }
+    $data = $callback();
+    writeCache($key, $data);
+    return $data;
 }
 
 // insspired by
@@ -652,9 +744,10 @@ function getColorOpt()
 }
 function getSidebarState()
 {
-    if ($_COOKIE['sidebarToggled'] == 'true' ) {
+    if (isset($_COOKIE['sidebarToggled']) && $_COOKIE['sidebarToggled'] == 'true' ) {
         return"toggled";
     }
+    return "";
 }
 
 // Returns bridged AP mode status
@@ -1009,12 +1102,29 @@ function get_revison()
 
 function isBinExists($name)
 {
-    exec("which $name", $path);
-    if ($path[0] == null) {
+    $path = array();
+    exec("which ". escapeshellarg($name) ." 2>/dev/null", $path);
+    // exec() leaves $path empty when the binary is missing, so index 0 must be guarded.
+    return !empty($path[0]);
+}
+
+/**
+ * Test whether the RestAPI feature is usable on this device.
+ *
+ * The API application is installed under RASPI_CONFIG_API (see installers/restapi.service)
+ * and is launched with "python3 -m uvicorn". When the directory is absent the service
+ * cannot run and DotEnv::createEnv() fails (it only does "sudo touch", it never creates
+ * the parent directory), so the menu entry and the page must stay hidden.
+ */
+function isRestApiAvailable()
+{
+    if (!is_dir(RASPI_CONFIG_API)) {
         return false;
-    } else {
-        return true;
     }
+    if (!isBinExists('python3')) {
+        return false;
+    }
+    return true;
 }
 
 function isRunning($name)
@@ -1618,8 +1728,7 @@ function getMenuPurviewList()
     $items[] = array(41, 'docker',    'docker',    $sv, '', _('Docker'),          "isBinExists('dockerd')");
     $items[] = array(42, 'chirpstack','chirpstack',$sv, '', _('ChirpStack'),      "isBinExists('chirpstack')");
     $items[] = array(43, 'iotedge',   'iotedge',   $sv, '', _('Azure IoT Edge'),  "isBinExists('iotedge')");
-    $items[] = array(44, 'restapi',   'restapi',   $sv, '', _('RestAPI'),
-        "isBinExists('pip3') || isBinExists('python3') && file_exists('/etc/raspap/api/')");
+    $items[] = array(44, 'restapi',   'restapi',   $sv, '', _('RestAPI'), "isRestApiAvailable()");
 
     // --- System (bits 45-53, 55) ---
     // bit 55 (System Log) appended after 53 was taken; bits are permanent.

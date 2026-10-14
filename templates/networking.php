@@ -1,8 +1,10 @@
 <?php ob_start() ?>
-  <?php if (!RASPI_MONITOR_ENABLED) : ?>
-      <input type="submit" class="btn btn-outline btn-primary" value="<?php echo _("Save settings"); ?>" name="savenetworksettings" />
-      <input type="submit" class="btn btn-success" value="<?php echo _("Apply settings"); $msg=_("Restarting networking"); ?>" data-toggle="modal" data-target="#hostapdModal" name="applynetworksettings" />
-  <?php endif ?>
+  <?php
+    $msg = _('Restarting networking');
+    if (!RASPI_MONITOR_ENABLED) :
+      BtnSaveApplyCustom('savenetworksettings', 'applynetworksettings');
+    endif;
+  ?>
   <!-- Modal -->
   <div class="modal fade" id="hostapdModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">

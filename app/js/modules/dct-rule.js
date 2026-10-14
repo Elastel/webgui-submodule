@@ -345,6 +345,12 @@ export function get_data_type_value(table_name) {
 
 globalThis.get_data_type_value = get_data_type_value;
 
+// Configuration-only tables reuse the generic rule table but must not get the
+// dynamic cur_value / write_value columns that data-point tables use.
+function hasValueColumns(table_name) {
+    return table_name != 'system_param';
+}
+
 export function addSectionTable(table_name, jsonData, option_list) {
     var mode = 0;
     var data_type_value = [];
@@ -378,6 +384,35 @@ export function addSectionTable(table_name, jsonData, option_list) {
         return;
     }
     
+    // The cur_value / write_value columns go right after the header column
+    // flagged with data-field="factor_name". Locate that column by index so the
+    // rows line up even when the underlying field is named differently (e.g.
+    // modbus_slave_point / dnp3 use "source_object").
+    var factorFieldIndex = -1;
+    var titlesRow = table.querySelector('tr.cbi-section-table-titles');
+    if (titlesRow) {
+        var titlesThs = titlesRow.querySelectorAll('th');
+        for (var t = 0; t < titlesThs.length; t++) {
+            if (titlesThs[t].dataset.field === 'factor_name') { factorFieldIndex = t; break; }
+        }
+    }
+
+    // A re-render (config loaded again, import, ...) must replace the rows
+    // instead of appending duplicates. The leading header-only rows (th and no
+    // td) come from page_table_title(); everything after them is data.
+    var headerRowCount = 0;
+    for (var hr = 0; hr < table.rows.length && headerRowCount < 2; hr++) {
+        if (table.rows[hr].querySelector('th') !== null && table.rows[hr].querySelector('td') === null) {
+            headerRowCount++;
+        } else {
+            break;
+        }
+    }
+    while (table.rows.length > headerRowCount) {
+        table.deleteRow(table.rows.length - 1);
+    }
+
+    var rowsHtml = [];
     for (var i = 0; i < len; i++) {
         var contents = '';
         contents += '<tr  class="tr cbi-section-table-descr">\n';
@@ -386,7 +421,7 @@ export function addSectionTable(table_name, jsonData, option_list) {
             mode = Number(jsonData[i]['mode']);
         }
 
-        option_list.forEach(function(key){
+        option_list.forEach(function(key, kIdx){
             if (!jsonData[i].hasOwnProperty(key)) {
                 if (key == 'operator' || key == 'operand' || key == 'ex' || key == 'accuracy' ||
                 key == 'report_type' || key == 'alarm_up' || key == 'alarm_down' || key == 'phone_num' || 
@@ -395,7 +430,7 @@ export function addSectionTable(table_name, jsonData, option_list) {
                     contents += '   <td style="display:none" name="'+key+'">-</td>\n';
                 } else if (key == 'enabled' || key == 'sms_reporting' || key == 'interpreter') {
                     var cellStyle = (key == 'enabled') ? 'text-align:center;padding:0;cursor:pointer;' : 'display:none';
-                    contents += '   <td style="' + cellStyle + '"><label style="display:block;width:100%;padding:0.5rem 0;cursor:pointer;"><input type="checkbox" class="dct-big-checkbox" name="' +
+                    contents += '   <td name="' + key + '" style="' + cellStyle + '"><label style="display:block;width:100%;padding:0.5rem 0;cursor:pointer;"><input type="checkbox" class="dct-big-checkbox" name="' +
                              key + '" ' + (jsonData[i][key] == '1' ? 'checked' : ' ') +
                              ' onclick="event.stopPropagation();updateData(\''+table_name+'\')"></label></td>\n';
                 } else {
@@ -444,7 +479,7 @@ export function addSectionTable(table_name, jsonData, option_list) {
                 contents += '   <td style="text-align:center" name="'+key+'">'+ cur_status +'</td>\n';
             } else if (key == 'enabled' || key == 'sms_reporting' || key == 'interpreter') {
                 var cellStyle2 = (key == 'enabled') ? 'text-align:center;padding:0;cursor:pointer;' : 'display:none';
-                contents += '   <td style="' + cellStyle2 + '"><label style="display:block;width:100%;padding:0.5rem 0;cursor:pointer;"><input type="checkbox" class="dct-big-checkbox" name="' +
+                contents += '   <td name="' + key + '" style="' + cellStyle2 + '"><label style="display:block;width:100%;padding:0.5rem 0;cursor:pointer;"><input type="checkbox" class="dct-big-checkbox" name="' +
                              key + '" ' + (jsonData[i][key] == '1' ? 'checked' : ' ') +
                              ' onclick="event.stopPropagation();updateData(\''+table_name+'\')"></label></td>\n';
             } else if (key == 'belonged_com' && jsonData[i][key].includes('TCP')) {
@@ -455,27 +490,152 @@ export function addSectionTable(table_name, jsonData, option_list) {
                 contents += '   <td style="text-align:center" name="'+key+'">'+ ((mode == 1 && key == 'debounce_interval') ? '-' : jsonData[i][key]) +'</td>\n';
             }
 
+            if ((key === 'factor_name' || kIdx === factorFieldIndex) && hasValueColumns(table_name)) {
+                contents += '   <td style="font-weight:bold;color:blue;text-align:center" name="cur_value">-</td>\n';
+                if (table_name != 'adc' && table_name != 'di' && table_name != 'modbus_slave_point' &&
+                    table_name != 'dnp3' && table_name != 'opcuaserv') {
+                    contents += '   <td style="text-align:center" name="write_value"><button type="button" class="btn-primary" style="border-radius:0.5rem;" onclick="event.preventDefault();writeValueByTag(this)">Write</button></td>\n';
+                }
+            }
+
         })
         contents += '   <td class="cbi-drag-col" style="text-align:center;"><span class="dct-drag-handle" draggable="true" title="Drag to reorder">&#9776;</span></td>\n' +
             '   <td><a href="javascript:void(0);" onclick="editData(this, \''+table_name+'\');" >Edit</a></td>\n' +
             '       <td><a href="javascript:void(0);" onclick="delData(this, \''+table_name+'\');" >Del</a></td>\n' +
             '   </tr>';
-        table.innerHTML += contents;
+        rowsHtml.push(contents);
     }
 
-    const curValue = document.querySelector('[data-i18n="cur_value"]').value;
-    const writeValue = document.querySelector('[data-i18n="write_value"]').value;
-    insertColumn("table_" + table_name, 'cur_value', 'factor_name', curValue);
-    insertColumn("table_" + table_name, 'write_value', 'cur_value', writeValue);
+    table.insertAdjacentHTML('beforeend', rowsHtml.join(''));
+
+    const curValueLabel = document.querySelector('[data-i18n="cur_value"]').value;
+    const writeValueLabel = document.querySelector('[data-i18n="write_value"]').value;
+    var hdrTable = document.getElementById("table_" + table_name);
+    var skipWriteValue = (table_name == 'adc' || table_name == 'di' || table_name == 'modbus_slave_point' ||
+        table_name == 'dnp3' || table_name == 'opcuaserv');
+    if (hdrTable && hasValueColumns(table_name) && !doesColumnExist("table_" + table_name, 'cur_value')) {
+        var titleRow = hdrTable.querySelector('tr.cbi-section-table-titles');
+        var descRow = hdrTable.querySelector('tr.cbi-section-table-descr');
+        var hdrThs = titleRow ? titleRow.querySelectorAll('th') : [];
+        var fIdx = hdrThs.length;
+        for (var h = 0; h < hdrThs.length; h++) {
+            if (hdrThs[h].dataset.field === 'factor_name') { fIdx = h + 1; break; }
+        }
+        function addHeaderCell(row, idx, label, field) {
+            if (!row) return;
+            var th = document.createElement('th');
+            th.className = 'th cbi-section-table-cell';
+            th.dataset.field = field;
+            th.innerHTML = label || '';
+            row.insertBefore(th, row.cells[idx] || null);
+        }
+        addHeaderCell(titleRow, fIdx, curValueLabel, 'cur_value');
+        addHeaderCell(descRow, fIdx, '', 'cur_value');
+        if (!skipWriteValue) {
+            addHeaderCell(titleRow, fIdx + 1, writeValueLabel, 'write_value');
+            addHeaderCell(descRow, fIdx + 1, '', 'write_value');
+        }
+    }
 
     var result = get_table_data(table_name, option_list);
     var json_data = JSON.stringify(result);
     $('#hidTD_'+table_name).val(json_data);
 
     initRowDrag(table_name);
+    initSelectAllEnable(table_name);
 }
 
 globalThis.addSectionTable = addSectionTable;
+
+export function initSelectAllEnable(table_name) {
+    var table = document.getElementById('table_' + table_name);
+    if (!table)
+        return;
+    if (table.querySelector('tr.cbi-section-table-titles input.dct-select-all') != null)
+        return; 
+
+    var th = getEnableHeaderTh(table, table_name);
+    if (th == null)
+        return; 
+
+    var label = document.createElement('label');
+    label.style.cssText = 'display:block;width:100%;margin:0;padding:0;cursor:pointer;text-align:center;';
+    label.title = 'Enable / Disable all';
+
+    var box = document.createElement('input');
+    box.type = 'checkbox';
+    box.className = 'dct-big-checkbox dct-select-all';
+    label.appendChild(box);
+    th.appendChild(label);
+
+    box.addEventListener('change', function () {
+        var boxes = getEnableBoxes(table);
+        for (var i = 0; i < boxes.length; i++)
+            boxes[i].checked = box.checked;
+
+        box.indeterminate = false;
+        updateData(table_name);
+    });
+
+    table.addEventListener('change', function (event) {
+        if (!event.target || event.target.name !== 'enabled')
+            return;
+        syncSelectAllState(table, box);
+    });
+
+    syncSelectAllState(table, box);
+}
+
+function syncSelectAllState(table, box) {
+    var boxes = getEnableBoxes(table);
+    var on = 0;
+    for (var i = 0; i < boxes.length; i++) {
+        if (boxes[i].checked)
+            on++;
+    }
+    box.checked = boxes.length > 0 && on === boxes.length;
+    box.indeterminate = on > 0 && on < boxes.length;
+}
+
+globalThis.initSelectAllEnable = initSelectAllEnable;
+
+function getEnableHeaderTh(table, table_name) {
+    var titleRow = table.querySelector('tr.cbi-section-table-titles');
+    if (titleRow == null)
+        return null;
+
+    if (!tableHasEnableColumn(table, table_name))
+        return null;
+
+    var drag = titleRow.querySelector('th.cbi-drag-col');
+    var th = drag != null ? drag.previousElementSibling : null;
+
+    if (th == null) {
+        var actions = titleRow.querySelectorAll('th.cbi-section-actions');
+        if (actions.length > 0)
+            th = actions[0].previousElementSibling;
+    }
+
+    if (th == null || th.classList.contains('cbi-drag-col') || th.classList.contains('cbi-section-actions'))
+        return null;
+
+    return th;
+}
+
+function tableHasEnableColumn(table, table_name) {
+    if (table.querySelector('td input[name=enabled]') != null)
+        return true;
+
+    var optionList = document.getElementById('option_list_' + table_name);
+    if (optionList == null)
+        return false;
+
+    return (',' + optionList.value + ',').indexOf(',enabled,') !== -1;
+}
+
+function getEnableBoxes(table) {
+    return table.querySelectorAll('td input[name=enabled]');
+}
 
 export function initRowDrag(table_name) {
     var table = document.getElementById("table_" + table_name);
@@ -797,55 +957,57 @@ export function get_table_data(table_name, option_list) {
 
     data_type_value = get_data_type_value(table_name);
 
-    var tr = $('#table_' + table_name + ' tr');
+    var table = document.getElementById("table_" + table_name);
+    if (!table) return [];
+
+    var rows = table.rows;
     var result = [];
-    for (var i = 2; i < tr.length; i++) {
-        var tds = $(tr[i]).find("td");
-        if (tds.length > 0) {
-            var tmp = [];
-            var num = 0;
-            tmp += '{';
-            option_list.forEach(function (option) {
-                var val = tds.filter('[name="'+ option +'"]').text();
-                // console.log(val);
+    for (var i = 2; i < rows.length; i++) {
+        var row = rows[i];
+        if (row.cells.length === 0) continue;
 
-                if (option == 'enabled' || option == 'sms_reporting' || option == 'interpreter') {
-                    var check = tds.find('input[name="' + option + '"]').is(':checked');
-                    // console.log(check);
-                    tmp += '"' + option + '":"' + ( check ? 1 : 0) + '",';
-                } else if (option == 'data_type') {
-                    tmp += '"' + option + '":"' + data_type_value.indexOf(val) + '",';
-                } else if (option == 'reg_type') {
-                    tmp += '"' + option + '":"' + reg_type_value.indexOf(val) + '",';
-                } else if (option == 'fc') {
-                    tmp += '"' + option + '":"' + fc_value.indexOf(val) + '",';
-                } else if (option == 'word_len') {
-                    tmp += '"' + option + '":"' + data_type_value.indexOf(val) + '",';
-                } else if (option == 'cap_type') {
-                    tmp += '"' + option + '":"' + cap_type_value.indexOf(val) + '",';
-                } else if (option == 'mode') {
-                    tmp += '"' + option + '":"' + mode_value.indexOf(val) + '",';
-                } else if (option == 'count_method') {
-                    tmp += '"' + option + '":"' + count_method_value.indexOf(val) + '",';
-                } else if (option == 'init_status') {
-                    tmp += '"' + option + '":"' + status_value.indexOf(val) + '",';
-                } else if (option == 'cur_status') {
-                    var cur_status = val;
-                    if (cur_status == '0' || cur_status == '1')
-                        cur_status = status_value.indexOf(val);
-                    
-                    tmp += '"' + option + '":"' + cur_status + '",';
-                } else if (option == "belonged_com"  && val.includes('Network')) {
-                    tmp += '"' + option + '":"TCP' + val.slice(-1) + '",'
-                } else  {
-                    tmp += '"' + option + '":"' + val + '",';
-                }
-            })
-
-            tmp = tmp.slice(-1) === "," ? tmp.slice(0, -1) + "}" : tmp + "}";
-            var obj = JSON.parse(tmp);
-            result.push(obj);
+        var cellMap = {};
+        for (var c = 0; c < row.cells.length; c++) {
+            var nm = row.cells[c].getAttribute('name');
+            if (nm) cellMap[nm] = row.cells[c];
         }
+
+        var obj = {};
+        for (var k = 0; k < option_list.length; k++) {
+            var option = option_list[k];
+            var cell = cellMap[option];
+            if (!cell) { obj[option] = ''; continue; }
+
+            if (option == 'enabled' || option == 'sms_reporting' || option == 'interpreter') {
+                var inp = cell.querySelector('input');
+                obj[option] = (inp && inp.checked) ? '1' : '0';
+            } else if (option == 'data_type') {
+                obj[option] = String(data_type_value.indexOf(cell.textContent));
+            } else if (option == 'reg_type') {
+                obj[option] = String(reg_type_value.indexOf(cell.textContent));
+            } else if (option == 'fc') {
+                obj[option] = String(fc_value.indexOf(cell.textContent));
+            } else if (option == 'word_len') {
+                obj[option] = String(data_type_value.indexOf(cell.textContent));
+            } else if (option == 'cap_type') {
+                obj[option] = String(cap_type_value.indexOf(cell.textContent));
+            } else if (option == 'mode') {
+                obj[option] = String(mode_value.indexOf(cell.textContent));
+            } else if (option == 'count_method') {
+                obj[option] = String(count_method_value.indexOf(cell.textContent));
+            } else if (option == 'init_status') {
+                obj[option] = String(status_value.indexOf(cell.textContent));
+            } else if (option == 'cur_status') {
+                var cs = cell.textContent;
+                if (cs === '0' || cs === '1') cs = String(status_value.indexOf(cs));
+                obj[option] = cs;
+            } else if (option == "belonged_com" && cell.textContent.indexOf('Network') !== -1) {
+                obj[option] = 'TCP' + cell.textContent.slice(-1);
+            } else {
+                obj[option] = cell.textContent;
+            }
+        }
+        result.push(obj);
     }
 
     return result;
@@ -933,12 +1095,21 @@ export function saveData(table_name) {
         table_name = io_type;
 
     var table = document.getElementById("table_" + table_name);
+    // Same rule as addSectionTable: find the factor column via the header's
+    // data-field marker so the value cells land where the header expects them,
+    // even when the field itself is named source_object.
+    var factorFieldIndex = -1;
+    var titlesRow = table ? table.querySelector('tr.cbi-section-table-titles') : null;
+    if (titlesRow) {
+        var titlesThs = titlesRow.querySelectorAll('th');
+        for (var t = 0; t < titlesThs.length; t++) {
+            if (titlesThs[t].dataset.field === 'factor_name') { factorFieldIndex = t; break; }
+        }
+    }
     if (page_type == "0") {
-        deleteColumnByHeader("table_" + table_name, 'cur_value');
-        deleteColumnByHeader("table_" + table_name, 'write_value');
         var contents = '';
         contents += '<tr  class="tr cbi-section-table-descr">\n';
-        option_list.forEach(function(option){
+        option_list.forEach(function(option, oIdx){
             if (option == 'operator' || option == 'operand' || option == 'ex' || option == 'accuracy' ||
                 option == 'report_type' || option == 'alarm_up' || option == 'alarm_down' || option == 'phone_num' || 
                 option == 'email' || option == 'event_server_center' || option == 'contents' || option == 'retry_interval' || 
@@ -946,7 +1117,7 @@ export function saveData(table_name) {
                 contents += '   <td style="display:none" name="'+option+'">'+ (option_value[option].length > 0 ? option_value[option] : "-") +'</td>\n';
             } else if (option == 'enabled' || option == 'sms_reporting' || option == 'interpreter') {
                 var cellStyle3 = (option == 'enabled') ? 'text-align:center;padding:0;cursor:pointer;' : 'display:none';
-                contents += '   <td style="' + cellStyle3 + '"><label style="display:block;width:100%;padding:0.5rem 0;cursor:pointer;"><input type="checkbox" class="dct-big-checkbox" name="' + option
+                contents += '   <td name="' + option + '" style="' + cellStyle3 + '"><label style="display:block;width:100%;padding:0.5rem 0;cursor:pointer;"><input type="checkbox" class="dct-big-checkbox" name="' + option
                 +'" ' + (option_value[option] == '1' ? 'checked' : ' ') + ' onclick="event.stopPropagation();updateData(\''+table_name+'\')"></label></td>\n';
             } else if (option == "belonged_com"  && option_value[option].includes('TCP')) {
                 contents += '   <td style="text-align:center" name="'+option+'">Network Node' + (option_value[option][3]) +'</td>\n';
@@ -955,15 +1126,20 @@ export function saveData(table_name) {
             } else {
                 contents += '   <td style="text-align:center" name="'+option+'">'+ (option_value[option] ? option_value[option] : "-") +'</td>\n';
             }
+
+            if ((option === 'factor_name' || oIdx === factorFieldIndex) && hasValueColumns(table_name)) {
+                contents += '   <td style="font-weight:bold;color:blue;text-align:center" name="cur_value">-</td>\n';
+                if (table_name != 'adc' && table_name != 'di' && table_name != 'modbus_slave_point' &&
+                    table_name != 'dnp3' && table_name != 'opcuaserv') {
+                    contents += '   <td style="text-align:center" name="write_value"><button type="button" class="btn-primary" style="border-radius:0.5rem;" onclick="event.preventDefault();writeValueByTag(this)">Write</button></td>\n';
+                }
+            }
         })
         contents += '   <td class="cbi-drag-col" style="text-align:center;"><span class="dct-drag-handle" draggable="true" title="Drag to reorder">&#9776;</span></td>\n' +
             '   <td><a href="javascript:void(0);" onclick="editData(this, \''+table_name+'\');" >Edit</a></td>\n' +
             '       <td><a href="javascript:void(0);" onclick="delData(this, \''+table_name+'\');" >Del</a></td>\n' +
             '   </tr>';
-        table.innerHTML += contents;
-
-        insertColumn("table_" + table_name, 'cur_value', 'factor_name', 'Current Value');
-        insertColumn("table_" + table_name, 'write_value', 'cur_value', 'Write Value');
+        table.insertAdjacentHTML('beforeend', contents);
     } else {
         var num = 0;
         option_list.forEach(function (option){
@@ -1044,7 +1220,11 @@ export function setSelectByText(id, text)
 globalThis.setSelectByText = setSelectByText;
 
 export function editData(object, table_name) {
-    var row = $(object).parent().parent().parent().prevAll().length + 1;
+    // Edit link -> td -> tr. rowIndex is this row's position in table.rows
+    // (header row included), which is exactly the index saveData() writes back
+    // to. Deriving it from prevAll() on an over-climbed ancestor made it a
+    // constant, so editing any row always targeted the first data row.
+    var row = object.parentNode.parentNode.rowIndex;
     document.getElementById("page_type").value = row;
     var num = 0;
     var tmp = $('#option_list_'+table_name).val();
@@ -1279,9 +1459,11 @@ export function getRealtimeData() {
                 if (tr.querySelector('td[name="factor_name"]')) {
                     //console.log(tr.querySelector('td[name="factor_name"]').textContent);
                     var factor = tr.querySelector('td[name="factor_name"]').textContent;
-                    var deviceName = tr.querySelector('td[name="device_name"]').textContent;
+                    var deviceNameTd = tr.querySelector('td[name="device_name"]');
+                    var deviceName = deviceNameTd ? deviceNameTd.textContent : '';
                     var factorList = factor.split(';');
-                    var serverCenter = tr.querySelector('td[name="server_center"]').textContent;
+                    var serverCenterTd = tr.querySelector('td[name="server_center"]');
+                    var serverCenter = serverCenterTd ? serverCenterTd.textContent : '';
                     var flag = getReportingCenterFlag(serverCenter);
                     factorList.forEach((key) => {
                         // console.log(flag);
@@ -1294,7 +1476,7 @@ export function getRealtimeData() {
                                 return;
                             }
                         });
-                        cur_value += jsonValue + ';'; 
+                        if (jsonValue !== '') cur_value += jsonValue + ';'; 
                     })
 
                     if (cur_value.slice(-1) === ';') {
@@ -1316,7 +1498,7 @@ globalThis.getRealtimeData = getRealtimeData;
 
 export function loadRealtimeData() {
     if (getRealtimeData()) {
-        setInterval(getRealtimeData, 1000);
+        setInterval(() => { if (!document.hidden) getRealtimeData(); }, 1000);
     }  
 }
 

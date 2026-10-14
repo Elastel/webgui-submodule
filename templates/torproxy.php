@@ -5,7 +5,7 @@
         <div class="card-body">
             <!-- Nav tabs -->
             <ul class="nav nav-tabs">
-                <li class="nav-item"><a class="nav-link active" href="#basic" data-toggle="tab">Basic</a></li>
+                <li class="nav-item"><a class="nav-link active" href="#tor-basic" data-toggle="tab">Basic</a></li>
                 <li class="nav-item"><a class="nav-link" href="#relay" data-toggle="tab">Relay</a>
                 </li>
             </ul>
@@ -14,7 +14,7 @@
             <div class="tab-content">
                 <p><?php echo $status; ?></p>
 
-                <div class="tab-pane active" id="basic">
+                <div class="tab-pane active" id="tor-basic">
                     <h4>Basic settings</h4>
                     <form role="form" action="save_hostapd_conf" method="POST">
                     <?php echo \ElastPro\Tokens\CSRF::hiddenField(); ?>

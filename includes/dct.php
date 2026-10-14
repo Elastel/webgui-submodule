@@ -34,6 +34,11 @@ abstract class TcpProtoEnum {
 
 function get_io_maps()
 {
+  static $channel_map_cache = null;
+  if ($channel_map_cache !== null) {
+      return $channel_map_cache;
+  }
+
   $model = getModel();
   $target = getTarget();
   $channel_map = [];
@@ -82,6 +87,7 @@ function get_io_maps()
   }
 
   echo $channel_map[0];
+  $channel_map_cache = $channel_map;
   return $channel_map;
 }
 
@@ -314,16 +320,20 @@ function page_interface_tcp($num)
   echo '</div>';
 
   echo '<div id="tcp_page_protocol_bacnet'.$num.'" name="tcp_page_protocol_bacnet'.$num.'">';
-  exec("ip -o link show | awk -F': ' '{print $2}'", $interface_tmp);
-  sort($interface_tmp);
-  $interface_list = array();
-  foreach ($interface_tmp as $value) {
-      if ($value == 'eth1' || $value == 'docker0' ||  $value == 'lo' ||
-          strstr($value, 'veth') != NULL || strstr($value, '@NONE') != NULL || 
-          strstr($value, 'br-') != NULL)
-          continue;
+  static $interface_list = null;
+  if ($interface_list === null) {
+      $interface_tmp = array();
+      exec("ip -o link show | awk -F': ' '{print $2}'", $interface_tmp);
+      sort($interface_tmp);
+      $interface_list = array();
+      foreach ($interface_tmp as $value) {
+          if ($value == 'eth1' || $value == 'docker0' ||  $value == 'lo' ||
+              strstr($value, 'veth') != NULL || strstr($value, '@NONE') != NULL || 
+              strstr($value, 'br-') != NULL)
+              continue;
 
-      $interface_list["$value"] = $value;
+          $interface_list["$value"] = $value;
+      }
   }
   SelectControlCustom(_('Interface'), 'tcp_interface'.$num, $interface_list, $interface_list['eth0'], 'tcp_interface'.$num);
   $collect_mode = array('poll'=>'poll', 'cov'=>'cov');
@@ -792,7 +802,6 @@ function save_import_file($section, $status, $file) {
         
         if (file_exists($new_file_path)) {
             $status->addMessage('file uploaded successfully', 'info');
-            // 文件编码转换
             exec("sudo dos2unix $new_file_path");
             exec("sudo conf_im_ex import $section");
         } else {

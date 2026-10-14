@@ -29,6 +29,10 @@ require_once 'config.php';
 
 define('SYSLOG_FILE_CANDIDATES', array('/var/log/syslog', '/var/log/messages'));
 define('SYSLOG_MAX_LINES', 50000);
+// Tighter window used only when a filter is active: scanning the full
+// SYSLOG_MAX_LINES into a PHP array just to filter it can peak at tens of MB,
+// so filtered reads are bounded to this smaller limit instead.
+define('SYSLOG_FILTER_SCAN_LINES', 5000);
 define('SYSLOG_CACHE_FILE', '/tmp/syslog_sources.cache');
 define('SYSLOG_CACHE_TTL', 300);
 
@@ -429,7 +433,7 @@ function syslogRead($type, $sourceKey, $limit, $filter = array())
     // SYSLOG_MAX_LINES) so matches are not lost to a scrolling window, then the
     // Lines control caps how many *matched* rows are returned for display. This
     // keeps the Lines limit meaningful while the reported count stays stable.
-    $readLimit = $filtered ? SYSLOG_MAX_LINES : $userLimit;
+    $readLimit = $filtered ? SYSLOG_FILTER_SCAN_LINES : $userLimit;
 
     if ($type === 'kernel') {
         list($ret, $output) = syslogExec(syslogKernelCommand($readLimit), $readLimit);
@@ -510,4 +514,62 @@ function DisplaySyslog()
     $kernelAvailable = (syslogResolve('dmesg') !== null);
 
     echo renderTemplate("syslog", compact("status", "sources", "kernelAvailable"));
+}
+
+/**
+ * Stream a log source to the output buffer, applying the same filter the page
+ * uses, without ever collecting the whole result into a PHP array or a single
+ * concatenated string. Used by the download endpoint so large or filtered logs
+ * do not double-buffer in memory (array + imploded string).
+ */
+function syslogStreamOutput($type, $sourceKey, $limit, $filter = array())
+{
+    $filter = empty($filter) ? syslogNormalizeFilter(array()) : $filter;
+    $filtered = !syslogFilterIsEmpty($filter);
+
+    $readLimit = $filtered
+        ? SYSLOG_FILTER_SCAN_LINES
+        : (($limit > 0) ? min((int)$limit, SYSLOG_MAX_LINES) : SYSLOG_MAX_LINES);
+
+    if ($type === 'kernel') {
+        $cmd = syslogKernelCommand($readLimit);
+    } else {
+        if ($sourceKey === '') {
+            $sources = syslogDetectSources();
+            if (empty($sources)) {
+                echo _('No log source available on this device.');
+                return;
+            }
+            $sourceKey = $sources[0]['key'];
+        }
+        $cmd = syslogReadCommand($sourceKey, $readLimit);
+    }
+
+    if ($cmd === null) {
+        return;
+    }
+
+    $isRegex = !empty($filter['regex']);
+    $caseSensitive = !empty($filter['case']);
+    $keyword = $filter['keyword'];
+    $exclude = $filter['exclude'];
+
+    $fh = popen($cmd . ' 2>&1', 'r');
+    if ($fh === false) {
+        return;
+    }
+
+    while (($line = fgets($fh)) !== false) {
+        if ($filtered) {
+            if ($keyword !== '' && !syslogMatchOne($line, $keyword, $isRegex, $caseSensitive)) {
+                continue;
+            }
+            if ($exclude !== '' && syslogMatchOne($line, $exclude, $isRegex, $caseSensitive)) {
+                continue;
+            }
+        }
+        echo $line;
+    }
+
+    pclose($fh);
 }

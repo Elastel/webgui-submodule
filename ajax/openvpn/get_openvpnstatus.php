@@ -4,7 +4,6 @@ require_once '../../includes/autoload.php';
 require_once '../../includes/CSRF.php';
 require_once '../../includes/config.php';
 
-// 判断openvpn是否在运行
 exec("sudo pgrep openvpn", $pid);
 if ($pid[0]) {
     exec("sudo /usr/local/bin/uci get openvpn.openvpn.role", $role);

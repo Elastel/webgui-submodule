@@ -33,15 +33,18 @@ function DisplayIotedge()
         }
     }
 
+    $tmp = array();
     exec("sudo iotedge --version | awk '{print $2}'", $tmp);
-    $version = $tmp[0];
+    $version = $tmp[0] ?? '';
     unset($tmp);
+    $tmp = array();
     exec('sudo iotedge system status | grep aziot-edged | grep Running -c', $tmp);
-    $run_status = $tmp[0];
+    $run_status = $tmp[0] ?? '';
 
     $method_list = array();
+    $source = array();
     exec('uci get iotedge.iotedge.source', $source);
-    if ($source[0] == 'dps') {
+    if (($source[0] ?? '') == 'dps') {
         $method_list = array('TPM', 'Symmetric encryption', 'X.509 certificate');
     } else {
         $method_list = array('Connection String', 'Symmetric encryption', 'X.509 certificate');

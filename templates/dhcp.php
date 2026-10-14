@@ -1,8 +1,10 @@
 <?php ob_start() ?>
-  <?php if (!RASPI_MONITOR_ENABLED) : ?>
-      <input type="submit" class="btn btn-outline btn-primary" value="<?php echo _("Save settings"); ?>" name="savedhcpdsettings" />
-      <input type="submit" class="btn btn-success" value="<?php echo _("Apply settings"); $msg=_("Restarting dhcp"); ?>" data-toggle="modal" data-target="#hostapdModal" name="applydhcpdsettings" />
-  <?php endif ?>
+  <?php
+    $msg = _('Restarting dhcp');
+    if (!RASPI_MONITOR_ENABLED) :
+      BtnSaveApplyCustom('savedhcpdsettings', 'applydhcpdsettings');
+    endif;
+  ?>
   <!-- Modal -->
   <div class="modal fade" id="hostapdModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">

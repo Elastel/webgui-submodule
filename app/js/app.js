@@ -245,10 +245,28 @@ function bindEvents() {
 
 function initMenu() {
     const currentUrl = location.href;
-    const $sidebarLinks = $('.sidebar a');
+    const $sidebar = $('.sidebar');
+    const $sidebarLinks = $sidebar.find('a');
     const $navItems = $('.nav-item');
     
     const MENU_GROUPS = ['dct', 'remote', 'network', 'convert', 'services', 'system'];
+
+    // The rail becomes a fly-out menu in two cases: the <768px media query
+    // (e.g. the page is zoomed in) or a manually collapsed rail. There the
+    // sub-menus are pop-up panels, so they must never be auto-expanded - doing
+    // that on every page load would cover the content the user just opened.
+    const narrowQuery = window.matchMedia('(max-width: 767.98px)');
+    const isFlyoutMode = () => $sidebar.hasClass('toggled') || narrowQuery.matches;
+
+    const closeFlyouts = () => {
+        $sidebar.find('.collapse.show').collapse('hide');
+    };
+
+    const expandActiveBranch = () => {
+        const $active = $sidebar.find('li.active');
+        $active.parents('.collapse').addClass('show');
+        $active.parents('.nav-item').children('a').removeClass('collapsed');
+    };
     
     const MENU_MAP = [
         { match: 'dct_', parent: 'dct', extra: [
@@ -278,7 +296,7 @@ function initMenu() {
         if (this.href === currentUrl) {
             const $this = $(this);
             $this.parent().addClass('active');
-            $this.parents('.collapse').addClass('show');
+            if (!isFlyoutMode()) $this.parents('.collapse').addClass('show');
             $this.parents('.nav-item').children('a').removeClass('collapsed');
         }
     });
@@ -296,13 +314,14 @@ function initMenu() {
         const parentCollapseId = `#navbar-collapse-${matchedGroup.parent}`;
         const parentId = `#${matchedGroup.parent}`;
         
-        $(parentCollapseId).addClass('show');
+        // fly-out mode keeps the panels closed, it only marks the current branch
+        if (!isFlyoutMode()) $(parentCollapseId).addClass('show');
         $(parentId).removeClass('collapsed');
 
         if (matchedGroup.extra) {
             matchedGroup.extra.forEach(sub => {
                 if (id.includes(sub.match)) {
-                    $(`#${sub.collapse}`).addClass('show');
+                    if (!isFlyoutMode()) $(`#${sub.collapse}`).addClass('show');
                     $(`#${sub.id}`).removeClass('collapsed');
                 }
             });
@@ -327,6 +346,34 @@ function initMenu() {
             collapseOthers(key);
         }
     });
+
+    // Fly-out mode: the 2nd/3rd level entries pop up as panels. Selecting an
+    // entry dismisses them so they stop covering the page content.
+    $sidebar.on('click', 'a.nav-link', function() {
+        const $link = $(this);
+
+        // sub-group toggles only open/close their own panel
+        if ($link.attr('data-toggle') === 'collapse' || $link.attr('data-bs-toggle') === 'collapse') return;
+
+        // the expanded sidebar keeps its sub-menu in normal flow - nothing to dismiss
+        if (!isFlyoutMode()) return;
+
+        closeFlyouts();
+    });
+
+    // Keep the two modes in sync: entering fly-out mode hides the panels,
+    // leaving it restores the branch of the page that is currently open.
+    const syncFlyoutMode = () => {
+        if (isFlyoutMode()) closeFlyouts(); else expandActiveBranch();
+    };
+
+    if (narrowQuery.addEventListener) narrowQuery.addEventListener('change', syncFlyoutMode);
+    else if (narrowQuery.addListener) narrowQuery.addListener(syncFlyoutMode);
+
+    if ($sidebar.length && window.MutationObserver) {
+        new MutationObserver(syncFlyoutMode)
+            .observe($sidebar[0], { attributes: true, attributeFilter: ['class'] });
+    }
 }
 
 function hideEmptyMenus() {
