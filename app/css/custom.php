@@ -377,6 +377,37 @@ canvas#divDBChartBandwidthhourly {
   text-align:left;
 }
 
+/* WiFi AP basic settings: fields on the left, QR code on the right (spanning several rows) */
+.wifi-ap-section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0 0.5rem;
+}
+.wifi-ap-fields {
+  flex: 1 1 22rem;
+  min-width: 0;
+}
+.wifi-ap-qrcode {
+  flex: 0 0 auto;
+  width: 15rem;
+  max-width: 100%;
+  margin-top: 0.35rem;
+  align-self: flex-end;
+}
+.wifi-ap-qrcode img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.wifi-ap-qrcode .figure-caption {
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  margin-top: 0.5rem;
+  opacity: 0.7;
+}
+
 .dct-big-checkbox {
   width: 15px;
   height: 15px;
@@ -773,6 +804,23 @@ canvas#divDBChartBandwidthhourly {
 #table_modbus td[name="value"] {
   color: blue;
   font-weight: bold;
+}
+
+/* JSON Format = custom-format: keeps the layout of the other cbi fields (inline
+   next to its label, width capped like the JSON Format select) and must preserve
+   the blank lines / indentation, so use a monospace font with white-space: pre. */
+.custom-format-box {
+  width: 100%;
+  max-width: 20rem;
+  height: 12em;
+  vertical-align: top;
+  padding: 0.4rem 0.5rem;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  white-space: pre;
+  overflow: auto;
+  resize: vertical;
 }
 
 .dropdown {

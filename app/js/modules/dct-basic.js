@@ -2,7 +2,6 @@ export function enableBasic(state) {
     if (state) {
     $('#page_basic').show();
     enableCache(document.getElementById('cache_enabled'));
-    enableSystemReport(document.getElementById('system_enabled'));
     } else {
     $('#page_basic').hide();
     }
@@ -21,16 +20,6 @@ export function enableCache(checkbox) {
 
 globalThis.enableCache = enableCache;
 
-export function enableSystemReport(checkbox) {
-    if (checkbox.checked == true) {
-        $("#page_system_report").show();
-    } else {
-        $("#page_system_report").hide();
-    }
-}
-
-globalThis.enableSystemReport = enableSystemReport;
-
 export function initDctBasic() {
     /*basic*/
     function loadBasicConfig() {
@@ -38,7 +27,7 @@ export function initDctBasic() {
         $.get('ajax/dct/get_dctcfg.php?type=basic',function(data) {
             var jsonData = JSON.parse(data);
             var arr = ['collect_period', 'report_period', 'batch_reporting', 'cache_enabled', 'cache_day', 'minute_enabled',
-            'minute_period', 'hour_enabled', 'day_enabled', 'system_enabled', 'system_report_period'];
+            'minute_period', 'hour_enabled', 'day_enabled'];
 
             $('#enabled').val(jsonData.enabled);
             if (jsonData.enabled == '1') {
@@ -51,7 +40,7 @@ export function initDctBasic() {
                     }
         
                     if (info == 'cache_enabled' || info == 'minute_enabled' || info == 'hour_enabled' || 
-                        info == 'day_enabled' || info == 'batch_reporting' || info == 'system_enabled') {
+                        info == 'day_enabled' || info == 'batch_reporting') {
                         $('#' + info).prop('checked', (jsonData[info] == '1') ? true:false);
                     } else {
                         $('#' + info).val(jsonData[info]);
@@ -62,12 +51,6 @@ export function initDctBasic() {
                     $('#page_cache_days').show();
                 } else {
                     $('#page_cache_days').hide();
-                }
-
-                if (jsonData.system_enabled == '1') {
-                    $('#page_system_report').show();
-                } else {
-                    $('#page_system_report').hide();
                 }
 
                 if (jsonData.minute_enabled == '1') {

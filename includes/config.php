@@ -1,6 +1,9 @@
 <?php
 
 define('ELASTEL_DCT_CONFIG_JSON', '/tmp/dct.json');
+// JSON Format = custom-format: framework text typed in the Server Setting page.
+define('ELASTEL_CUSTOM_JSON_FORMAT', '/etc/config/custom_json_format');
+define('ELASTEL_CUSTOM_JSON_FORMAT_TMP', '/tmp/custom_json_format');
 define('RASPI_BRAND_TEXT', 'ElastPro');
 define('RASPI_CONFIG', '/etc/raspap');
 define('RASPI_CONFIG_NETWORK', RASPI_CONFIG.'/networking/defaults.json');

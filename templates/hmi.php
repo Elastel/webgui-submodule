@@ -106,7 +106,7 @@
 
   const slider = document.getElementById("hmi_brightness");
   const valueDisplay = document.getElementById("brightnessValue");
-  const csrfToken = document.querySelector('input[name="csrf_token"]').value; // 假设隐藏字段名为csrf_token
+  const csrfToken = document.querySelector('input[name="csrf_token"]').value; // hidden csrf field
 
   slider.addEventListener("input", () => {
       valueDisplay.textContent = slider.value;

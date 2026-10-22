@@ -3,6 +3,20 @@ import { getCSRFToken } from "../helpers.js";
 // Minimum gap between activity pings (ms).
 const ACTIVITY_PING_INTERVAL = 60000;
 let lastActivityPing = 0;
+let sessionCheckInterval = null;
+let sessionExpiredHandled = false;
+
+// Central handling for every "this session is dead" answer the backend can give
+// (5s poll and user-activity ping). Showing the modal twice is pointless.
+function handleSessionExpired() {
+    if (sessionExpiredHandled) return;
+    sessionExpiredHandled = true;
+    if (sessionCheckInterval !== null) {
+        clearInterval(sessionCheckInterval);
+        sessionCheckInterval = null;
+    }
+    showSessionExpiredModal();
+}
 
 // Only real user interaction may extend the session. The 5s poll below must
 // not do it, otherwise an idle page would keep the session alive forever.
@@ -12,7 +26,12 @@ function pingActivity() {
     lastActivityPing = now;
 
     var csrfToken = getCSRFToken();
-    $.post('ajax/session/do_touch_session.php', { 'csrf_token': csrfToken });
+    $.post('ajax/session/do_touch_session.php', { 'csrf_token': csrfToken }, function (data) {
+        // e.g. the device was rebooted: the session belongs to an earlier boot
+        if (data && data.status === 'session_expired') {
+            handleSessionExpired();
+        }
+    });
 }
 
 function initActivityTracking() {
@@ -27,7 +46,7 @@ export function showSessionExpiredModal() {
 
 export function initSession() {
     initActivityTracking();
-    let sessionCheckInterval = setInterval(checkSession, 5000);
+    sessionCheckInterval = setInterval(checkSession, 5000);
 
     function checkSession() {
         // skip session check if on login page
@@ -37,8 +56,7 @@ export function initSession() {
         var csrfToken = getCSRFToken();
         $.post('ajax/session/do_check_session.php',{'csrf_token': csrfToken},function (data) {
             if (data.status === 'session_expired') {
-                clearInterval(sessionCheckInterval);
-                showSessionExpiredModal();
+                handleSessionExpired();
             }
         }).fail(function (jqXHR, status, err) {
             console.error("Error checking session status:", status, err);

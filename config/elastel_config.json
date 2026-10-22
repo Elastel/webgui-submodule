@@ -9,9 +9,7 @@
 		"minute_enabled",
 		"minute_period",
 		"hour_enabled",
-		"day_enabled",
-		"system_enabled",
-		"system_report_period"
+		"day_enabled"
 	],
 	"com_option": [
 		"enabled",

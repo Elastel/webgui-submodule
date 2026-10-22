@@ -459,11 +459,20 @@ echo "<div class=\"tab-pane $active\" id=\"server$num\">
                   <option value=\"1\" selected=\"\">elastpro-format</option>
                   <option value=\"2\">array-format</option>
                   <option value=\"3\">multi-device-format</option>
+                  <option value=\"4\">custom-format</option>
                 </select>
                 <i class=\"fas fa-question-circle\"
                   style=\"color:#17a2b8;cursor:pointer;margin-left:0.5rem;\"
                   title=''>
                 </i>
+              </div>
+            </div>
+
+            <div name=\"page_custom$num\" id=\"page_custom$num\" style=\"display:none\">
+              <div class=\"cbi-value cbi-value-last\">
+                <label class=\"cbi-value-title\">"; echo _("Custom JSON Format"); echo "</label>
+                <textarea class=\"cbi-input-textarea custom-format-box\" name=\"custom_json_format$num\" id=\"custom_json_format$num\" rows=\"12\"></textarea>
+                <div class=\"cbi-value-description\">"; echo _("Supported variables"); echo ": "; echo '${ts}, ${time}, ${device_name}, ${tag_name}, ${tag_value}, ${$(shell command)}'; echo "</div>
               </div>
             </div>
 
@@ -668,7 +677,7 @@ echo "<div class=\"tab-pane $active\" id=\"server$num\">
             </div>
 
             <div name=\"page_json$num\" id=\"page_json$num\">
-              <div class=\"cbi-value\">
+              <div class=\"cbi-value\" id=\"page_selfvar$num\">
                 <label class=\"cbi-value-title\">"; echo _("Enable Self Defined Variable"); echo "</label>
                 <input type=\"checkbox\" class=\"cbi-input-checkbox\" name=\"self_define_var$num\" id=\"self_define_var$num\" onchange=\"enableVar($num)\" value=\"1\"/>
               </div>

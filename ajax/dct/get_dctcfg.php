@@ -293,6 +293,14 @@ if ($type == 'datadisplay') {
     } else if ($type == 'server') {
         exec("/usr/sbin/get_config dct name $type 5", $data);
         $dctdata = json_decode($data[0]);
+        if (!is_object($dctdata)) {
+            $dctdata = new stdClass();
+        }
+
+        /* JSON Format = custom-format: the framework text is kept in its own file */
+        $dctdata->custom_json_format = file_exists(ELASTEL_CUSTOM_JSON_FORMAT)
+            ? file_get_contents(ELASTEL_CUSTOM_JSON_FORMAT) : '';
+
         echo json_encode($dctdata);
     } else if ($rule == '1') {
         exec("/usr/sbin/get_config dct type $type 1", $data);

@@ -99,9 +99,21 @@ globalThis.encapChange = encapChange;
 export function jsonChange(num) {
     var select = document.getElementById('json_format' + num);
     var icon = select.nextElementSibling;
-    if (!icon || !icon.classList.contains('fa-question-circle')) return;
 
     var value = select.value;
+    /* JSON format 4 (custom-format) shows the template boxes, the others hide them. */
+    if (value === "4") {
+        $('#page_custom' + num).show();
+        /* custom-format uses its own template: self defined variables do not apply, hide the whole block */
+        $('#page_selfvar' + num).hide();
+        $('#page_var' + num).hide();
+    } else {
+        $('#page_custom' + num).hide();
+        enableVar(num);
+    }
+
+    if (!icon || !icon.classList.contains('fa-question-circle')) return;
+
     if (value === "0") {
         icon.setAttribute('title', '{"ts":1747208633000,"temperature":27}');
     } else if (value === "1") {
@@ -110,6 +122,8 @@ export function jsonChange(num) {
         icon.setAttribute('title', '{"ts":1747208633000,"params":[{"name":"temperature", "value":27}]}');
     } else if (value === "3") {
         icon.setAttribute('title', '{"ts":1747208633000,"params":[{"device_id":"meter1", "data":{"temperature":27}}]}');
+    } else if (value === "4") {
+        icon.setAttribute('title', 'Custom JSON frame, variables: ${ts} ${time} ${device_name} ${tag_name} ${tag_value}');
     }
 
     if ($(icon).data('bs.tooltip')) {
@@ -133,6 +147,16 @@ globalThis.enableHeader = enableHeader;
 
 export function enableVar(num) {
     var enable_var = document.getElementById('self_define_var' + num).checked;
+    var isCustom = ($('#json_format' + num).val() === '4');
+
+    /* custom-format does not use self defined variables: this block is not shown at all */
+    if (isCustom) {
+        $('#page_selfvar' + num).hide();
+        $('#page_var' + num).hide();
+        return;
+    }
+
+    $('#page_selfvar' + num).show();
 
     if (enable_var == true) {
         $('#page_var' + num).show();
@@ -231,7 +255,13 @@ export function initDctServer() {
                         }
                         protocolChange(i);
                         jsonChange(i);
-                    });           
+                    });
+
+                    /* JSON Format = custom-format: the frame text lives in
+                       /etc/config/custom_json_format, shared by every server. */
+                    if ($('#json_format' + i).val() == '4') {
+                        $('#custom_json_format' + i).val(jsonData['custom_json_format'] || '');
+                    }
                 } else {
                     $('#page_server' + i).hide(); 
                     $('#disable' + i).prop('checked', true);

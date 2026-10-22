@@ -1,7 +1,6 @@
 <?php ob_start() ?>
   <?php if (!RASPI_MONITOR_ENABLED) : ?>
-    <input type="submit" class="btn btn-outline btn-primary" name="SaveHostAPDSettings" value="<?php echo _("Save settings"); ?>" />
-    <input type="submit" class="btn btn-success" value="<?php echo _("Apply settings"); $msg=_("Restarting WIFI AP"); ?>" data-toggle="modal" data-target="#hostapdModal" name="applyHostAPDsettings" />
+    <?php BtnSaveApplyCustom('SaveHostAPDSettings', 'applyHostAPDsettings'); $msg = _("Restarting WIFI AP"); ?>
     <!-- Modal -->
     <div class="modal fade" id="hostapdModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">

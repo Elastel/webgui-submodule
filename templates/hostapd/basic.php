@@ -1,32 +1,28 @@
-<!-- <div class="tab-pane active" id="basic"> -->
-  <h4 class="mt-3"><?php echo _("Basic settings") ;?></h4>
-  <div class="row">
-    <div class="col-md-6 mb-2">
-      <div class="custom-control custom-switch">
-        <?php $checked = $arrConfig['disable_wifi_ap_bool'] == 1 ? 'checked="checked"' : '' ?>
-        <?php $disabled = $arrConfig['enable_wifi_client_bool'] == 1 ? 'disabled="disabled"' : '' ?>
-        <input class="custom-control-input" id="disablewifiap" name="disable_wifi_ap" type="checkbox" value="1" <?php echo $checked ?> <?php echo $disabled ?> />
-        <label class="custom-control-label" for="disablewifiap"><?php echo _("Disable WIFI"); ?></label>
-      </div>
+<div class="tab-pane" id="basic">
+  <h5 class="mt-1"><?php echo _("Basic settings"); ?></h5>
+  <div class="cbi-section cbi-tblsection wifi-ap-section">
+    <div class="wifi-ap-fields">
+    <div class="cbi-value">
+      <label class="cbi-value-title"><?php echo _("Disable WIFI"); ?></label>
+      <input type="checkbox" class="cbi-input-checkbox" value="1"
+        <?php echo ($arrConfig['disable_wifi_ap_bool'] == 1) ? 'checked="checked"' : '' ?>
+        <?php echo ($arrConfig['enable_wifi_client_bool'] == 1) ? 'disabled="disabled"' : '' ?>
+        name="disable_wifi_ap" id="disablewifiap" />
     </div>
-  </div>
-  <div class="row">
-    <div class="form-group col-md-6">
-      <label for="cbxinterface"><?php echo _("Interface") ;?></label>
-      <?php
-        SelectorOptions('interface', $interfaces, $arrConfig['interface'], 'cbxinterface');
-      ?>
+
+    <div class="cbi-value">
+      <label class="cbi-value-title" for="cbxinterface"><?php echo _("Interface"); ?></label>
+      <?php SelectorOptions('interface', $interfaces, $arrConfig['interface'], 'cbxinterface', null, null, 'cbi-input-select'); ?>
     </div>
-  </div>
-  <div class="row">
-    <div class="form-group col-md-6">
-      <label for="txtssid"><?php echo _("SSID"); ?></label>
-      <input type="text" id="txtssid" class="form-control" name="ssid" value="<?php echo htmlspecialchars($arrConfig['ssid'], ENT_QUOTES); ?>" />
+
+    <div class="cbi-value">
+      <label class="cbi-value-title" for="txtssid"><?php echo _("SSID"); ?></label>
+      <input type="text" class="cbi-input-text" id="txtssid" name="ssid"
+        value="<?php echo htmlspecialchars($arrConfig['ssid'], ENT_QUOTES); ?>" />
     </div>
-  </div>
-  <div class="row">
-    <div class="form-group col-md-6">
-      <label for="cbxhwmode"><?php echo _("Wireless Mode") ;?></label>
+
+    <div class="cbi-value">
+      <label class="cbi-value-title" for="cbxhwmode"><?php echo _("Wireless Mode"); ?></label>
       <?php
       $countries_5Ghz_max48ch = RASPI_5GHZ_ISO_ALPHA2;
       $selectedHwMode = $arrConfig['hw_mode'];
@@ -53,40 +49,36 @@
               unset($selectedHwMode);
           }
       }
-      SelectorOptions('hw_mode', $arr80211Standard, $selectedHwMode, 'cbxhwmode', 'loadChannelSelect', $hwModeDisabled); ?>
+      SelectorOptions('hw_mode', $arr80211Standard, $selectedHwMode, 'cbxhwmode', 'loadChannelSelect', $hwModeDisabled, 'cbi-input-select'); ?>
     </div>
-  </div>
-  <div class="row">
-    <div class="form-group col-md-6">
-      <label for="cbxchannel"><?php echo _("Channel"); ?></label>
+
+    <div class="cbi-value">
+      <label class="cbi-value-title" for="cbxchannel"><?php echo _("Channel"); ?></label>
       <?php
-      $selectablechannels = Array();
-      SelectorOptions('channel', $selectablechannels, intval($arrConfig['channel']), 'cbxchannel'); ?>
+        $selectablechannels = Array();
+        SelectorOptions('channel', $selectablechannels, intval($arrConfig['channel']), 'cbxchannel', null, null, 'cbi-input-select'); ?>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <label for="cbxwpa"><?php echo _("Security type"); ?></label>
-        <?php SelectorOptions('wpa', $arrSecurity, $arrConfig['wpa'], 'cbxwpa'); ?>
-      </div>
-      <div class="form-group">
-        <label for="cbxwpapairwise"><?php echo _("Encryption Type"); ?></label>
-        <?php SelectorOptions('wpa_pairwise', $arrEncType, $arrConfig['wpa_pairwise'], 'cbxwpapairwise'); ?>
-      </div>
-      <div class="form-group">
-        <label for="txtwpapassphrase"><?php echo _("PSK"); ?></label>
-        <div class="input-group">
-          <input type="text" class="form-control" id="txtwpapassphrase" name="wpa_passphrase" value="<?php echo htmlspecialchars($arrConfig['wpa_passphrase'], ENT_QUOTES); ?>" />
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" id="gen_wpa_passphrase"><i class="fas fa-magic"></i></button>
-          </div>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="cbxcountries"><?php echo _("Country Code"); ?></label>
-        <input type="hidden" id="selected_country" value="<?php echo htmlspecialchars($arrConfig['country_code'], ENT_QUOTES); ?>">
-        <select  class="form-control" id="cbxcountries" name="country_code" onchange="loadChannelSelect()">
+
+    <div class="cbi-value">
+      <label class="cbi-value-title" for="cbxwpa"><?php echo _("Security type"); ?></label>
+      <?php SelectorOptions('wpa', $arrSecurity, $arrConfig['wpa'], 'cbxwpa', null, null, 'cbi-input-select'); ?>
+    </div>
+
+    <div class="cbi-value">
+      <label class="cbi-value-title" for="cbxwpapairwise"><?php echo _("Encryption Type"); ?></label>
+      <?php SelectorOptions('wpa_pairwise', $arrEncType, $arrConfig['wpa_pairwise'], 'cbxwpapairwise', null, null, 'cbi-input-select'); ?>
+    </div>
+
+    <div class="cbi-value">
+      <label class="cbi-value-title" for="txtwpapassphrase"><?php echo _("PSK"); ?></label>
+      <input type="text" class="cbi-input-text" id="txtwpapassphrase" name="wpa_passphrase"
+        value="<?php echo htmlspecialchars($arrConfig['wpa_passphrase'], ENT_QUOTES); ?>" />
+    </div>
+
+    <div class="cbi-value">
+      <label class="cbi-value-title" for="cbxcountries"><?php echo _("Country Code"); ?></label>
+      <input type="hidden" id="selected_country" value="<?php echo htmlspecialchars($arrConfig['country_code'], ENT_QUOTES); ?>">
+      <select class="cbi-input-select" id="cbxcountries" name="country_code" onchange="loadChannelSelect()">
           <option value="AF">Afghanistan</option>
           <option value="AX">Åland Islands</option>
           <option value="AL">Albania</option>
@@ -348,22 +340,19 @@
           }
         }
         </script>
-      </div>
     </div>
-    <div class="col-md-6">
-      <figure class="figure">
-        <img src="app/img/wifi-qr-code.php" class="figure-img img-fluid" alt="Wifi QR code" style="width:80%;">
-        <figcaption class="figure-caption"><?php echo _("Scan this QR code with your phone to connect to this AP."); ?></figcaption>
-      </figure>
+
+    <div class="cbi-value">
+      <label class="cbi-value-title"><?php echo _("Hide SSID in broadcast"); ?></label>
+      <input type="checkbox" class="cbi-input-checkbox" value="1"
+        <?php echo ($arrConfig['ignore_broadcast_ssid'] == 1 || $arrConfig['ignore_broadcast_ssid'] == 2) ? 'checked="checked"' : '' ?>
+        name="hiddenSSID" id="chxhiddenssid" />
     </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6 form-group">
-      <div class="custom-control custom-switch">
-        <?php $checked = $arrConfig['ignore_broadcast_ssid'] == 1 || $arrConfig['ignore_broadcast_ssid'] == 2 ? 'checked="checked"' : '' ?>
-        <input class="custom-control-input" id="chxhiddenssid" name="hiddenSSID" type="checkbox" value="1" <?php echo $checked ?> />
-        <label class="custom-control-label" for="chxhiddenssid"><?php echo _("Hide SSID in broadcast"); ?></label>
-      </div>
+    </div><!-- /wifi-ap-fields -->
+
+    <div class="wifi-ap-qrcode">
+      <img src="app/img/wifi-qr-code.php" alt="Wifi QR code">
+      <span class="figure-caption"><?php echo _("Scan this QR code with your phone to connect to this AP."); ?></span>
     </div>
   </div>
-<!-- </div> -->
+</div>
