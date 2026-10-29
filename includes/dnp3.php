@@ -20,6 +20,18 @@ function DisplayDnp3()
         }
     }
 
+    /* Mapping rules import: conf_im_ex writes the dnp3 sections
+       directly into UCI and restarts dct by itself. */
+    if ( isset($_POST['upload']) ) {
+        if (strlen($_FILES['upload_file']['name']) > 0) {
+            if (is_uploaded_file($_FILES['upload_file']['tmp_name'])) {
+                save_import_file('dnp3', $status, $_FILES['upload_file']);
+            } else {
+                $status->addMessage('Fail to upload file', 'danger');
+            }
+        }
+    }
+
     echo renderTemplate("dnp3", compact('status'));
 }
 

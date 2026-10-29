@@ -74,6 +74,7 @@
                   ?>
                   <div class="cbi-section-create">
                     <input type="button" class="cbi-button-add" name="popBox" value="<?=_('Add')?>" onclick="addData('modbus_slave_point')">
+                    <?php conf_im_ex('Modbus_slave_point'); ?>
                   </div>
                 </div>
           <?php
@@ -85,6 +86,8 @@
       </div><!-- card-body -->
     </div><!-- card -->
   </div><!-- col-lg-12 -->
+
+<?php page_im_ex('Modbus_slave_point', 'modbus_slave'); ?>
 </div>
 
 <div id="popLayer"></div>

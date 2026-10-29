@@ -747,8 +747,11 @@ echo "<div class=\"tab-pane $active\" id=\"server$num\">
       </div><!-- /.tab-pane | basic tab -->";
 }
 
-function page_im_ex($conf_name) {
+function page_im_ex($conf_name, $form_action = null) {
   $conf_name_lower = strtolower($conf_name);
+  if ($form_action === null) {
+    $form_action = $conf_name_lower . '_conf';
+  }
   echo "<div id=\"confLayer\" style=\"display:none\"></div>
   <div id=\"confBox\" style=\"display:none;overflow:auto\">
     <div style=\"margin-top: -1rem; margin-right: -1rem; text-align: right !important;\">
@@ -765,7 +768,7 @@ function page_im_ex($conf_name) {
         <input type=\"submit\" class=\"btn btn-success\" value=\""; echo _("Export"); echo "\" name=\"export\" onclick=\"downloadFile('$conf_name')\">
       </div>
       </br></br>
-      <form method=\"POST\" action=\"" . $conf_name_lower . "_conf\" enctype=\"multipart/form-data\" role=\"form\" onsubmit=\"closeConfBox()\">";
+      <form method=\"POST\" action=\"" . $form_action . "\" enctype=\"multipart/form-data\" role=\"form\" onsubmit=\"closeConfBox()\">";
       echo \ElastPro\Tokens\CSRF::hiddenField();
       echo "<div class=\"cbi-value\">
           <input hidden=\"hidden\" name=\"page_im_ex_name\" id=\"page_im_ex_name\" value=\"0\">
@@ -877,7 +880,7 @@ function page_table_title($section, $option_list) {
       </tr>
     </table>";
   if ($section != 'adc' && $section != 'di' && $section != 'do' && $section != 'system_param' &&
-      $section != 'modbus_slave_point' && $section != 'dnp3') {
+      $section != 'modbus_slave_point' && $section != 'dnp3' && $section != 'bacnet_point') {
     $section_t = ucfirst($section);
     echo "<div class=\"cbi-section-create\">
       <input type=\"button\" class=\"cbi-button-add\" name=\"popBox\" value="._("Add")." onclick=\"addData('$section')\">
@@ -949,15 +952,24 @@ function dct_rules_common_add_fields($arrOri) {
 function dct_rules_common($table_name) {
   InputControlCustom(_('Reporting Center'), $table_name.'.server_center', $table_name.'.server_center', _('Multiple Servers Are Separated By Minus'));
 
-  $operator_list = [_('None'), '+', '-', '*', '/', _('Expression')];
-  SelectControlCustom(_('Operator (math)'), $table_name.'.operator', $operator_list, $operator_list[0], $table_name.'.operator', _('0 + - * /'), "selectOperator('$table_name')");
+  $operator_list = [_('None'), '+', '-', '*', '/', _('Expression'), _('Reassign')];
+  SelectControlCustom(_('Operator (math)'), $table_name.'.operator', $operator_list, $operator_list[0], $table_name.'.operator', _('0 + - * / Expression Reassign'), "selectOperator('$table_name')");
 
   echo '<div name="page_operand" id="page_operand">';
   InputControlCustom(_('Operand'), $table_name.'.operand', $table_name.'.operand');
   echo '</div>';
 
+  /*
+   * Expression and Reassign share the same "ex" input, only the label and the
+   * hint text differ. selectOperator() switches them by operator value, so the
+   * translations are exposed to JS through hidden inputs.
+   */
   echo '<div name="page_ex" id="page_ex">';
   InputControlCustom(_('Operation Expression'), $table_name.'.ex', $table_name.'.ex', _('(x + 10) * 10,  x is collected data'));
+  echo '<input type="hidden" data-i18n="ex_expr" value="'._("Operation Expression").'">';
+  echo '<input type="hidden" data-i18n="ex_expr_descr" value="'._("(x + 10) * 10,  x is collected data").'">';
+  echo '<input type="hidden" data-i18n="ex_remap" value="'._("Value Mapping").'">';
+  echo '<input type="hidden" data-i18n="ex_remap_descr" value="'._("old:new, pairs separated by semicolon, e.g. 0:1;1:1").'">';
   echo '</div>';
 
   $accuracy_list = ['0', '1', '2', '3', '4', '5', '6'];

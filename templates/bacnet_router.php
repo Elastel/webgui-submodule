@@ -30,7 +30,7 @@
           <form method="POST" action="bacnet_router" role="form">
           <?php echo \ElastPro\Tokens\CSRF::hiddenField();;
             echo '<div class="cbi-section cbi-tblsection">';
-            RadioControlCustom('BACnet '._('Router'), 'enabled', 'bacnet', 'enableBACnet');
+            RadioControlCustom('BACnet '._('Router'), 'enabled', 'bacnet', 'enableBACnetRouter');
 
             echo '<div id="page_bacnet" name="page_bacnet">';
 

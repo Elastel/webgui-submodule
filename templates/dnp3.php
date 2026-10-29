@@ -115,6 +115,7 @@
               ?>
               <div class="cbi-section-create">
                 <input type="button" class="cbi-button-add" name="popBox" value="<?=_('Add')?>" onclick="addData('dnp3')">
+                <?php conf_im_ex('Dnp3'); ?>
               </div>
             </div>
           <?php
@@ -127,6 +128,7 @@
   </div><!-- col-lg-12 -->
 </div>
 
+<?php page_im_ex('Dnp3', 'dnp3'); ?>
 <div id="popLayer"></div>
 <div id="popBox" style="overflow:auto">
   <input hidden="hidden" name="page_type" id="page_type" value="0">

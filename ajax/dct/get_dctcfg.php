@@ -9,7 +9,8 @@ $type = $_GET['type'];
 $type_arr = array(
     'dnp3' => array('option' => 'dnp3_server', 'option_list' => 'dnp3'),
     'modbus_slave' => array('option' => 'modbus_slave', 'option_list' => 'modbus_slave_point'),
-    'opcua' => array('option' => 'opcua', 'option_list' => 'opcuaserv')
+    'opcua' => array('option' => 'opcua', 'option_list' => 'opcuaserv'),
+    'bacnet_point' => array('option' => 'bacnet', 'option_list' => 'bacnet_point')
 );
 
 if ($type == 'datadisplay') {
@@ -310,7 +311,7 @@ if ($type == 'datadisplay') {
         $dctdata[$type] = $data[0];
 
         echo json_encode($dctdata);
-    } else if ($type == 'dnp3' || $type == 'modbus_slave' || $type == 'opcua') {
+    } else if ($type == 'dnp3' || $type == 'modbus_slave' || $type == 'opcua' || $type == 'bacnet_point') {
         $option_name = $type_arr[$type]['option'];
         $option_list_name = $type_arr[$type]['option_list'];
 

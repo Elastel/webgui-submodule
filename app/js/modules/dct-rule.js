@@ -34,6 +34,36 @@ export function closeBox() {
 
 globalThis.closeBox = closeBox;
 
+/* Read a translated string exposed by PHP through a hidden data-i18n input. */
+function dctI18n(key) {
+    var el = document.querySelector('input[data-i18n="' + key + '"]');
+    return el ? el.value : '';
+}
+
+/*
+ * The "ex" input is shared by Expression and Reassign: only its label and hint
+ * differ, so swap the texts instead of rendering a second input.
+ */
+function switchExLabel(operator) {
+    var box = document.getElementById('page_ex');
+    if (!box) {
+        return;
+    }
+
+    var title = box.querySelector('.cbi-value-title');
+    var descr = box.querySelector('.cbi-value-description');
+    var remap = (operator == "6");
+
+    if (title) {
+        title.textContent = remap ? dctI18n('ex_remap') : dctI18n('ex_expr');
+    }
+    if (descr) {
+        descr.textContent = remap ? dctI18n('ex_remap_descr') : dctI18n('ex_expr_descr');
+    }
+}
+
+globalThis.switchExLabel = switchExLabel;
+
 export function selectOperator(table_name) {
     if (document.getElementById(table_name+'.operator')) {
         var operator = document.getElementById(table_name+'.operator').value;
@@ -43,9 +73,11 @@ export function selectOperator(table_name) {
         if (operator == "0") {
             $('#page_operand').hide();
             $('#page_ex').hide();
-        } else if (operator == "5") {
+        } else if (operator == "5" || operator == "6") {
+            /* 5 = Expression, 6 = Reassign: both use the "ex" input */
             $('#page_operand').hide();
             $('#page_ex').show();
+            switchExLabel(operator);
         } else {
             $('#page_operand').show();
             $('#page_ex').hide();
@@ -228,8 +260,8 @@ export function insertColumn(tableId, name, headerName, newHeaderName) {
     if (doesColumnExist(tableId, name))
         return;
 
-    if ((tableId == 'table_adc' || tableId == 'table_di' || tableId == 'table_modbus_slave_point' || 
-        tableId == 'table_dnp3' || tableId == 'table_opcuaserv') && name == 'write_value') {
+    if ((tableId == 'table_adc' || tableId == 'table_di' || tableId == 'table_modbus_slave_point' ||
+        tableId == 'table_dnp3' || tableId == 'table_opcuaserv' || tableId == 'table_bacnet_point') && name == 'write_value') {
         return;
     }
 
@@ -349,6 +381,10 @@ globalThis.get_data_type_value = get_data_type_value;
 // dynamic cur_value / write_value columns that data-point tables use.
 function hasValueColumns(table_name) {
     return table_name != 'system_param';
+}
+
+function bacnetCovSupported(type) {
+    return !(type == 'BI' || type == 'BO' || type == 'BV' || type == 'MSV');
 }
 
 export function addSectionTable(table_name, jsonData, option_list) {
@@ -486,6 +522,10 @@ export function addSectionTable(table_name, jsonData, option_list) {
                 contents += '   <td style="text-align:center" name="'+key+'">Network Node'+ jsonData[i][key][3] +'</td>\n';
             } else if (key == 'order') {
                 contents += '   <td style="text-align:center" name="'+key+'">'+ ((mode == 1 && key == 'debounce_interval') ? '-' : jsonData[i][key]) +'</td>\n';
+            } else if (table_name == 'bacnet_point' && key == 'cov_increment' &&
+                       !bacnetCovSupported(jsonData[i]['object_type'])) {
+                /* BI/BO/BV/MSV do not support COV Increment: Even if historical values are stored in the UCI, they are displayed as “-” */
+                contents += '   <td style="text-align:center" name="'+key+'">-</td>\n';
             } else {
                 contents += '   <td style="text-align:center" name="'+key+'">'+ ((mode == 1 && key == 'debounce_interval') ? '-' : jsonData[i][key]) +'</td>\n';
             }
@@ -493,7 +533,7 @@ export function addSectionTable(table_name, jsonData, option_list) {
             if ((key === 'factor_name' || kIdx === factorFieldIndex) && hasValueColumns(table_name)) {
                 contents += '   <td style="font-weight:bold;color:blue;text-align:center" name="cur_value">-</td>\n';
                 if (table_name != 'adc' && table_name != 'di' && table_name != 'modbus_slave_point' &&
-                    table_name != 'dnp3' && table_name != 'opcuaserv') {
+                    table_name != 'dnp3' && table_name != 'opcuaserv' && table_name != 'bacnet_point') {
                     contents += '   <td style="text-align:center" name="write_value"><button type="button" class="btn-primary" style="border-radius:0.5rem;" onclick="event.preventDefault();writeValueByTag(this)">Write</button></td>\n';
                 }
             }
@@ -512,7 +552,7 @@ export function addSectionTable(table_name, jsonData, option_list) {
     const writeValueLabel = document.querySelector('[data-i18n="write_value"]').value;
     var hdrTable = document.getElementById("table_" + table_name);
     var skipWriteValue = (table_name == 'adc' || table_name == 'di' || table_name == 'modbus_slave_point' ||
-        table_name == 'dnp3' || table_name == 'opcuaserv');
+        table_name == 'dnp3' || table_name == 'opcuaserv' || table_name == 'bacnet_point');
     if (hdrTable && hasValueColumns(table_name) && !doesColumnExist("table_" + table_name, 'cur_value')) {
         var titleRow = hdrTable.querySelector('tr.cbi-section-table-titles');
         var descRow = hdrTable.querySelector('tr.cbi-section-table-descr');
@@ -534,6 +574,63 @@ export function addSectionTable(table_name, jsonData, option_list) {
         if (!skipWriteValue) {
             addHeaderCell(titleRow, fIdx + 1, writeValueLabel, 'write_value');
             addHeaderCell(descRow, fIdx + 1, '', 'write_value');
+        }
+    }
+
+    /* These configuration-only tables must never show a Write Value column.
+       Remove any leftover header cells (e.g. from a stale render) so the
+       remaining columns stay aligned with the data rows. */
+    if (hdrTable && skipWriteValue) {
+        hdrTable.querySelectorAll('th[data-field="write_value"]').forEach(function (th) {
+            th.remove();
+        });
+    }
+
+    if (hdrTable) {
+        var alignTitleRow = hdrTable.querySelector('tr.cbi-section-table-titles');
+        var alignDescRow = hdrTable.querySelector('tr.cbi-section-table-descr');
+        var firstDataRow = null;
+        for (var r = 0; r < hdrTable.rows.length; r++) {
+            if (hdrTable.rows[r].cells.length > 0 &&
+                hdrTable.rows[r].cells[0].tagName === 'TD') {
+                firstDataRow = hdrTable.rows[r];
+                break;
+            }
+        }
+
+        if (firstDataRow && alignTitleRow) {
+            var dataTrailing = 0;
+            for (var c = firstDataRow.cells.length - 1; c >= 0; c--) {
+                var trailTd = firstDataRow.cells[c];
+                if (trailTd.className.indexOf('cbi-drag-col') !== -1 ||
+                    trailTd.querySelector('a')) {
+                    dataTrailing++;
+                } else {
+                    break;
+                }
+            }
+
+            var hdrTrailing = 0;
+            for (var c2 = alignTitleRow.cells.length - 1; c2 >= 0; c2--) {
+                var trailTh = alignTitleRow.cells[c2];
+                if (trailTh.className.indexOf('cbi-drag-col') !== -1 ||
+                    trailTh.className.indexOf('cbi-section-actions') !== -1) {
+                    hdrTrailing++;
+                } else {
+                    break;
+                }
+            }
+            var padCount = dataTrailing - hdrTrailing;
+            if (padCount > 0) {
+                [alignTitleRow, alignDescRow].forEach(function (hdrRow) {
+                    if (!hdrRow) return;
+                    for (var p = 0; p < padCount; p++) {
+                        var padTh = document.createElement('th');
+                        padTh.className = 'th cbi-section-table-cell cbi-section-actions';
+                        hdrRow.appendChild(padTh);
+                    }
+                });
+            }
         }
     }
 
@@ -926,6 +1023,8 @@ export function addData(table_name) {
         groupIdChange();
     } else if (table_name == 'system_param') {
         systemParamChange(table_name)
+    } else if (table_name == 'bacnet_point') {
+        objectTypeChange();
     }
 }
 
@@ -1003,6 +1102,9 @@ export function get_table_data(table_name, option_list) {
                 obj[option] = cs;
             } else if (option == "belonged_com" && cell.textContent.indexOf('Network') !== -1) {
                 obj[option] = 'TCP' + cell.textContent.slice(-1);
+            } else if (table_name == 'bacnet_point' && option == 'cov_increment' &&
+                       cell.textContent === '-') {
+                obj[option] = '';
             } else {
                 obj[option] = cell.textContent;
             }
@@ -1124,13 +1226,18 @@ export function saveData(table_name) {
             } else if (option == 'order') {
                 contents += '   <td style="text-align:center" name="'+option+'">'+ (option_value[option] ? option_value[option] : "-") +'</td>\n';
             } else {
-                contents += '   <td style="text-align:center" name="'+option+'">'+ (option_value[option] ? option_value[option] : "-") +'</td>\n';
+                var addCellVal = option_value[option];
+                if (table_name == 'bacnet_point' && option == 'cov_increment' &&
+                        !bacnetCovSupported(option_value['object_type'])) {
+                    addCellVal = '';
+                }
+                contents += '   <td style="text-align:center" name="'+option+'">'+ (addCellVal ? addCellVal : "-") +'</td>\n';
             }
 
             if ((option === 'factor_name' || oIdx === factorFieldIndex) && hasValueColumns(table_name)) {
                 contents += '   <td style="font-weight:bold;color:blue;text-align:center" name="cur_value">-</td>\n';
                 if (table_name != 'adc' && table_name != 'di' && table_name != 'modbus_slave_point' &&
-                    table_name != 'dnp3' && table_name != 'opcuaserv') {
+                    table_name != 'dnp3' && table_name != 'opcuaserv' && table_name != 'bacnet_point') {
                     contents += '   <td style="text-align:center" name="write_value"><button type="button" class="btn-primary" style="border-radius:0.5rem;" onclick="event.preventDefault();writeValueByTag(this)">Write</button></td>\n';
                 }
             }
@@ -1160,6 +1267,10 @@ export function saveData(table_name) {
                 }
             } else {
                 // console.log(table.rows[Number(page_type)].querySelector('td[name="'+ option +'"]').innerHTML);
+                if (table_name == 'bacnet_point' && option == 'cov_increment' &&
+                        !bacnetCovSupported(option_value['object_type'])) {
+                    option_value[option] = '';
+                }
                 var option_value_display = '';
                 if (option == "belonged_com"  && option_value[option].includes('TCP')) {
                     option_value_display = (option_value[option].length > 0 ? option_value[option].replace('TCP', 'Network Node') : "-")
@@ -1254,9 +1365,15 @@ export function editData(object, table_name) {
         } else if (option == "belonged_com"  && val.includes('Network')) {
             document.getElementById(table_name + '.'  + option).value = 'TCP' + val.slice(-1);
         } else {
+            if (table_name == 'bacnet_point' && option == 'cov_increment' && val === '-') {
+                val = '';
+            }
             document.getElementById(table_name + '.'  + option).value = val;
             if (table_name == 'dnp3' && option == 'group_id') {
                 groupIdChange();
+            }
+            if (table_name == 'bacnet_point' && option == 'object_type') {
+                objectTypeChange();
             }
         }
     })
@@ -1444,9 +1561,10 @@ export function getRealtimeData() {
         var dnp3 = document.getElementById('option_list_dnp3');
         var modbus_slave = document.getElementById('option_list_modbus_slave_point');
         var opcua = document.getElementById('option_list_opcuaserv');
+        var bacnet_point = document.getElementById('option_list_bacnet_point');
         trList.forEach((tr) => {
             var cur_value = '';
-            if (dnp3 || modbus_slave || opcua) {
+            if (dnp3 || modbus_slave || opcua || bacnet_point) {
                 if (tr.querySelector('td[name="source_object"]')) {
                     var factor = tr.querySelector('td[name="source_object"]').textContent;
                     factor = factor.substring(factor.indexOf('-') + 1)

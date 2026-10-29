@@ -1,4 +1,4 @@
-export function enableBACnet(state) {
+export function enableBACnetRouter(state) {
     if (state) {
       $('#page_bacnet').show();
     } else {
@@ -6,7 +6,7 @@ export function enableBACnet(state) {
     }
 }
 
-globalThis.enableBACnet = enableBACnet;
+globalThis.enableBACnetRouter = enableBACnetRouter;
 
 export function initBacnetRouter() {
     // console.info("ElastPro bacnet router module initialized");

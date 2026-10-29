@@ -831,6 +831,15 @@
 		"device_id",
 		"object_name"
 	],
+	"bacnet_point_option": [
+		"source_object",
+		"object_type",
+		"object_instance",
+		"object_name",
+		"description",
+		"cov_increment",
+		"enabled"
+	],
 	"opcuacli_option": [
 		"order",
 		"device_name",
