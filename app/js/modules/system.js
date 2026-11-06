@@ -108,45 +108,80 @@ $('#night-mode').change(function() {
 
 $('.node_online_update').click(function(){
     $('#loading').show();
-    $.get('ajax/system/system.php?type=node_online_update',function(data) {
-        var jsonData = JSON.parse(data);
-        // console.log(jsonData);
-        if (jsonData['new_node'] != null) {
-            $('#new_node').html(jsonData['new_node']);
-        }
+    var $tip = $('#node_status_tip');
+    if ($tip.length) {
+        $tip.stop(true, true).css('opacity', 1).html('');
+    }
 
-        if (jsonData['cur_node'] != jsonData['new_node']) {
-            $("#update_node").prop("disabled", false);
-            $('#update_node').css('background-color', '#3392CC');
-        }
+    $.ajax({
+        url: 'ajax/system/system.php?type=node_online_update',
+        type: 'GET',
+        timeout: 4000,
+        success: function(data) {
+            $('#loading').hide();
+            var jsonData = typeof data === 'object' ? data : JSON.parse(data);
 
-        $('#loading').hide();
-    }) 
-})
+            if (jsonData['network'] === false) {
+                if ($tip.length) {
+                    $tip.html('<span style="color: #dc3545;"><i class="fas fa-exclamation-triangle"></i> Network unavailable, cannot check updates</span>').show();
+                    setTimeout(function(){ $tip.fadeOut(1500); }, 6000);
+                }
+            } else if (jsonData['cur_node'] && jsonData['new_node'] && jsonData['cur_node'] === jsonData['new_node']) {
+                if ($tip.length) {
+                    $tip.html('<span style="color: #28a745;"><i class="fas fa-check-circle"></i> Already up to date</span>').show();
+                    setTimeout(function(){ $tip.fadeOut(1500); }, 5000);
+                }
+            } else if (jsonData['cur_node'] && jsonData['new_node'] && jsonData['cur_node'] !== jsonData['new_node']) {
+                if ($tip.length) {
+                    $tip.html('<span style="color: #007bff; font-weight: bold;"><i class="fas fa-arrow-circle-up"></i> New version found!</span>').show();
+                }
+            }
+
+            if (jsonData['new_node'] != null && jsonData['new_node'] !== "") {
+                $('#new_node').html(jsonData['new_node']);
+            }
+
+            if (jsonData['cur_node'] && jsonData['new_node'] && jsonData['cur_node'] != jsonData['new_node']) {
+                $("#update_node").prop("disabled", false);
+                $('#update_node').css('background-color', '#3392CC');
+            }
+        },
+        error: function(xhr, status, error) {
+            $('#loading').hide();
+            if ($tip.length) {
+                $tip.html('<span style="color: #dc3545;"><i class="fas fa-times-circle"></i> Check failed: ' + (status === 'timeout' ? 'Connection timed out' : error) + '</span>').show();
+                setTimeout(function(){ $tip.fadeOut(1500); }, 6000);
+            }
+        }
+    });
+});
 
 $('#update_node').click(function(){
     if (confirm("Please confirm whether to execute the update node？")) {
         $('#page_progress').css('display', 'block');
+        $('#progress_info').css('color', '');
+        $('#progress_info').html('Please do not power off or operate the page, updating in progress...');
         let randomPercentage = 0;
         var intervalId = setInterval(() => {
             randomPercentage = randomPercentage + 5;
             updateProgress(randomPercentage);
         }, 2000);
-    
-        $.get('ajax/system/system.php?type=update_node',function(data) {
-            var jsonData = JSON.parse(data);
-            // console.log(jsonData);
+
+        $.get('ajax/system/system.php?type=update_node', function(data) {
+            var jsonData = typeof data === 'object' ? data : JSON.parse(data);
+            clearInterval(intervalId);
             if (jsonData.hasOwnProperty('error')) {
-                clearInterval(intervalId);
                 $('#progress_info').html(jsonData['error']);
                 $('#progress_info').css('color', 'red');
             } else {
-                clearInterval(intervalId);
                 updateProgress(100);
             }
-        })
+        }).fail(function() {
+            clearInterval(intervalId);
+            updateProgress(100);
+        });
     }
-})
+});
 
 $('#reset_configs').click(function(){
     if (confirm("Please confirm whether to perform a restore？")) {

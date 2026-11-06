@@ -34,6 +34,7 @@
               <label class="cbi-value-title"><?php echo _("Online newest node");?>:</label>
               <label id="new_node" name="new_node"><?php echo _(empty($new_node[0]) ? "-" : $new_node[0]);?></label>
               <button class="btn rounded-right node_online_update" type="button"><i class="fas fa-sync"></i></button>
+              <span id="node_status_tip" style="margin-left: 10px; font-size: 13px; font-weight: 500;"></span>
             </div>
             <div class="cbi-value">
               <label class="cbi-value-title"><?php echo _("Node update"); ?></label>

@@ -91,7 +91,7 @@ install_lib_if_needed() {
 iotedge_package_check() {
         if ! command -v "iotedge" >/dev/null 2>&1; then
                 echo "iotedge is NOT installed!"
-                if [[ $model == "EG500" || $model == "EG410" || $model == "ElastBox400" ]]; then
+                if [[ $1 == true && $2 == false ]]; then
                         curl https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb >/tmp/packages-microsoft-prod.deb
                         apt install /tmp/packages-microsoft-prod.deb
                         apt-get update
@@ -210,6 +210,24 @@ set_immutable_if_needed() {
     fi
 }
 
+# Check if the device is a Raspberry Pi
+is_rpi=false
+if [ -r /proc/device-tree/model ] && grep -q "Raspberry Pi" /proc/device-tree/model 2>/dev/null; then
+    is_rpi=true
+fi
+
+# Check if the OS is Debian 12 or later
+is_debian12_plus=false
+if [ -r /etc/os-release ]; then
+        . /etc/os-release
+        if [[ "${ID:-}" == "debian" && -n "${VERSION_ID:-}" ]]; then
+                major_version="${VERSION_ID%%.*}"
+                if [[ "$major_version" =~ ^[0-9]+$ ]] && (( major_version >= 12 )); then
+                is_debian12_plus=true
+                fi
+        fi
+fi
+
 # restapi init
 if [[ $restapi -eq 1 ]]; then
         if [[ $model != "EG324L" && $model != "EC212" ]]; then
@@ -248,7 +266,7 @@ fi
 set_immutable_if_needed "/etc/fw_model"
 set_immutable_if_needed "/etc/target_model"
 
-if [[ $model == "EG500" || $model == "EG410" || $model == "ElastBox400" ]]; then
+if [[ "$is_rpi" == true && "$is_debian12_plus" == false ]]; then
         cp $path/config/sources.list /etc/apt/sources.list
 fi
 
@@ -272,7 +290,7 @@ if [[ $model != "EG324L" && $model != "EC212" ]]; then
         systemctl disable nftables.service
 fi
 
-iotedge_package_check
+iotedge_package_check $is_rpi $is_debian12_plus
 
 sleep 1
 if [ $model == "EG324" ]; then
@@ -319,8 +337,9 @@ else
         fi
 fi
 
-if [[ $model == "EG500" || $model == "EG410" || $model == "ElastBox400" || $model == "EG510" ]]; then
-        if [[ $model == "EG510" ]]; then
+if [[ "$is_rpi" == true ]]; then
+        # Raspberry Pi on Debian 12+ uses /boot/firmware/config.txt
+        if [[ "$is_rpi" == true && "$is_debian12_plus" == true ]]; then
                 CONFIG_PATH="/boot/firmware/config.txt"
         else
                 CONFIG_PATH="/boot/config.txt"
