@@ -37,7 +37,6 @@ case "$1" in
             /usr/sbin/i2cset -f -y 1 0x20 0x03 0xff
       fi
 
-      /etc/init.d/failover restart
       ;;
   restart|force-reload)
       $0 stop
